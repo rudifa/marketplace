@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 // Script to fetch Logseq marketplace plugin package details from GitHub
+// and generate an HTML page with a table of plugins.
 // Usage: node fetch-logseq-marketplace.js
 
 import fetch from "node-fetch";
@@ -15,121 +16,33 @@ const GITHUB_API =
 const RAW_BASE =
   "https://raw.githubusercontent.com/logseq/marketplace/master/packages";
 
-function getGithubHeaders() {
-  const headers = {Accept: "application/vnd.github.v3+json"};
-  if (process.env.GITHUB_TOKEN) {
-    headers["Authorization"] = `token ${process.env.GITHUB_TOKEN}`;
-  }
-  return headers;
-}
+// Parse command line arguments for verbose flag
+const args = process.argv.slice(2);
+const verbose = args.includes("--verbose") || args.includes("-v");
 
-async function fetchPackageList() {
-  console.log("Fetching package list from GitHub...");
-  const res = await fetch(GITHUB_API, {headers: getGithubHeaders()});
-  if (!res.ok) {
-    let errorText = "";
-    try {
-      errorText = await res.text();
-    } catch (e) {
-      errorText = "(could not read error body)";
-    }
-    console.error(
-      `Failed to fetch package list. Status: ${res.status} ${res.statusText}. Body: ${errorText}`
-    );
-    throw new Error("Failed to fetch package list");
-  }
-  const data = await res.json();
-  console.log(`Found ${data.length} packages.`);
-  return data;
-}
+main({verbose}).then(() => {
+  if (verbose) console.log("Script execution completed.");
+  process.exit(0);
+});
 
-async function fetchManifestAndIcon(packageName) {
-  const manifestUrl = `${RAW_BASE}/${packageName}/manifest.json`;
-  try {
-    const res = await fetch(manifestUrl, {headers: getGithubHeaders()});
-    if (!res.ok) {
-      console.log(`No manifest.json for ${packageName}`);
-      return null;
-    }
-    const manifest = await res.json();
-
-    // Add iconUrl if icon is present, using raw.githubusercontent.com for CORS compatibility
-    if (manifest.icon) {
-      manifest.iconUrl = `${RAW_BASE}/${packageName}/${manifest.icon}`;
-    } else {
-      manifest.iconUrl = "";
-    }
-    console.log(`Fetched manifest for ${packageName}`);
-    return manifest;
-  } catch (err) {
-    console.log(`Error fetching manifest for ${packageName}:`, err);
-    return null;
-  }
-}
-
-// Fetch commit dates for a package directory
-async function fetchCommitDates(packageName) {
-  const commitsApi = `https://api.github.com/repos/logseq/marketplace/commits?path=packages/${packageName}&per_page=100`;
-  try {
-    const res = await fetch(commitsApi, {headers: getGithubHeaders()});
-    if (!res.ok) {
-      console.log(`Could not fetch commits for ${packageName}`);
-      return {created_at: "", last_updated: ""};
-    }
-    const commits = await res.json();
-    if (!Array.isArray(commits) || commits.length === 0) {
-      return {created_at: "", last_updated: ""};
-    }
-    // Commits are returned newest first
-    const last_updated = commits[0]?.commit?.committer?.date || "";
-    const created_at =
-      commits[commits.length - 1]?.commit?.committer?.date || "";
-    return {created_at, last_updated};
-  } catch (err) {
-    console.log(`Error fetching commit dates for ${packageName}:`, err);
-    return {created_at: "", last_updated: ""};
-  }
-}
-
-async function main() {
+/**
+ * Main entry point for fetching Logseq marketplace plugin data and generating HTML output.
+ * @param {Object} options
+ * @param {boolean} options.verbose - Enable verbose logging.
+ */
+async function main({verbose = false} = {}) {
   try {
     // Fetch package list from GitHub logseq marketplace repo
-    const packages = await fetchPackageList();
+    const packages = await fetchPackageList(verbose);
     const results = [];
     let count = 0;
     // Loop through packages to convert package data to result data
     for (const pkg of packages) {
-      if (pkg.type !== "dir") continue;
-      console.log(`Processing package: ${pkg.name}`);
-      const manifest = await fetchManifestAndIcon(pkg.name);
-      const commitDates = await fetchCommitDates(pkg.name);
-      if (manifest) {
-        console.log(`manifest for ${pkg.name}`, manifest);
-        results.push({
-          name: manifest.name || pkg.name,
-          id: manifest.id || "",
-          description: manifest.description || "",
-          author: manifest.author || "",
-          repo: manifest.repo || "",
-          version: manifest.version || "",
-          dir: pkg.name,
-          iconUrl: manifest.iconUrl,
-          created_at: commitDates.created_at,
-          last_updated: commitDates.last_updated,
-        });
-      } else {
-        results.push({
-          name: pkg.name,
-          error: "No manifest.json",
-          iconUrl: "",
-          created_at: commitDates.created_at,
-          last_updated: commitDates.last_updated,
-        });
-      }
-
+      const result = await processPackage(pkg, verbose);
+      if (result) results.push(result);
       count++;
-      if (count % 30 === 0) {
-        console.log(`Processed ${count} packages...`);
+      if (count % 12 === 0) {
+        if (verbose) console.log(`Processed ${count} packages...`);
         break; // during the development
       }
     }
@@ -147,7 +60,10 @@ async function main() {
         <td>${pkg.name || ""}</td>
         <td>       ${
           pkg.description && pkg.repo
-            ? `<a href="#" onclick="showReadmeModal('${pkg.repo.replace(/'/g, "\\'")}')">${pkg.description}</a>`
+            ? `<a href="#" onclick="showReadmeModal('${pkg.repo.replace(
+                /'/g,
+                "\\'"
+              )}')">${pkg.description}</a>`
             : ""
         }</td>
         <td>${pkg.author || ""}</td>
@@ -278,17 +194,150 @@ async function main() {
       fs.mkdirSync(docsDir, {recursive: true});
     }
     fs.writeFileSync(`${docsDir}/index.html`, html);
-    console.log(
-      "Fetched",
-      results.length,
-      `plugins. Output: ${docsDir}/index.html`
-    );
+    if (verbose) {
+      console.log(
+        "Fetched",
+        results.length,
+        `plugins. Output: ${docsDir}/index.html`
+      );
+    }
   } catch (e) {
     console.error(e);
   }
 }
 
-main().then(() => {
-  console.log("Script execution completed.");
-  process.exit(0);
-});
+/**
+ * Process a single package: fetch manifest, commit dates, and build result object.
+ * @param {Object} pkg - The package object from GitHub API.
+ * @param {boolean} verbose - Enable verbose logging.
+ * @returns {Promise<Object|null>} Result object for the package, or null if not a directory.
+ */
+async function processPackage(pkg, verbose = false) {
+  if (pkg.type !== "dir") return null;
+  if (verbose) console.log(`Processing package: ${pkg.name}`);
+  else process.stdout.write(".");
+  const manifest = await fetchManifestAndIcon(pkg.name, verbose);
+  const commitDates = await fetchCommitDates(pkg.name, verbose);
+  if (manifest) {
+    if (verbose) console.log(`manifest for ${pkg.name}`, manifest);
+    return {
+      name: manifest.name || pkg.name,
+      id: manifest.id || "",
+      description: manifest.description || "",
+      author: manifest.author || "",
+      repo: manifest.repo || "",
+      version: manifest.version || "",
+      dir: pkg.name,
+      iconUrl: manifest.iconUrl,
+      created_at: commitDates.created_at,
+      last_updated: commitDates.last_updated,
+    };
+  } else {
+    return {
+      name: pkg.name,
+      error: "No manifest.json",
+      iconUrl: "",
+      created_at: commitDates.created_at,
+      last_updated: commitDates.last_updated,
+    };
+  }
+}
+
+/**
+ * Fetch the list of package directories from the Logseq marketplace GitHub repository.
+ * @param {boolean} verbose - Enable verbose logging.
+ * @returns {Promise<Array>} List of package objects from GitHub API.
+ */
+async function fetchPackageList(verbose = false) {
+  if (verbose) console.log("Fetching package list from GitHub...");
+  const res = await fetch(GITHUB_API, {headers: getGithubHeaders()});
+  if (!res.ok) {
+    let errorText = "";
+    try {
+      errorText = await res.text();
+    } catch (e) {
+      errorText = "(could not read error body)";
+    }
+    console.error(
+      `Failed to fetch package list. Status: ${res.status} ${res.statusText}. Body: ${errorText}`
+    );
+    throw new Error("Failed to fetch package list");
+  }
+  const data = await res.json();
+  if (verbose) console.log(`Found ${data.length} packages.`);
+  return data;
+}
+
+/**
+ * Fetch the manifest.json and icon URL for a given package.
+ * @param {string} packageName - The name of the package directory.
+ * @param {boolean} verbose - Enable verbose logging.
+ * @returns {Promise<Object|null>} Manifest object with iconUrl, or null if not found.
+ */
+async function fetchManifestAndIcon(packageName, verbose = false) {
+  const manifestUrl = `${RAW_BASE}/${packageName}/manifest.json`;
+  try {
+    const res = await fetch(manifestUrl, {headers: getGithubHeaders()});
+    if (!res.ok) {
+      if (verbose) console.log(`No manifest.json for ${packageName}`);
+      return null;
+    }
+    const manifest = await res.json();
+
+    // Add iconUrl if icon is present, using raw.githubusercontent.com for CORS compatibility
+    if (manifest.icon) {
+      manifest.iconUrl = `${RAW_BASE}/${packageName}/${manifest.icon}`;
+    } else {
+      manifest.iconUrl = "";
+    }
+    if (verbose) console.log(`Fetched manifest for ${packageName}`);
+    return manifest;
+  } catch (err) {
+    if (verbose)
+      console.log(`Error fetching manifest for ${packageName}:`, err);
+    return null;
+  }
+}
+
+// Fetch commit dates for a package directory
+/**
+ * Fetch the first and last commit dates for a given package directory.
+ * @param {string} packageName - The name of the package directory.
+ * @param {boolean} verbose - Enable verbose logging.
+ * @returns {Promise<{created_at: string, last_updated: string}>} Commit date info.
+ */
+async function fetchCommitDates(packageName, verbose = false) {
+  const commitsApi = `https://api.github.com/repos/logseq/marketplace/commits?path=packages/${packageName}&per_page=100`;
+  try {
+    const res = await fetch(commitsApi, {headers: getGithubHeaders()});
+    if (!res.ok) {
+      if (verbose) console.log(`Could not fetch commits for ${packageName}`);
+      return {created_at: "", last_updated: ""};
+    }
+    const commits = await res.json();
+    if (!Array.isArray(commits) || commits.length === 0) {
+      return {created_at: "", last_updated: ""};
+    }
+    // Commits are returned newest first
+    const last_updated = commits[0]?.commit?.committer?.date || "";
+    const created_at =
+      commits[commits.length - 1]?.commit?.committer?.date || "";
+    return {created_at, last_updated};
+  } catch (err) {
+    if (verbose)
+      console.log(`Error fetching commit dates for ${packageName}:`, err);
+    return {created_at: "", last_updated: ""};
+  }
+}
+
+/**
+ * Get headers for GitHub API requests, including authorization if GITHUB_TOKEN is set.
+ * @returns {Object} Headers object for fetch requests.
+ */
+function getGithubHeaders() {
+  const headers = {Accept: "application/vnd.github.v3+json"};
+  if (process.env.GITHUB_TOKEN) {
+    headers["Authorization"] = `token ${process.env.GITHUB_TOKEN}`;
+  }
+  return headers;
+}
