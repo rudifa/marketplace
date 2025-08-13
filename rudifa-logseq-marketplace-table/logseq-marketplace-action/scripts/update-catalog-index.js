@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 // Script to fetch Logseq marketplace plugin package details from GitHub
 // and generate an HTML page with a table of plugins.
-// Usage: node fetch-logseq-marketplace.js
+// Usage: node update-catalog-index.js
 
 import fetch from "node-fetch";
 import fs from "fs";
 
-const OUTPUT_DIR = "docs";
+const OUTPUT_DIR = "catalog";
 const OUTPUT_FILE = "index.html";
 
 const GITHUB_API =
@@ -48,7 +48,7 @@ async function main({verbose = false} = {}) {
     // Generate HTML page
     const html = generateHtml(results);
 
-    // Write HTML to docs/index.html
+    // Write HTML to OUTPUT_FILE
     const outDir = OUTPUT_DIR;
     const outFile = OUTPUT_FILE;
     if (!fs.existsSync(outDir)) {

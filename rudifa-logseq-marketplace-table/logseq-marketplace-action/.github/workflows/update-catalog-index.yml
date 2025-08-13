@@ -1,7 +1,9 @@
 name: Update Catalog
 on:
-  schedule:
-    - cron: '0 2 * * *' # every day at 02:00 UTC
+  push:
+    branches:
+      - "**"
+      - master
   workflow_dispatch:
 
 jobs:
@@ -13,9 +15,9 @@ jobs:
         with:
           node-version: 20
       - run: npm install
-      - run: npm run update
+      - run: node scripts/update-catalog-index.js
       - run: git config user.name "GitHub Actions"
       - run: git config user.email "actions@github.com"
-      - run: git add .
+      - run: git add catalog/index.html
       - run: git commit -m "Update catalog" || echo "No changes"
       - run: git push
