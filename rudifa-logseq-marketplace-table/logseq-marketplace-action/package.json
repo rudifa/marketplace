@@ -4,10 +4,9 @@
   "description": "Interactive catalog of Logseq Marketplace packages",
   "type": "module",
   "dependencies": {
-    "node-fetch": "^3.3.2",
+    "node-fetch": "^3.3.2"
   },
   "scripts": {
-    "update": "node update.js",
     "dev": "nodemon fetch-logseq-marketplace.js"
   }
 }
