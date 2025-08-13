@@ -8,6 +8,7 @@
     "sharp": "^0.34.3"
   },
   "scripts": {
-    "update": "node update.js"
+    "update": "node update.js",
+    "dev": "nodemon fetch-logseq-marketplace.js"
   }
 }
