@@ -222,7 +222,9 @@ async function fetchCommitDates(packageName, verbose = false) {
   try {
     const res = await fetch(commitsApi, {headers: getGithubHeaders()});
     if (!res.ok) {
-      console.error(`Could not fetch commits for ${packageName}`);
+      console.error(
+        `fetchCommitDates: Could not fetch commits for ${packageName}`
+      );
       return {created_at: "", last_updated: ""};
     }
 
