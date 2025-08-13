@@ -9,6 +9,10 @@ This project generates an **interactive, searchable, sortable table** of all pac
 - Table is interactive (search, sort, scroll) using DataTables
 - Click a package description to view its README.md in a modal dialog (fetched live from GitHub)
 
+## Issues
+
+- if a README.md contains relative links, they will not work in the modal dialog.
+
 ## Setup
 
 1. **Install dependencies:**
