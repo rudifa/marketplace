@@ -5,11 +5,9 @@
 
 import fetch from "node-fetch";
 import fs from "fs";
-import sharp from "sharp";
-import path from "path";
 
-const OUTPUT_DIR = "src/data";
-const OUTPUT_FILE = "logseq-marketplace-plugins.json";
+const OUTPUT_DIR = "docs";
+const OUTPUT_FILE = "index.html";
 
 const GITHUB_API =
   "https://api.github.com/repos/logseq/marketplace/contents/packages";
@@ -47,163 +45,51 @@ async function main({verbose = false} = {}) {
       }
     }
 
-    // Generate HTML table rows from results
-    const rows = results
-      .map(
-        (pkg) => `
-      <tr>
-        <td>${
-          pkg.iconUrl
-            ? `<img src="${pkg.iconUrl}" alt="icon" width="24" height="24">`
-            : ""
-        }</td>
-        <td>${pkg.name || ""}</td>
-        <td>       ${
-          pkg.description && pkg.repo
-            ? `<a href="#" onclick="showReadmeModal('${pkg.repo.replace(
-                /'/g,
-                "\\'"
-              )}')">${pkg.description}</a>`
-            : ""
-        }</td>
-        <td>${pkg.author || ""}</td>
-        <td>${
-          pkg.repo
-            ? `<a href="https://github.com/${pkg.repo}" target="_blank">${pkg.repo}</a>`
-            : ""
-        }</td>
-        <td>${pkg.version || ""}</td>
-        <td>${pkg.created_at ? pkg.created_at.slice(0, 10) : ""}</td>
-        <td>${pkg.last_updated ? pkg.last_updated.slice(0, 10) : ""}</td>
-        <td>${pkg.error || ""}</td>
-      </tr>
-    `
-      )
-      .join("");
-
     // Generate HTML page
-    const html = `<!DOCTYPE html>
-       <html>
-       <head>
-         <meta charset="UTF-8">
-         <title>Logseq Marketplace Plugins</title>
-         <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
-         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-         <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
-         <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-         <style>
-           div.dataTables_wrapper {
-             width: 100%;
-             margin: 0 auto;
-           }
-           /* Modal styles */
-           .modal-bg {
-             display: none;
-             position: fixed;
-             z-index: 1000;
-             left: 0; top: 0; width: 100vw; height: 100vh;
-             background: rgba(0,0,0,0.5);
-             justify-content: center; align-items: center;
-           }
-           .modal-content {
-             background: #fff;
-             max-width: 80vw;
-             max-height: 80vh;
-             overflow: auto;
-             padding: 2em;
-             border-radius: 8px;
-             position: relative;
-           }
-           .modal-close {
-             position: absolute;
-             top: 0.5em;
-             right: 1em;
-             font-size: 2em;
-             color: #888;
-             cursor: pointer;
-           }
-         </style>
-       </head>
-       <body>
-         <h1>Logseq Marketplace Plugins</h1>
-         <table id="plugins" class="display">
-           <thead>
-             <tr>
-               <th>Icon</th>
-               <th>Name</th>
-               <th>Description</th>
-               <th>Author</th>
-               <th>Repo</th>
-               <th>Version</th>
-               <th>Created</th>
-               <th>Last Updated</th>
-               <th>Error</th>
-             </tr>
-           </thead>
-           <tbody>${rows}</tbody>
-         </table>
-         <div class="modal-bg" id="readme-modal-bg">
-           <div class="modal-content">
-             <span class="modal-close" onclick="closeReadmeModal()">&times;</span>
-             <div id="readme-modal-content">Loading...</div>
-           </div>
-         </div>
-         <script type="text/javascript">
-           window.showReadmeModal = function(repo) {
-             const modalBg = document.getElementById('readme-modal-bg');
-             const modalContent = document.getElementById('readme-modal-content');
-             modalBg.style.display = 'flex';
-             modalContent.innerHTML = 'Loading...';
-             // Try main branch first, then fallback to master
-             const urlMain = 'https://raw.githubusercontent.com/' + repo + '/main/README.md';
-             const urlMaster = 'https://raw.githubusercontent.com/' + repo + '/master/README.md';
-             fetch(urlMain)
-               .then(function(res) {
-                 if (res.ok) return res.text();
-                 return fetch(urlMaster).then(function(r) { return r.ok ? r.text() : 'README.md not found.'; });
-               })
-               .then(function(markdown) {
-                 if (markdown === 'README.md not found.') {
-                   modalContent.innerHTML = '<p>README.md not found.</p>';
-                 } else {
-                   modalContent.innerHTML = marked.parse(markdown);
-                 }
-               })
-               .catch(function() {
-                 modalContent.innerHTML = '<p>Error loading README.md</p>';
-               });
-           };
-           window.closeReadmeModal = function() {
-             document.getElementById('readme-modal-bg').style.display = 'none';
-           };
-           $(document).ready(function() {
-             $('#plugins').DataTable({
-               paging: false,
-               scrollY: '70vh',
-               scrollCollapse: true,
-               info: false
-             });
-           });
-         </script>
-       </body>
-       </html>`;
+    const html = generateHtml(results);
 
     // Write HTML to docs/index.html
-    const docsDir = "docs";
-    if (!fs.existsSync(docsDir)) {
-      fs.mkdirSync(docsDir, {recursive: true});
+    const outDir = OUTPUT_DIR;
+    const outFile = OUTPUT_FILE;
+    if (!fs.existsSync(outDir)) {
+      fs.mkdirSync(outDir, {recursive: true});
     }
-    fs.writeFileSync(`${docsDir}/index.html`, html);
+    fs.writeFileSync(`${outDir}/${outFile}`, html);
     if (verbose) {
       console.log(
         "Fetched",
         results.length,
-        `plugins. Output: ${docsDir}/index.html`
+        `plugins. Output: ${outDir}/${outFile}`
       );
     }
   } catch (e) {
     console.error(e);
   }
+}
+
+/**
+ * Fetch the list of package directories from the Logseq marketplace GitHub repository.
+ * @param {boolean} verbose - Enable verbose logging.
+ * @returns {Promise<Array>} List of package objects from GitHub API.
+ */
+async function fetchPackageList(verbose = false) {
+  if (verbose) console.log("Fetching package list from GitHub...");
+  const res = await fetch(GITHUB_API, {headers: getGithubHeaders()});
+  if (!res.ok) {
+    let errorText = "";
+    try {
+      errorText = await res.text();
+    } catch (e) {
+      errorText = "(could not read error body)";
+    }
+    console.error(
+      `Failed to fetch package list. Status: ${res.status} ${res.statusText}. Body: ${errorText}`
+    );
+    throw new Error("Failed to fetch package list");
+  }
+  const data = await res.json();
+  if (verbose) console.log(`Found ${data.length} packages.`);
+  return data;
 }
 
 /**
@@ -243,30 +129,6 @@ async function processPackage(pkg, verbose = false) {
   }
 }
 
-/**
- * Fetch the list of package directories from the Logseq marketplace GitHub repository.
- * @param {boolean} verbose - Enable verbose logging.
- * @returns {Promise<Array>} List of package objects from GitHub API.
- */
-async function fetchPackageList(verbose = false) {
-  if (verbose) console.log("Fetching package list from GitHub...");
-  const res = await fetch(GITHUB_API, {headers: getGithubHeaders()});
-  if (!res.ok) {
-    let errorText = "";
-    try {
-      errorText = await res.text();
-    } catch (e) {
-      errorText = "(could not read error body)";
-    }
-    console.error(
-      `Failed to fetch package list. Status: ${res.status} ${res.statusText}. Body: ${errorText}`
-    );
-    throw new Error("Failed to fetch package list");
-  }
-  const data = await res.json();
-  if (verbose) console.log(`Found ${data.length} packages.`);
-  return data;
-}
 
 /**
  * Fetch the manifest.json and icon URL for a given package.
@@ -328,6 +190,182 @@ async function fetchCommitDates(packageName, verbose = false) {
       console.log(`Error fetching commit dates for ${packageName}:`, err);
     return {created_at: "", last_updated: ""};
   }
+}
+
+
+/**
+ * Generates the complete HTML page for the Logseq Marketplace Plugins.
+ * @param {Array} results - Array of processed package objects.
+ * @returns {string} Complete HTML string.
+ */
+function generateHtml(results) {
+  const styles = generateStyles();
+  const header = generateTableHeader();
+  const rows = results.map(generateTableRow).join("");
+
+  return `<!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="UTF-8">
+      <title>Logseq Marketplace Plugins</title>
+      <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+      <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+      <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+      <style>
+        ${styles}
+      </style>
+    </head>
+    <body>
+      <h1>Logseq Marketplace Plugins</h1>
+      <table id="plugins" class="display">
+        <thead>
+          ${header}
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>
+      <div class="modal-bg" id="readme-modal-bg">
+        <div class="modal-content">
+          <span class="modal-close" onclick="closeReadmeModal()">&times;</span>
+          <div id="readme-modal-content">Loading...</div>
+        </div>
+      </div>
+      <script type="text/javascript">
+        window.showReadmeModal = function(repo) {
+          const modalBg = document.getElementById('readme-modal-bg');
+          const modalContent = document.getElementById('readme-modal-content');
+          modalBg.style.display = 'flex';
+          modalContent.innerHTML = 'Loading...';
+          // Try main branch first, then fallback to master
+          const urlMain = 'https://raw.githubusercontent.com/' + repo + '/main/README.md';
+          const urlMaster = 'https://raw.githubusercontent.com/' + repo + '/master/README.md';
+          fetch(urlMain)
+            .then(function(res) {
+              if (res.ok) return res.text();
+              return fetch(urlMaster).then(function(r) { return r.ok ? r.text() : 'README.md not found.'; });
+            })
+            .then(function(markdown) {
+              if (markdown === 'README.md not found.') {
+                modalContent.innerHTML = '<p>README.md not found.</p>';
+              } else {
+                modalContent.innerHTML = marked.parse(markdown);
+              }
+            })
+            .catch(function() {
+              modalContent.innerHTML = '<p>Error loading README.md</p>';
+            });
+        };
+        window.closeReadmeModal = function() {
+          document.getElementById('readme-modal-bg').style.display = 'none';
+        };
+        $(document).ready(function() {
+          $('#plugins').DataTable({
+            paging: false,
+            scrollY: '70vh',
+            scrollCollapse: true,
+            info: false
+          });
+        });
+      </script>
+    </body>
+    </html>`;
+}
+
+/**
+ * Generates the CSS styles for the HTML page.
+ * @returns {string} CSS styles as a string.
+ */
+function generateStyles() {
+  return `
+    <style>
+      div.dataTables_wrapper {
+        width: 100%;
+        margin: 0 auto;
+      }
+      /* Modal styles */
+      .modal-bg {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0; top: 0; width: 100vw; height: 100vh;
+        background: rgba(0,0,0,0.5);
+        justify-content: center; align-items: center;
+      }
+      .modal-content {
+        background: #fff;
+        max-width: 80vw;
+        max-height: 80vh;
+        overflow: auto;
+        padding: 2em;
+        border-radius: 8px;
+        position: relative;
+      }
+      .modal-close {
+        position: absolute;
+        top: 0.5em;
+        right: 1em;
+        font-size: 2em;
+        color: #888;
+        cursor: pointer;
+      }
+    </style>
+  `;
+}
+
+/**
+ * Generates the table header for the Logseq Marketplace Plugins table.
+ * @returns {string} HTML string containing the table header.
+ */
+function generateTableHeader() {
+  return `
+      <tr>
+        <th>Icon</th>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Author</th>
+        <th>Repo</th>
+        <th>Version</th>
+        <th>Created</th>
+        <th>Last Updated</th>
+        <th>Error</th>
+      </tr>
+  `;
+}
+
+/**
+ * Generates the HTML for a single table row based on the package data.
+ * @param {Object} pkg - The package object.
+ * @returns {string} HTML string for a table row.
+ */
+function generateTableRow(pkg) {
+  return `
+    <tr>
+      <td>${
+        pkg.iconUrl
+          ? `<img src="${pkg.iconUrl}" alt="icon" width="24" height="24">`
+          : ""
+      }</td>
+      <td>${pkg.name || ""}</td>
+      <td>${
+        pkg.description && pkg.repo
+          ? `<a href="#" onclick="showReadmeModal('${pkg.repo.replace(
+              /'/g,
+              "'"
+            )}')">${pkg.description}</a>`
+          : ""
+      }</td>
+      <td>${pkg.author || ""}</td>
+      <td>${
+        pkg.repo
+          ? `<a href="https://github.com/${pkg.repo}" target="_blank">${pkg.repo}</a>`
+          : ""
+      }</td>
+      <td>${pkg.version || ""}</td>
+      <td>${pkg.created_at ? pkg.created_at.slice(0, 10) : ""}</td>
+      <td>${pkg.last_updated ? pkg.last_updated.slice(0, 10) : ""}</td>
+      <td>${pkg.error || ""}</td>
+    </tr>
+  `;
 }
 
 /**
