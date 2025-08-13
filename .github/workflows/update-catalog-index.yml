@@ -1,0 +1,23 @@
+name: Update Catalog
+on:
+  push:
+    branches:
+      - "**"
+      - master
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm install
+      - run: node catalog/scripts/update-catalog-index.mjs
+      - run: git config user.name "GitHub Actions"
+      - run: git config user.email "actions@github.com"
+      - run: git add catalog/index.html
+      - run: git commit -m "Update catalog" || echo "No changes"
+      - run: git push
