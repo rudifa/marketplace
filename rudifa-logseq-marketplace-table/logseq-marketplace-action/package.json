@@ -7,6 +7,7 @@
     "node-fetch": "^3.3.2"
   },
   "scripts": {
-    "dev": "nodemon scripts/update-catalog-index.js"
+    "dev": "nodemon catalog/scripts/update-catalog-index.js --max 12",
+    "full": "nodemon catalog/scripts/update-catalog-index.js"
   }
 }
