@@ -423,7 +423,12 @@ function generateClientScripts() {
     }
 
     $(document).ready(function() {
-      $('#plugins').DataTable();
+      $('#plugins').DataTable({
+        paging: false,
+        scrollY: '70vh',
+        scrollCollapse: true,
+        info: false // Remove "Showing X to Y of Z entries"
+      });
     });
   `;
 }
