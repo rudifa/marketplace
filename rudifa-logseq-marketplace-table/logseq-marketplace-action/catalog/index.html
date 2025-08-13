@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="UTF-8">
+      <title>Logseq Marketplace Plugins</title>
+      <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+      <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+      <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+      <style>
+        
+    <style>
+      div.dataTables_wrapper {
+        width: 100%;
+        margin: 0 auto;
+      }
+      /* Modal styles */
+      .modal-bg {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0; top: 0; width: 100vw; height: 100vh;
+        background: rgba(0,0,0,0.5);
+        justify-content: center; align-items: center;
+      }
+      .modal-content {
+        background: #fff;
+        max-width: 80vw;
+        max-height: 80vh;
+        overflow: auto;
+        padding: 2em;
+        border-radius: 8px;
+        position: relative;
+      }
+      .modal-close {
+        position: absolute;
+        top: 0.5em;
+        right: 1em;
+        font-size: 2em;
+        color: #888;
+        cursor: pointer;
+      }
+    </style>
+  
+      </style>
+    </head>
+    <body>
+      <h1>Logseq Marketplace Plugins</h1>
+      <table id="plugins" class="display">
+        <thead>
+          
+      <tr>
+        <th>Icon</th>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Author</th>
+        <th>Repo</th>
+        <th>Version</th>
+        <th>Created</th>
+        <th>Last Updated</th>
+        <th>Error</th>
+      </tr>
+  
+        </thead>
+        <tbody>
+    <tr>
+      <td><img src="https://raw.githubusercontent.com/logseq/marketplace/master/packages/block-pin/icon.png" alt="icon" width="24" height="24"></td>
+      <td>block-pin</td>
+      <td><a href="#" onclick="showReadmeModal('joodo/logseq-plugin-pin')">Add "Paste as pin" shortcut for pdf and editor blocks.</a></td>
+      <td>Joodo <wyattliang@gmail.com></td>
+      <td><a href="https://github.com/joodo/logseq-plugin-pin" target="_blank">joodo/logseq-plugin-pin</a></td>
+      <td></td>
+      <td>2024-08-27</td>
+      <td>2024-08-29</td>
+      <td></td>
+    </tr>
+  
+    <tr>
+      <td><img src="https://raw.githubusercontent.com/logseq/marketplace/master/packages/cobra-kai-fira-theme/icon.png" alt="icon" width="24" height="24"></td>
+      <td>cobra-kai-fira-theme</td>
+      <td><a href="#" onclick="showReadmeModal('Martin1887/CobraKaiFira')">If Cobra Kai had a Logseq theme this would be it! (Made for fans of dark-mode).</a></td>
+      <td>Santi Younger (Fira variant by Martín Pozo)</td>
+      <td><a href="https://github.com/Martin1887/CobraKaiFira" target="_blank">Martin1887/CobraKaiFira</a></td>
+      <td></td>
+      <td>2023-05-26</td>
+      <td>2023-05-26</td>
+      <td></td>
+    </tr>
+  
+    <tr>
+      <td><img src="https://raw.githubusercontent.com/logseq/marketplace/master/packages/cobra-theme/icon.png" alt="icon" width="24" height="24"></td>
+      <td>cobra-theme</td>
+      <td><a href="#" onclick="showReadmeModal('santiyounger/Cobra')">If Cobra Kai had a Logseq theme this would be it! (Made for fans of dark-mode).</a></td>
+      <td>Santi Younger</td>
+      <td><a href="https://github.com/santiyounger/Cobra" target="_blank">santiyounger/Cobra</a></td>
+      <td></td>
+      <td>2021-10-14</td>
+      <td>2021-10-19</td>
+      <td></td>
+    </tr>
+  
+    <tr>
+      <td><img src="https://raw.githubusercontent.com/logseq/marketplace/master/packages/cubox-2-logseq/logo.svg" alt="icon" width="24" height="24"></td>
+      <td>cubox-2-logseq</td>
+      <td><a href="#" onclick="showReadmeModal('stillfox-lee/cubox-2-logseq')">Cubox (Read it later) <-> Logseq integration.</a></td>
+      <td>lsy</td>
+      <td><a href="https://github.com/stillfox-lee/cubox-2-logseq" target="_blank">stillfox-lee/cubox-2-logseq</a></td>
+      <td></td>
+      <td>2025-06-24</td>
+      <td>2025-06-24</td>
+      <td></td>
+    </tr>
+  
+    <tr>
+      <td><img src="https://raw.githubusercontent.com/logseq/marketplace/master/packages/cycle-todo-dwim/icon.webp" alt="icon" width="24" height="24"></td>
+      <td>cycle-todo-dwim</td>
+      <td><a href="#" onclick="showReadmeModal('hron/logseq-cycle-todo-dwim')">Ctrl+Enter with repeating timestamp support, similar to org-mode</a></td>
+      <td>Aleksei Gusev</td>
+      <td><a href="https://github.com/hron/logseq-cycle-todo-dwim" target="_blank">hron/logseq-cycle-todo-dwim</a></td>
+      <td></td>
+      <td>2024-12-03</td>
+      <td>2024-12-04</td>
+      <td></td>
+    </tr>
+  
+    <tr>
+      <td><img src="https://raw.githubusercontent.com/logseq/marketplace/master/packages/darwis-mathlive-plugin/./icon.svg" alt="icon" width="24" height="24"></td>
+      <td>darwis-mathlive-plugin</td>
+      <td><a href="#" onclick="showReadmeModal('hkgnp/darwis-mathlive-plugin')">Use Mathlive to input mathematical expressions in Logseq.</a></td>
+      <td>hkgnp</td>
+      <td><a href="https://github.com/hkgnp/darwis-mathlive-plugin" target="_blank">hkgnp/darwis-mathlive-plugin</a></td>
+      <td></td>
+      <td>2023-04-14</td>
+      <td>2023-04-15</td>
+      <td></td>
+    </tr>
+  
+    <tr>
+      <td><img src="https://raw.githubusercontent.com/logseq/marketplace/master/packages/flomo_memos_sync/icon.png" alt="icon" width="24" height="24"></td>
+      <td>flomo_memos_sync</td>
+      <td><a href="#" onclick="showReadmeModal('duiliuliu/logseq-flomo-plugin')">同步 flomo 笔记至 logseq</a></td>
+      <td>duiliuliu</td>
+      <td><a href="https://github.com/duiliuliu/logseq-flomo-plugin" target="_blank">duiliuliu/logseq-flomo-plugin</a></td>
+      <td></td>
+      <td>2022-05-19</td>
+      <td>2022-05-19</td>
+      <td></td>
+    </tr>
+  
+    <tr>
+      <td><img src="https://raw.githubusercontent.com/logseq/marketplace/master/packages/gruvbox-theme/icon.png" alt="icon" width="24" height="24"></td>
+      <td>gruvbox-theme</td>
+      <td><a href="#" onclick="showReadmeModal('OddDev/oddbox')">A theme for LogSeq based on the popular Gruvbox color theme.</a></td>
+      <td>Kai Klostermann</td>
+      <td><a href="https://github.com/OddDev/oddbox" target="_blank">OddDev/oddbox</a></td>
+      <td></td>
+      <td>2024-10-02</td>
+      <td>2024-10-02</td>
+      <td></td>
+    </tr>
+  
+    <tr>
+      <td><img src="https://raw.githubusercontent.com/logseq/marketplace/master/packages/hanzi-writer-integration/./logo.gif" alt="icon" width="24" height="24"></td>
+      <td>hanzi-writer-integration</td>
+      <td><a href="#" onclick="showReadmeModal('pb-pub/hanzi-writer-integration')">Integration of HanZi Writer to practice Chinese characters writing in Logseq</a></td>
+      <td>pb-pub</td>
+      <td><a href="https://github.com/pb-pub/hanzi-writer-integration" target="_blank">pb-pub/hanzi-writer-integration</a></td>
+      <td></td>
+      <td>2025-01-31</td>
+      <td>2025-02-04</td>
+      <td></td>
+    </tr>
+  
+    <tr>
+      <td><img src="https://raw.githubusercontent.com/logseq/marketplace/master/packages/harmony-theme/./logo.png" alt="icon" width="24" height="24"></td>
+      <td>harmony-theme</td>
+      <td><a href="#" onclick="showReadmeModal('dmytrodubinin/Harmony-theme-for-Logseq')">Minimalistic custom dark and white themes keeping the classic approach of the standard Logseq theme</a></td>
+      <td>Dmytro Dubinin</td>
+      <td><a href="https://github.com/dmytrodubinin/Harmony-theme-for-Logseq" target="_blank">dmytrodubinin/Harmony-theme-for-Logseq</a></td>
+      <td></td>
+      <td>2022-04-08</td>
+      <td>2022-06-08</td>
+      <td></td>
+    </tr>
+  
+    <tr>
+      <td><img src="https://raw.githubusercontent.com/logseq/marketplace/master/packages/log-stats/icon.png" alt="icon" width="24" height="24"></td>
+      <td>log-stats</td>
+      <td><a href="#" onclick="showReadmeModal('QWxleA/log-stats')">Analyse your graph's Stats</a></td>
+      <td>Alex Qwxlea</td>
+      <td><a href="https://github.com/QWxleA/log-stats" target="_blank">QWxleA/log-stats</a></td>
+      <td></td>
+      <td>2022-04-12</td>
+      <td>2022-04-12</td>
+      <td></td>
+    </tr>
+  
+    <tr>
+      <td><img src="https://raw.githubusercontent.com/logseq/marketplace/master/packages/loglink-integration/icon.png" alt="icon" width="24" height="24"></td>
+      <td>loglink-integration</td>
+      <td><a href="#" onclick="showReadmeModal('hankhank10/loglink-plugin')">Send text, location and images to your Logseq graph from mobile apps like Telegram</a></td>
+      <td>hankhank10</td>
+      <td><a href="https://github.com/hankhank10/loglink-plugin" target="_blank">hankhank10/loglink-plugin</a></td>
+      <td></td>
+      <td>2023-01-05</td>
+      <td>2023-01-06</td>
+      <td></td>
+    </tr>
+  </tbody>
+      </table>
+      <div class="modal-bg" id="readme-modal-bg">
+        <div class="modal-content">
+          <span class="modal-close" onclick="closeReadmeModal()">&times;</span>
+          <div id="readme-modal-content">Loading...</div>
+        </div>
+      </div>
+      <script>
+        
+    function showReadmeModal(repo) {
+      const modalBg = document.getElementById('readme-modal-bg');
+      const modalContent = document.getElementById('readme-modal-content');
+      modalBg.style.display = 'flex';
+      modalContent.innerHTML = 'Loading...';
+      // Try main branch first, then fallback to master
+      const urlMain = 'https://raw.githubusercontent.com/' + repo + '/main/README.md';
+      const urlMaster = 'https://raw.githubusercontent.com/' + repo + '/master/README.md';
+      fetch(urlMain)
+        .then(function(res) {
+          if (res.ok) return res.text();
+          return fetch(urlMaster).then(function(r) { return r.ok ? r.text() : 'README.md not found.'; });
+        })
+        .then(function(text) {
+          modalContent.innerHTML = marked(text);
+        });
+    }
+
+    function closeReadmeModal() {
+      document.getElementById('readme-modal-bg').style.display = 'none';
+    }
+
+    $(document).ready(function() {
+      $('#plugins').DataTable();
+    });
+  
+      </script>
+    </body>
+    </html>
