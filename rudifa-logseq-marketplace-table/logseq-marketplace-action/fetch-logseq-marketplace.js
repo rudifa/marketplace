@@ -358,10 +358,7 @@ function generateTableRow(pkg) {
       <td>${pkg.name || ""}</td>
       <td>${
         pkg.description && pkg.repo
-          ? `<a href="#" onclick="showReadmeModal('${pkg.repo.replace(
-              /'/g,
-              "'"
-            )}')">${pkg.description}</a>`
+          ? `<a href="#" onclick="showReadmeModal('${pkg.repo}')">${pkg.description}</a>`
           : ""
       }</td>
       <td>${pkg.author || ""}</td>
