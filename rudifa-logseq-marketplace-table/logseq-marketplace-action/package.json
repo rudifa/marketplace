@@ -7,6 +7,6 @@
     "node-fetch": "^3.3.2"
   },
   "scripts": {
-    "dev": "nodemon fetch-logseq-marketplace.js"
+    "dev": "nodemon scripts/update-catalog-index.js"
   }
 }
