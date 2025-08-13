@@ -1,0 +1,12 @@
+{
+  "name": "logseq-marketplace-catalog",
+  "version": "1.0.0",
+  "description": "Interactive catalog of Logseq Marketplace packages",
+  "type": "module",
+  "dependencies": {
+    "node-fetch": "^3.3.2"
+  },
+  "scripts": {
+    "dev": "nodemon fetch-logseq-marketplace.js"
+  }
+}
