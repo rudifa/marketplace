@@ -14,9 +14,21 @@ const GITHUB_API =
 const RAW_BASE =
   "https://raw.githubusercontent.com/logseq/marketplace/master/packages";
 
-// Parse command line arguments for verbose flag
+
+
+// Parse command line arguments for verbose flag, max, and help
 const args = process.argv.slice(2);
+if (args.includes('--help') || args.includes('-h')) {
+  console.log(`Usage: node update-catalog-index.js [--max <number>] [--verbose|-v] [--help|-h]\n\nOptions:\n  --max <number>   Limit the number of packages processed\n  --verbose, -v    Enable verbose logging\n  --help, -h       Show this help message`);
+  process.exit(0);
+}
 const verbose = args.includes("--verbose") || args.includes("-v");
+let max;
+const maxIdx = args.indexOf("--max");
+if (maxIdx !== -1 && args.length > maxIdx + 1) {
+  const val = parseInt(args[maxIdx + 1], 10);
+  if (!isNaN(val) && val > 0) max = val;
+}
 
 main({verbose}).then(() => {
   if (verbose) console.log("Script execution completed.");
@@ -33,15 +45,18 @@ async function main({verbose = false} = {}) {
     // Fetch package list from GitHub logseq marketplace repo
     const packages = await fetchPackageList(verbose);
     const results = [];
+
     let count = 0;
     // Loop through packages to convert package data to result data
     for (const pkg of packages) {
       const result = await processPackage(pkg, verbose);
       if (result) results.push(result);
       count++;
-      if (count % 12 === 0) {
-        if (verbose) console.log(`Processed ${count} packages...`);
-        break; // during the development
+      if (verbose && count % 20 === 0) {
+        console.log(`Processed ${count} packages...`);
+      }
+      if (max !== undefined && count >= max) {
+        break; // limit processing if max is set
       }
     }
 
