@@ -14,12 +14,12 @@ const GITHUB_API =
 const RAW_BASE =
   "https://raw.githubusercontent.com/logseq/marketplace/master/packages";
 
-
-
 // Parse command line arguments for verbose flag, max, and help
 const args = process.argv.slice(2);
-if (args.includes('--help') || args.includes('-h')) {
-  console.log(`Usage: node update-catalog-index.js [--max <number>] [--verbose|-v] [--help|-h]\n\nOptions:\n  --max <number>   Limit the number of packages processed\n  --verbose, -v    Enable verbose logging\n  --help, -h       Show this help message`);
+if (args.includes("--help") || args.includes("-h")) {
+  console.log(
+    `Usage: node update-catalog-index.js [--max <number>] [--verbose|-v] [--help|-h]\n\nOptions:\n  --max <number>   Limit the number of packages processed\n  --verbose, -v    Enable verbose logging\n  --help, -h       Show this help message`
+  );
   process.exit(0);
 }
 const verbose = args.includes("--verbose") || args.includes("-v");
@@ -70,13 +70,12 @@ async function main({verbose = false} = {}) {
       fs.mkdirSync(outDir, {recursive: true});
     }
     fs.writeFileSync(`${outDir}/${outFile}`, html);
-    if (verbose) {
-      console.log(
-        "Fetched",
-        results.length,
-        `plugins. Output: ${outDir}/${outFile}`
-      );
-    }
+
+    console.log(
+      "\nFetched",
+      results.length,
+      `plugins. Output: ${outDir}/${outFile}`
+    );
   } catch (e) {
     console.error(e);
   }
@@ -144,7 +143,6 @@ async function processPackage(pkg, verbose = false) {
   }
 }
 
-
 /**
  * Fetch the manifest.json and icon URL for a given package.
  * @param {string} packageName - The name of the package directory.
@@ -206,7 +204,6 @@ async function fetchCommitDates(packageName, verbose = false) {
     return {created_at: "", last_updated: ""};
   }
 }
-
 
 /**
  * Generates the complete HTML page for the Logseq Marketplace Plugins.
