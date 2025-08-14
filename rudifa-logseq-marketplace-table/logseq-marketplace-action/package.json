@@ -7,7 +7,7 @@
     "node-fetch": "^3.3.2"
   },
   "scripts": {
-    "dev": "nodemon catalog/scripts/update-catalog-index.js --max 12",
-    "full": "nodemon catalog/scripts/update-catalog-index.js"
+    "dev": "nodemon fetch-logseq-marketplace.js --max 12",
+    "full": "nodemon fetch-logseq-marketplace.js"
   }
 }
