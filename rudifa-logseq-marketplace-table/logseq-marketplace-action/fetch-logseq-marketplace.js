@@ -202,6 +202,7 @@ function generateHtml(results) {
   const styles = generateStyles();
   const header = generateTableHeader();
   const rows = results.map(generateTableRow).join("");
+  const script = generateScript();
 
   return `<!DOCTYPE html>
     <html>
@@ -231,41 +232,7 @@ function generateHtml(results) {
         </div>
       </div>
       <script type="text/javascript">
-        window.showReadmeModal = function(repo) {
-          const modalBg = document.getElementById('readme-modal-bg');
-          const modalContent = document.getElementById('readme-modal-content');
-          modalBg.style.display = 'flex';
-          modalContent.innerHTML = 'Loading...';
-          // Try main branch first, then fallback to master
-          const urlMain = 'https://raw.githubusercontent.com/' + repo + '/main/README.md';
-          const urlMaster = 'https://raw.githubusercontent.com/' + repo + '/master/README.md';
-          fetch(urlMain)
-            .then(function(res) {
-              if (res.ok) return res.text();
-              return fetch(urlMaster).then(function(r) { return r.ok ? r.text() : 'README.md not found.'; });
-            })
-            .then(function(markdown) {
-              if (markdown === 'README.md not found.') {
-                modalContent.innerHTML = '<p>README.md not found.</p>';
-              } else {
-                modalContent.innerHTML = marked.parse(markdown);
-              }
-            })
-            .catch(function() {
-              modalContent.innerHTML = '<p>Error loading README.md</p>';
-            });
-        };
-        window.closeReadmeModal = function() {
-          document.getElementById('readme-modal-bg').style.display = 'none';
-        };
-        $(document).ready(function() {
-          $('#plugins').DataTable({
-            paging: false,
-            scrollY: '70vh',
-            scrollCollapse: true,
-            info: false
-          });
-        });
+        ${script}
       </script>
     </body>
     </html>`;
@@ -312,6 +279,49 @@ function generateStyles() {
   `;
 }
 
+/**
+ * Generates the JavaScript for the HTML page.
+ * @returns {string} JavaScript code as a string.
+ */
+function generateScript() {
+  return `
+        window.showReadmeModal = function(repo) {
+          const modalBg = document.getElementById('readme-modal-bg');
+          const modalContent = document.getElementById('readme-modal-content');
+          modalBg.style.display = 'flex';
+          modalContent.innerHTML = 'Loading...';
+          // Try main branch first, then fallback to master
+          const urlMain = 'https://raw.githubusercontent.com/' + repo + '/main/README.md';
+          const urlMaster = 'https://raw.githubusercontent.com/' + repo + '/master/README.md';
+          fetch(urlMain)
+            .then(function(res) {
+              if (res.ok) return res.text();
+              return fetch(urlMaster).then(function(r) { return r.ok ? r.text() : 'README.md not found.'; });
+            })
+            .then(function(markdown) {
+              if (markdown === 'README.md not found.') {
+                modalContent.innerHTML = '<p>README.md not found.</p>';
+              } else {
+                modalContent.innerHTML = marked.parse(markdown);
+              }
+            })
+            .catch(function() {
+              modalContent.innerHTML = '<p>Error loading README.md</p>';
+            });
+        };
+        window.closeReadmeModal = function() {
+          document.getElementById('readme-modal-bg').style.display = 'none';
+        };
+        $(document).ready(function() {
+          $('#plugins').DataTable({
+            paging: false,
+            scrollY: '70vh',
+            scrollCollapse: true,
+            info: false
+          });
+        });
+      `;
+}
 /**
  * Generates the table header for the Logseq Marketplace Plugins table.
  * @returns {string} HTML string containing the table header.
