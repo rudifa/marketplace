@@ -71,7 +71,7 @@ async function main({verbose = false} = {}) {
         const result = await retrievePackageDetails(pkg, verbose);
         if (result) results[myIdx] = result;
         count++;
-        if (count % 10 === 0) {
+        if (count % 25 === 0) {
           console.log(`Processed ${count} packages...`);
         }
         if (maxItems && count >= maxItems) {
@@ -87,8 +87,19 @@ async function main({verbose = false} = {}) {
         .map(() => worker())
     );
 
+    // Sort results by last_updated (descending)
+    const sortedResults = results
+      .filter(Boolean)
+      .sort((a, b) => {
+        // If either date is missing, treat as oldest
+        if (!a.last_updated && !b.last_updated) return 0;
+        if (!a.last_updated) return 1;
+        if (!b.last_updated) return -1;
+        // Compare as ISO date strings
+        return b.last_updated.localeCompare(a.last_updated);
+      });
     // Generate HTML page
-    const html = generateHtml(results.filter(Boolean));
+    const html = generateHtml(sortedResults);
 
     // Write HTML to OUTPUT_FILE
     const outDir = OUTPUT_DIR;
@@ -215,7 +226,6 @@ async function fetchManifest(packageName, verbose = false) {
   try {
     const res = await fetch(manifestUrl, {headers: getGithubHeaders()});
     if (!res.ok) {
-      console.error(`\nNo manifest.json for ${packageName}`);
       return null;
     }
     const manifest = await res.json();
@@ -482,7 +492,7 @@ function generateClientScripts() {
       const modalBg = document.getElementById('readme-modal-bg');
       const modalContent = document.getElementById('readme-modal-content');
       modalBg.style.display = 'flex';
-      modalContent.innerHTML = 'Loading...';
+      modalContent.innerHTML = '';
       if (!readmeUrl) {
         modalContent.innerHTML = '<p>README.md not found.</p>';
         return;
@@ -504,7 +514,8 @@ function generateClientScripts() {
         paging: false,
         scrollY: '70vh',
         scrollCollapse: true,
-        info: false
+        info: false,
+        order: [] // No initial sort, preserve server order, but allow user sorting
       });
     });
   `;
