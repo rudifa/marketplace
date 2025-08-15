@@ -5200,18 +5200,30 @@
     window.showReadmeModal = function(readmeUrl) {
       const modalBg = document.getElementById('readme-modal-bg');
       const modalContent = document.getElementById('readme-modal-content');
+      const modalBox = modalBg.querySelector('.modal-content');
       modalBg.style.display = 'flex';
+      modalBox.style.visibility = 'hidden';
       modalContent.innerHTML = '';
+      let loadingTimeout = setTimeout(function() {
+        modalBox.style.visibility = 'visible';
+        modalContent.innerHTML = 'Loading...';
+      }, 500);
       if (!readmeUrl) {
+        clearTimeout(loadingTimeout);
+        modalBox.style.visibility = 'visible';
         modalContent.innerHTML = '<p>README.md not found.</p>';
         return;
       }
       fetch(readmeUrl)
         .then(function(res) { return res.text(); })
         .then(function(markdown) {
+          clearTimeout(loadingTimeout);
+          modalBox.style.visibility = 'visible';
           modalContent.innerHTML = marked.parse(markdown);
         })
         .catch(function() {
+          clearTimeout(loadingTimeout);
+          modalBox.style.visibility = 'visible';
           modalContent.innerHTML = '<p>Error loading README.md</p>';
         });
     };
