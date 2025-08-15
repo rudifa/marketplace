@@ -116,6 +116,10 @@ async function main({verbose = false} = {}) {
   }
 }
 
+// ==================================================================================
+// Extract the package details for packages, for the Logseq Marketplace Plugins table
+// ==================================================================================
+
 /**
  * Fetch the list of package directories from the Logseq marketplace GitHub repository.
  * @param {boolean} verbose - Enable verbose logging.
@@ -169,8 +173,13 @@ async function retrievePackageDetails(pkg, verbose = false) {
 
   if (manifest) {
     if (verbose) console.log(`manifest for ${pkg.name}`, manifest);
-    const error = validateManifest(manifest);
+    let errors = validateManifest(manifest);
     const iconUrl = await fetchIconUrl(pkg.name, manifest, verbose);
+    const readmeUrl = await getValidReadmeUrl(manifest.repo);
+    if (!readmeUrl) {
+        errors.push("Missing README");
+    }
+    const error = errors.join(", ");
     return {
       name: manifest.name || pkg.name,
       id: manifest.id || "",
@@ -179,6 +188,7 @@ async function retrievePackageDetails(pkg, verbose = false) {
       repo: manifest.repo || "",
       dir: pkg.name,
       iconUrl: iconUrl,
+      readmeUrl: readmeUrl,
       created_at: commitDates.created_at,
       last_updated: commitDates.last_updated,
       error: error,
@@ -234,7 +244,7 @@ function validateManifest(manifest) {
   if (!manifest.repo) errors.push("Missing package repository");
   if (!manifest.icon) errors.push("Missing package icon");
 
-  return errors.join(", ");
+  return errors;
 }
 
 /**
@@ -288,6 +298,43 @@ async function fetchCommitDates(packageName, verbose = false) {
     return {created_at: "", last_updated: ""};
   }
 }
+
+/**
+ * Returns the first valid README.md URL (main or master branch) for a given GitHub repo, or null if not found.
+ * @param {string} repo - The GitHub repository in the form 'owner/repo'.
+ * @returns {Promise<string|null>} The valid README.md URL or null if not found.
+ */
+async function getValidReadmeUrl(repo) {
+  const urlMain =
+    "https://raw.githubusercontent.com/" + repo + "/main/README.md";
+  const urlMaster =
+    "https://raw.githubusercontent.com/" + repo + "/master/README.md";
+  try {
+    let res = await fetch(urlMain);
+    if (res.ok) return urlMain;
+    res = await fetch(urlMaster);
+    if (res.ok) return urlMaster;
+    return null;
+  } catch (e) {
+    return null;
+  }
+}
+
+/**
+ * Get headers for GitHub API requests, including authorization if GITHUB_TOKEN is set.
+ * @returns {Object} Headers object for fetch requests.
+ */
+function getGithubHeaders() {
+  const headers = {Accept: "application/vnd.github.v3+json"};
+  if (process.env.GITHUB_TOKEN) {
+    headers["Authorization"] = `token ${process.env.GITHUB_TOKEN}`;
+  }
+  return headers;
+}
+
+// ======================================================================
+// Generate the html file presenting the Logseq Marketplace Plugins table
+// ======================================================================
 
 /**
  * Generates the complete HTML page for the Logseq Marketplace Plugins.
@@ -387,7 +434,6 @@ function generateTableHeader() {
         <th>Description</th>
         <th>Author</th>
         <th>Repo</th>
-        <th>Version</th>
         <th>Created</th>
         <th>Last Updated</th>
         <th>Error</th>
@@ -401,26 +447,24 @@ function generateTableHeader() {
  * @returns {string} HTML string for a table row.
  */
 function generateTableRow(pkg) {
+  const iconCell = pkg.iconUrl
+    ? `<img src="${pkg.iconUrl}" alt="icon" width="24" height="24">`
+    : "";
+  const descCell = pkg.description
+    ? (pkg.readmeUrl
+        ? `<a href="#" onclick="showReadmeModal('${pkg.readmeUrl}')">${pkg.description}</a>`
+        : pkg.description)
+    : "";
+  const repoCell = pkg.repo
+    ? `<a href="https://github.com/${pkg.repo}" target="_blank">${pkg.repo}</a>`
+    : "";
   return `
     <tr>
-      <td>${
-        pkg.iconUrl
-          ? `<img src="${pkg.iconUrl}" alt="icon" width="24" height="24">`
-          : ""
-      }</td>
+      <td>${iconCell}</td>
       <td>${pkg.name || ""}</td>
-      <td>${
-        pkg.description && pkg.repo
-          ? `<a href="#" onclick="showReadmeModal('${pkg.repo}')">${pkg.description}</a>`
-          : ""
-      }</td>
+      <td>${descCell}</td>
       <td>${pkg.author || ""}</td>
-      <td>${
-        pkg.repo
-          ? `<a href="https://github.com/${pkg.repo}" target="_blank">${pkg.repo}</a>`
-          : ""
-      }</td>
-      <td>${pkg.version || ""}</td>
+      <td>${repoCell}</td>
       <td>${pkg.created_at ? pkg.created_at.slice(0, 10) : ""}</td>
       <td>${pkg.last_updated ? pkg.last_updated.slice(0, 10) : ""}</td>
       <td>${pkg.error || ""}</td>
@@ -434,52 +478,34 @@ function generateTableRow(pkg) {
  */
 function generateClientScripts() {
   return `
-        window.showReadmeModal = function(repo) {
-          const modalBg = document.getElementById('readme-modal-bg');
-          const modalContent = document.getElementById('readme-modal-content');
-          modalBg.style.display = 'flex';
-          modalContent.innerHTML = 'Loading...';
-          // Try main branch first, then fallback to master
-          const urlMain = 'https://raw.githubusercontent.com/' + repo + '/main/README.md';
-          const urlMaster = 'https://raw.githubusercontent.com/' + repo + '/master/README.md';
-          fetch(urlMain)
-            .then(function(res) {
-              if (res.ok) return res.text();
-              return fetch(urlMaster).then(function(r) { return r.ok ? r.text() : 'README.md not found.'; });
-            })
-            .then(function(markdown) {
-              if (markdown === 'README.md not found.') {
-                modalContent.innerHTML = '<p>README.md not found.</p>';
-              } else {
-                modalContent.innerHTML = marked.parse(markdown);
-              }
-            })
-            .catch(function() {
-              modalContent.innerHTML = '<p>Error loading README.md</p>';
-            });
-        };
-        window.closeReadmeModal = function() {
-          document.getElementById('readme-modal-bg').style.display = 'none';
-        };
-        $(document).ready(function() {
-          $('#plugins').DataTable({
-            paging: false,
-            scrollY: '70vh',
-            scrollCollapse: true,
-            info: false
-          });
+    window.showReadmeModal = function(readmeUrl) {
+      const modalBg = document.getElementById('readme-modal-bg');
+      const modalContent = document.getElementById('readme-modal-content');
+      modalBg.style.display = 'flex';
+      modalContent.innerHTML = 'Loading...';
+      if (!readmeUrl) {
+        modalContent.innerHTML = '<p>README.md not found.</p>';
+        return;
+      }
+      fetch(readmeUrl)
+        .then(function(res) { return res.text(); })
+        .then(function(markdown) {
+          modalContent.innerHTML = marked.parse(markdown);
+        })
+        .catch(function() {
+          modalContent.innerHTML = '<p>Error loading README.md</p>';
         });
-      `;
-}
-
-/**
- * Get headers for GitHub API requests, including authorization if GITHUB_TOKEN is set.
- * @returns {Object} Headers object for fetch requests.
- */
-function getGithubHeaders() {
-  const headers = {Accept: "application/vnd.github.v3+json"};
-  if (process.env.GITHUB_TOKEN) {
-    headers["Authorization"] = `token ${process.env.GITHUB_TOKEN}`;
-  }
-  return headers;
+    };
+    window.closeReadmeModal = function() {
+      document.getElementById('readme-modal-bg').style.display = 'none';
+    };
+    $(document).ready(function() {
+      $('#plugins').DataTable({
+        paging: false,
+        scrollY: '70vh',
+        scrollCollapse: true,
+        info: false
+      });
+    });
+  `;
 }
