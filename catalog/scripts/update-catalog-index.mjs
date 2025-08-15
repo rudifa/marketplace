@@ -459,6 +459,16 @@ function generateStyles() {
       .modal-body {
         padding: 1em;
       }
+      /* Custom styles for the search box */
+      .dataTables_filter {
+        float: right;
+        margin-right: 20px;
+        margin-bottom: 10px;
+      }
+      .dataTables_filter input {
+        width: 250px;
+        padding: 5px;
+      }
     </style>
   `;
 }
