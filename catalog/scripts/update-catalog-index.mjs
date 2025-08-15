@@ -1,11 +1,13 @@
 #!/usr/bin/env node
+
+import fetch from "node-fetch";
+import fs from "fs";
+
+
 // Script to fetch Logseq marketplace plugin package details from GitHub
 // and generate an HTML page with a table of plugins.
 // Usage: node update-catalog-index.js
 // Output: catalog/index.html
-
-import fetch from "node-fetch";
-import fs from "fs";
 
 const OUTPUT_DIR = "catalog";
 const OUTPUT_FILE = "index.html";
@@ -88,16 +90,14 @@ async function main({verbose = false} = {}) {
     );
 
     // Sort results by last_updated (descending)
-    const sortedResults = results
-      .filter(Boolean)
-      .sort((a, b) => {
-        // If either date is missing, treat as oldest
-        if (!a.last_updated && !b.last_updated) return 0;
-        if (!a.last_updated) return 1;
-        if (!b.last_updated) return -1;
-        // Compare as ISO date strings
-        return b.last_updated.localeCompare(a.last_updated);
-      });
+    const sortedResults = results.filter(Boolean).sort((a, b) => {
+      // If either date is missing, treat as oldest
+      if (!a.last_updated && !b.last_updated) return 0;
+      if (!a.last_updated) return 1;
+      if (!b.last_updated) return -1;
+      // Compare as ISO date strings
+      return b.last_updated.localeCompare(a.last_updated);
+    });
     // Generate HTML page
     const html = generateHtml(sortedResults);
 
@@ -188,7 +188,7 @@ async function retrievePackageDetails(pkg, verbose = false) {
     const iconUrl = await fetchIconUrl(pkg.name, manifest, verbose);
     const readmeUrl = await getValidReadmeUrl(manifest.repo);
     if (!readmeUrl) {
-        errors.push("Missing README");
+      errors.push("Missing README");
     }
     const error = errors.join(", ");
     return {
@@ -468,9 +468,9 @@ function generateTableRow(pkg) {
     ? `<img src="${pkg.iconUrl}" alt="icon" width="24" height="24">`
     : "";
   const descCell = pkg.description
-    ? (pkg.readmeUrl
-        ? `<a href="#" onclick="showReadmeModal('${pkg.readmeUrl}')">${pkg.description}</a>`
-        : pkg.description)
+    ? pkg.readmeUrl
+      ? `<a href="#" onclick="showReadmeModal('${pkg.readmeUrl}')">${pkg.description}</a>`
+      : pkg.description
     : "";
   const repoCell = pkg.repo
     ? `<a href="https://github.com/${pkg.repo}" target="_blank">${pkg.repo}</a>`
@@ -494,61 +494,126 @@ function generateTableRow(pkg) {
  * @returns {string} Client-side JavaScript as a string.
  */
 function generateClientScripts() {
+  const convertRelativeUrlsToAbsoluteString = convertRelativeUrlsToAbsolute.toString();
+  const showReadmeModalString = showReadmeModal.toString();
+  const closeReadmeModalString = closeReadmeModal.toString();
+  const initDataTableString = initDataTable.toString();
+
   return `
-    window.showReadmeModal = function(readmeUrl) {
-      const modalBg = document.getElementById('readme-modal-bg');
-      const modalContent = document.getElementById('readme-modal-content');
-      const modalBox = modalBg.querySelector('.modal-content');
-      modalBg.style.display = 'flex';
-      modalBox.classList.remove('modal-animate');
-      modalBox.style.visibility = 'hidden';
-      modalContent.innerHTML = '';
-      // Animate in after a short delay to allow display
-      setTimeout(function() {
-        modalBox.classList.add('modal-animate');
-      }, 10);
-      let loadingTimeout = setTimeout(function() {
-        modalBox.style.visibility = 'visible';
-        modalContent.innerHTML = 'Loading...';
-      }, 500);
-      if (!readmeUrl) {
-        clearTimeout(loadingTimeout);
-        modalBox.style.visibility = 'visible';
-        modalBox.classList.add('modal-animate');
-        modalContent.innerHTML = '<p>README.md not found.</p>';
-        return;
-      }
-      fetch(readmeUrl)
-        .then(function(res) { return res.text(); })
-        .then(function(markdown) {
-          clearTimeout(loadingTimeout);
-          modalBox.style.visibility = 'visible';
-          modalBox.classList.add('modal-animate');
-          modalContent.innerHTML = marked.parse(markdown);
-        })
-        .catch(function() {
-          clearTimeout(loadingTimeout);
-          modalBox.style.visibility = 'visible';
-          modalBox.classList.add('modal-animate');
-          modalContent.innerHTML = '<p>Error loading README.md</p>';
-        });
-    };
-    window.closeReadmeModal = function() {
-      const modalBg = document.getElementById('readme-modal-bg');
-      const modalBox = modalBg.querySelector('.modal-content');
-      modalBox.classList.remove('modal-animate');
-      setTimeout(function() {
-        modalBg.style.display = 'none';
-      }, 200);
-    };
-    $(document).ready(function() {
-      $('#plugins').DataTable({
-        paging: false,
-        scrollY: '70vh',
-        scrollCollapse: true,
-        info: false,
-        order: [] // No initial sort, preserve server order, but allow user sorting
-      });
-    });
+    // Converts relative image and link URLs in markdown to absolute URLs based on the README location
+    ${convertRelativeUrlsToAbsoluteString}
+
+    // Show README modal
+    ${showReadmeModalString}
+
+    // Close README modal
+    ${closeReadmeModalString}
+
+    // Initialize DataTable
+    ${initDataTableString}
+
+    // Assign functions to window object
+    window.showReadmeModal = showReadmeModal;
+    window.closeReadmeModal = closeReadmeModal;
+
+    // Initialize DataTable on document ready
+    $(document).ready(initDataTable);
   `;
+}
+
+/**
+ * Preprocesses README markdown to convert relative URLs to absolute URLs.
+ * @param {string} markdown - The original markdown content.
+ * @param {string} readmeUrl - The URL of the README file.
+ * @returns {string} The processed markdown with absolute URLs.
+ */
+function convertRelativeUrlsToAbsolute(markdown, readmeUrl) {
+  if (!readmeUrl) return markdown;
+  // Get base URL (directory of the README)
+  var baseUrl = readmeUrl.replace(/\/[^/]*$/, "/");
+  // Replace image links: ![alt](relativepath)
+  markdown = markdown.replace(
+    /!\[([^\]]*)\]\((?!https?:\/\/|\/)([^)]+)\)/g,
+    function (match, alt, rel) {
+      return "![" + alt + "](" + baseUrl + rel + ")";
+    }
+  );
+  // Replace normal links: [text](relativepath)
+  markdown = markdown.replace(
+    /\[([^\]]+)\]\((?!https?:\/\/|\/)([^)]+)\)/g,
+    function (match, text, rel) {
+      return "[" + text + "](" + baseUrl + rel + ")";
+    }
+  );
+  return markdown;
+}
+
+/**
+ * Displays a modal with the README content of a plugin.
+ * @param {string} readmeUrl - The URL of the README file to display.
+ */
+function showReadmeModal(readmeUrl) {
+  const modalBg = document.getElementById('readme-modal-bg');
+  const modalContent = document.getElementById('readme-modal-content');
+  const modalBox = modalBg.querySelector('.modal-content');
+  modalBg.style.display = 'flex';
+  modalBox.classList.remove('modal-animate');
+  modalBox.style.visibility = 'hidden';
+  modalContent.innerHTML = '';
+  // Animate in after a short delay to allow display
+  setTimeout(function() {
+    modalBox.classList.add('modal-animate');
+  }, 10);
+  let loadingTimeout = setTimeout(function() {
+    modalBox.style.visibility = 'visible';
+    modalContent.innerHTML = 'Loading...';
+  }, 500);
+  if (!readmeUrl) {
+    clearTimeout(loadingTimeout);
+    modalBox.style.visibility = 'visible';
+    modalBox.classList.add('modal-animate');
+    modalContent.innerHTML = '<p>README.md not found.</p>';
+    return;
+  }
+  fetch(readmeUrl)
+    .then(function(res) { return res.text(); })
+    .then(function(markdown) {
+      clearTimeout(loadingTimeout);
+      modalBox.style.visibility = 'visible';
+      modalBox.classList.add('modal-animate');
+      // Preprocess markdown to convert relative links to absolute URLs
+      var processed = convertRelativeUrlsToAbsolute(markdown, readmeUrl);
+      modalContent.innerHTML = marked.parse(processed);
+    })
+    .catch(function() {
+      clearTimeout(loadingTimeout);
+      modalBox.style.visibility = 'visible';
+      modalBox.classList.add('modal-animate');
+      modalContent.innerHTML = '<p>Error loading README.md</p>';
+    });
+}
+
+/**
+ * Closes the README modal.
+ */
+function closeReadmeModal() {
+  const modalBg = document.getElementById('readme-modal-bg');
+  const modalBox = modalBg.querySelector('.modal-content');
+  modalBox.classList.remove('modal-animate');
+  setTimeout(function() {
+    modalBg.style.display = 'none';
+  }, 200);
+}
+
+/**
+ * Initializes the DataTable for the plugins table.
+ */
+function initDataTable() {
+  $('#plugins').DataTable({
+    paging: false,
+    scrollY: '70vh',
+    scrollCollapse: true,
+    info: false,
+    order: [] // No initial sort, preserve server order, but allow user sorting
+  });
 }
