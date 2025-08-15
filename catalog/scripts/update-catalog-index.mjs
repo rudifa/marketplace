@@ -72,10 +72,10 @@ async function main({verbose = false} = {}) {
         if (result) results[myIdx] = result;
         count++;
         if (count % 25 === 0) {
-          console.log(`Processed ${count} packages...`);
+          console.log(` Processed ${count} packages`);
         }
         if (maxItems && count >= maxItems) {
-          console.log(`Processed ${count} packages. Stopping early.`);
+          console.log(` Processed ${count} packages. Stopping early.`);
           break;
         }
       }
@@ -419,6 +419,13 @@ function generateStyles() {
         padding: 2em;
         border-radius: 8px;
         position: relative;
+        transform: scale(0.7);
+        opacity: 0;
+  transition: transform 0.25s ease, opacity 0.2s;
+      }
+      .modal-content.modal-animate {
+        transform: scale(1);
+        opacity: 1;
       }
       .modal-close {
         position: absolute;
@@ -493,8 +500,13 @@ function generateClientScripts() {
       const modalContent = document.getElementById('readme-modal-content');
       const modalBox = modalBg.querySelector('.modal-content');
       modalBg.style.display = 'flex';
+      modalBox.classList.remove('modal-animate');
       modalBox.style.visibility = 'hidden';
       modalContent.innerHTML = '';
+      // Animate in after a short delay to allow display
+      setTimeout(function() {
+        modalBox.classList.add('modal-animate');
+      }, 10);
       let loadingTimeout = setTimeout(function() {
         modalBox.style.visibility = 'visible';
         modalContent.innerHTML = 'Loading...';
@@ -502,6 +514,7 @@ function generateClientScripts() {
       if (!readmeUrl) {
         clearTimeout(loadingTimeout);
         modalBox.style.visibility = 'visible';
+        modalBox.classList.add('modal-animate');
         modalContent.innerHTML = '<p>README.md not found.</p>';
         return;
       }
@@ -510,16 +523,23 @@ function generateClientScripts() {
         .then(function(markdown) {
           clearTimeout(loadingTimeout);
           modalBox.style.visibility = 'visible';
+          modalBox.classList.add('modal-animate');
           modalContent.innerHTML = marked.parse(markdown);
         })
         .catch(function() {
           clearTimeout(loadingTimeout);
           modalBox.style.visibility = 'visible';
+          modalBox.classList.add('modal-animate');
           modalContent.innerHTML = '<p>Error loading README.md</p>';
         });
     };
     window.closeReadmeModal = function() {
-      document.getElementById('readme-modal-bg').style.display = 'none';
+      const modalBg = document.getElementById('readme-modal-bg');
+      const modalBox = modalBg.querySelector('.modal-content');
+      modalBox.classList.remove('modal-animate');
+      setTimeout(function() {
+        modalBg.style.display = 'none';
+      }, 200);
     };
     $(document).ready(function() {
       $('#plugins').DataTable({
