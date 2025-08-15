@@ -409,10 +409,12 @@ function generateStyles() {
       }
       h1 {
         text-align: center;
-        margin-bottom: 20px;
+        margin: 0;
+        padding: 20px;
         width: 100%;
         font-size: 24px;
-        color: #333;
+        color: #85c8c8;
+        background-color: #012b36;
       }
       div.dataTables_wrapper {
         width: 100%;
@@ -462,7 +464,7 @@ function generateStyles() {
       /* Custom styles for the search box */
       .dataTables_filter {
         float: right;
-        margin-right: 20px;
+        margin-right: 0px;
         margin-bottom: 10px;
       }
       .dataTables_filter input {
