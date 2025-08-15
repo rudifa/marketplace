@@ -401,6 +401,19 @@ function generateHtml(results) {
 function generateStyles() {
   return `
     <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+        box-sizing: border-box;
+      }
+      h1 {
+        text-align: center;
+        margin-bottom: 20px;
+        width: 100%;
+        font-size: 24px;
+        color: #333;
+      }
       div.dataTables_wrapper {
         width: 100%;
         margin: 0 auto;
@@ -567,18 +580,23 @@ function showReadmeModal(readmeUrl) {
   const modalBg = document.getElementById('readme-modal-bg');
   const modalContent = modalBg.querySelector('.modal-content');
   const modalBody = document.getElementById('readme-modal-content');
+  const modalTitle = modalContent.querySelector('.modal-header h2');
   modalBg.style.display = 'flex';
   modalContent.classList.remove('modal-animate');
   modalContent.style.visibility = 'hidden';
   modalBody.innerHTML = '';
+  modalTitle.textContent = 'README'; // Default title
+
   // Animate in after a short delay to allow display
   setTimeout(function() {
     modalContent.classList.add('modal-animate');
   }, 10);
+
   let loadingTimeout = setTimeout(function() {
     modalContent.style.visibility = 'visible';
     modalBody.innerHTML = 'Loading...';
   }, 500);
+
   if (!readmeUrl) {
     clearTimeout(loadingTimeout);
     modalContent.style.visibility = 'visible';
@@ -586,14 +604,23 @@ function showReadmeModal(readmeUrl) {
     modalBody.innerHTML = '<p>README.md not found.</p>';
     return;
   }
+
   fetch(readmeUrl)
     .then(function(res) { return res.text(); })
     .then(function(markdown) {
       clearTimeout(loadingTimeout);
       modalContent.style.visibility = 'visible';
       modalContent.classList.add('modal-animate');
+
       // Preprocess markdown to convert relative links to absolute URLs
       var processed = convertRelativeUrlsToAbsolute(markdown, readmeUrl);
+
+      // Extract title from markdown (first heading)
+      const titleMatch = processed.match(/^#\s+(.+)$/m);
+      if (titleMatch && titleMatch[1]) {
+        modalTitle.textContent = titleMatch[1];
+      }
+
       modalBody.innerHTML = marked.parse(processed);
     })
     .catch(function() {
