@@ -380,8 +380,11 @@ function generateHtml(results) {
       </table>
       <div class="modal-bg" id="readme-modal-bg">
         <div class="modal-content">
-          <span class="modal-close" onclick="closeReadmeModal()">&times;</span>
-          <div id="readme-modal-content">Loading...</div>
+          <div class="modal-header">
+            <span class="modal-close" onclick="closeReadmeModal()">&times;</span>
+            <h2>README</h2>
+          </div>
+          <div class="modal-body" id="readme-modal-content">Loading...</div>
         </div>
       </div>
       <script>
@@ -416,24 +419,32 @@ function generateStyles() {
         max-width: 80vw;
         max-height: 80vh;
         overflow: auto;
-        padding: 2em;
         border-radius: 8px;
         position: relative;
         transform: scale(0.7);
         opacity: 0;
-  transition: transform 0.25s ease, opacity 0.2s;
+        transition: transform 0.25s ease, opacity 0.2s;
       }
       .modal-content.modal-animate {
         transform: scale(1);
         opacity: 1;
       }
+      .modal-header {
+        position: sticky;
+        top: 0;
+        background-color: #fff;
+        padding: 1em;
+        border-bottom: 1px solid #ddd;
+        z-index: 1001;
+      }
       .modal-close {
-        position: absolute;
-        top: 0.5em;
-        right: 1em;
+        float: right;
         font-size: 2em;
         color: #888;
         cursor: pointer;
+      }
+      .modal-body {
+        padding: 1em;
       }
     </style>
   `;
@@ -554,45 +565,44 @@ function convertRelativeUrlsToAbsolute(markdown, readmeUrl) {
  */
 function showReadmeModal(readmeUrl) {
   const modalBg = document.getElementById('readme-modal-bg');
-  const modalContent = document.getElementById('readme-modal-content');
-  const modalBox = modalBg.querySelector('.modal-content');
+  const modalContent = modalBg.querySelector('.modal-content');
+  const modalBody = document.getElementById('readme-modal-content');
   modalBg.style.display = 'flex';
-  modalBox.classList.remove('modal-animate');
-  modalBox.style.visibility = 'hidden';
-  modalContent.innerHTML = '';
+  modalContent.classList.remove('modal-animate');
+  modalContent.style.visibility = 'hidden';
+  modalBody.innerHTML = '';
   // Animate in after a short delay to allow display
   setTimeout(function() {
-    modalBox.classList.add('modal-animate');
+    modalContent.classList.add('modal-animate');
   }, 10);
   let loadingTimeout = setTimeout(function() {
-    modalBox.style.visibility = 'visible';
-    modalContent.innerHTML = 'Loading...';
+    modalContent.style.visibility = 'visible';
+    modalBody.innerHTML = 'Loading...';
   }, 500);
   if (!readmeUrl) {
     clearTimeout(loadingTimeout);
-    modalBox.style.visibility = 'visible';
-    modalBox.classList.add('modal-animate');
-    modalContent.innerHTML = '<p>README.md not found.</p>';
+    modalContent.style.visibility = 'visible';
+    modalContent.classList.add('modal-animate');
+    modalBody.innerHTML = '<p>README.md not found.</p>';
     return;
   }
   fetch(readmeUrl)
     .then(function(res) { return res.text(); })
     .then(function(markdown) {
       clearTimeout(loadingTimeout);
-      modalBox.style.visibility = 'visible';
-      modalBox.classList.add('modal-animate');
+      modalContent.style.visibility = 'visible';
+      modalContent.classList.add('modal-animate');
       // Preprocess markdown to convert relative links to absolute URLs
       var processed = convertRelativeUrlsToAbsolute(markdown, readmeUrl);
-      modalContent.innerHTML = marked.parse(processed);
+      modalBody.innerHTML = marked.parse(processed);
     })
     .catch(function() {
       clearTimeout(loadingTimeout);
-      modalBox.style.visibility = 'visible';
-      modalBox.classList.add('modal-animate');
-      modalContent.innerHTML = '<p>Error loading README.md</p>';
+      modalContent.style.visibility = 'visible';
+      modalContent.classList.add('modal-animate');
+      modalBody.innerHTML = '<p>Error loading README.md</p>';
     });
 }
-
 /**
  * Closes the README modal.
  */
