@@ -2,16 +2,22 @@
 // Script to fetch Logseq marketplace plugin package details from GitHub
 // and generate an HTML page with a table of plugins.
 // Usage: node update-catalog-index.js
+// Output: catalog/index.html
 
 import fetch from "node-fetch";
 import fs from "fs";
 
 const OUTPUT_DIR = "catalog";
 const OUTPUT_FILE = "index.html";
+const RESULTS_FILE = "results.json";
 
-const GITHUB_API =
+const LOGSEQ_MARKETPLACE_PACKAGES_URL =
   "https://api.github.com/repos/logseq/marketplace/contents/packages";
-const RAW_BASE =
+
+const COMMITS_API =
+  "https://api.github.com/repos/logseq/marketplace/commits?path=packages";
+
+const RAW_LOGSEQ_MARKETPLACE_PACKAGES_URL =
   "https://raw.githubusercontent.com/logseq/marketplace/master/packages";
 
 // Parse command line arguments for verbose flag, max, and help
@@ -23,11 +29,11 @@ if (args.includes("--help") || args.includes("-h")) {
   process.exit(0);
 }
 const verbose = args.includes("--verbose") || args.includes("-v");
-let max;
+let maxItems;
 const maxIdx = args.indexOf("--max");
 if (maxIdx !== -1 && args.length > maxIdx + 1) {
   const val = parseInt(args[maxIdx + 1], 10);
-  if (!isNaN(val) && val > 0) max = val;
+  if (!isNaN(val) && val > 0) maxItems = val;
 }
 
 main({verbose}).then(() => {
@@ -54,16 +60,23 @@ async function main({verbose = false} = {}) {
       while (true) {
         let myIdx;
         // Atomically get the next index
-        if (idx >= packages.length || (max !== undefined && count >= max))
+        if (
+          idx >= packages.length ||
+          (maxItems !== undefined && idx >= maxItems)
+        )
           return;
         myIdx = idx;
         idx++;
         const pkg = packages[myIdx];
-        const result = await processPackage(pkg, verbose);
+        const result = await retrievePackageDetails(pkg, verbose);
         if (result) results[myIdx] = result;
         count++;
-        if (verbose && count % 10 === 0) {
+        if (count % 10 === 0) {
           console.log(`Processed ${count} packages...`);
+        }
+        if (maxItems && count >= maxItems) {
+          console.log(`Processed ${count} packages. Stopping early.`);
+          break;
         }
       }
     }
@@ -84,13 +97,20 @@ async function main({verbose = false} = {}) {
       fs.mkdirSync(outDir, {recursive: true});
     }
     fs.writeFileSync(`${outDir}/${outFile}`, html);
-    /* if (verbose) */{
+    /* if (verbose) */ {
       console.log(
         "\nFetched",
         results.filter(Boolean).length,
         `plugins. Output: ${outDir}/${outFile}`
       );
     }
+
+    // Write results to JSON file
+    fs.writeFileSync(
+      `${outDir}/${RESULTS_FILE}`,
+      JSON.stringify(results, null, 2)
+    );
+    console.log("Package Details saved to", `${outDir}/${RESULTS_FILE}`);
   } catch (e) {
     console.error(e);
   }
@@ -103,7 +123,9 @@ async function main({verbose = false} = {}) {
  */
 async function fetchPackageList(verbose = false) {
   if (verbose) console.log("Fetching package list from GitHub...");
-  const res = await fetch(GITHUB_API, {headers: getGithubHeaders()});
+  const res = await fetch(LOGSEQ_MARKETPLACE_PACKAGES_URL, {
+    headers: getGithubHeaders(),
+  });
   if (!res.ok) {
     let errorText = "";
     try {
@@ -138,30 +160,33 @@ async function fetchPackageList(verbose = false) {
  * @param {boolean} verbose - Enable verbose logging.
  * @returns {Promise<Object|null>} Result object for the package, or null if not a directory.
  */
-async function processPackage(pkg, verbose = false) {
+async function retrievePackageDetails(pkg, verbose = false) {
   if (pkg.type !== "dir") return null;
   if (verbose) console.log(`Processing package: ${pkg.name}`);
-  else ; //process.stdout.write(".");
-  const manifest = await fetchManifestAndIcon(pkg.name, verbose);
+  else; //process.stdout.write(".");
+  const manifest = await fetchManifest(pkg.name, verbose);
   const commitDates = await fetchCommitDates(pkg.name, verbose);
+
   if (manifest) {
     if (verbose) console.log(`manifest for ${pkg.name}`, manifest);
+    const error = validateManifest(manifest);
+    const iconUrl = await fetchIconUrl(pkg.name, manifest, verbose);
     return {
       name: manifest.name || pkg.name,
       id: manifest.id || "",
       description: manifest.description || "",
       author: manifest.author || "",
       repo: manifest.repo || "",
-      version: manifest.version || "",
       dir: pkg.name,
-      iconUrl: manifest.iconUrl,
+      iconUrl: iconUrl,
       created_at: commitDates.created_at,
       last_updated: commitDates.last_updated,
+      error: error,
     };
   } else {
     return {
       name: pkg.name,
-      error: "No manifest.json",
+      error: "Missing manifest",
       iconUrl: "",
       created_at: commitDates.created_at,
       last_updated: commitDates.last_updated,
@@ -170,22 +195,20 @@ async function processPackage(pkg, verbose = false) {
 }
 
 /**
- * Fetch the manifest.json and icon URL for a given package.
+ * Fetch the manifest.json for a given package.
  * @param {string} packageName - The name of the package directory.
  * @param {boolean} verbose - Enable verbose logging.
- * @returns {Promise<Object|null>} Manifest object with iconUrl, or null if not found.
+ * @returns {Promise<Object|null>} Manifest object, or null if not found.
  */
-async function fetchManifestAndIcon(packageName, verbose = false) {
-  const manifestUrl = `${RAW_BASE}/${packageName}/manifest.json`;
+async function fetchManifest(packageName, verbose = false) {
+  const manifestUrl = `${RAW_LOGSEQ_MARKETPLACE_PACKAGES_URL}/${packageName}/manifest.json`;
   try {
     const res = await fetch(manifestUrl, {headers: getGithubHeaders()});
     if (!res.ok) {
       console.error(`\nNo manifest.json for ${packageName}`);
       return null;
     }
-
     const manifest = await res.json();
-
     // Additional check for API error messages (defensive)
     if (
       manifest &&
@@ -193,13 +216,6 @@ async function fetchManifestAndIcon(packageName, verbose = false) {
       manifest.message.includes("API rate limit exceeded")
     ) {
       throw new Error("GitHub API rate limit exceeded! Are you authenticated?");
-    }
-
-    // Add iconUrl if icon is present, using raw.githubusercontent.com for CORS compatibility
-    if (manifest.icon) {
-      manifest.iconUrl = `${RAW_BASE}/${packageName}/${manifest.icon}`;
-    } else {
-      manifest.iconUrl = "";
     }
     if (verbose) console.log(`Fetched manifest for ${packageName}`);
     return manifest;
@@ -210,6 +226,32 @@ async function fetchManifestAndIcon(packageName, verbose = false) {
   }
 }
 
+function validateManifest(manifest) {
+  const errors = [];
+  //   if (!manifest.name) errors.push("Missing package name"); // if missing, manifest name will be used
+  if (!manifest.description) errors.push("Missing package description");
+  if (!manifest.author) errors.push("Missing package author");
+  if (!manifest.repo) errors.push("Missing package repository");
+  if (!manifest.icon) errors.push("Missing package icon");
+
+  return errors.join(", ");
+}
+
+/**
+ * Get the icon URL for a given package and manifest.
+ * @param {string} packageName - The name of the package directory.
+ * @param {Object} manifest - The manifest object.
+ * @param {boolean} verbose - Enable verbose logging.
+ * @returns {Promise<string>} Icon URL or empty string.
+ */
+async function fetchIconUrl(packageName, manifest, verbose = false) {
+  if (manifest && manifest.icon) {
+    const url = `${RAW_LOGSEQ_MARKETPLACE_PACKAGES_URL}/${packageName}/${manifest.icon}`;
+    return url;
+  }
+  return "";
+}
+
 // Fetch commit dates for a package directory
 /**
  * Fetch the first and last commit dates for a given package directory.
@@ -218,7 +260,7 @@ async function fetchManifestAndIcon(packageName, verbose = false) {
  * @returns {Promise<{created_at: string, last_updated: string}>} Commit date info.
  */
 async function fetchCommitDates(packageName, verbose = false) {
-  const commitsApi = `https://api.github.com/repos/logseq/marketplace/commits?path=packages/${packageName}&per_page=100`;
+  const commitsApi = `${COMMITS_API}/${packageName}&per_page=100`;
   try {
     const res = await fetch(commitsApi, {headers: getGithubHeaders()});
     if (!res.ok) {
@@ -230,14 +272,6 @@ async function fetchCommitDates(packageName, verbose = false) {
 
     const commits = await res.json();
 
-    // Additional check for API error messages (defensive)
-    if (
-      data &&
-      data.message &&
-      data.message.includes("API rate limit exceeded")
-    ) {
-      throw new Error("GitHub API rate limit exceeded! Are you authenticated?");
-    }
     if (!Array.isArray(commits) || commits.length === 0) {
       return {created_at: "", last_updated: ""};
     }
@@ -245,12 +279,12 @@ async function fetchCommitDates(packageName, verbose = false) {
     const last_updated = commits[0]?.commit?.committer?.date || "";
     const created_at =
       commits[commits.length - 1]?.commit?.committer?.date || "";
-      process.stdout.write(".");
+    process.stdout.write(".");
     return {created_at, last_updated};
   } catch (err) {
     process.stdout.write("?");
-    if (verbose)
-      console.error(`Error fetching commit dates for ${packageName}:`, err);
+
+    console.error(`Error fetching commit dates for ${packageName}:`, err);
     return {created_at: "", last_updated: ""};
   }
 }
@@ -400,37 +434,42 @@ function generateTableRow(pkg) {
  */
 function generateClientScripts() {
   return `
-    function showReadmeModal(repo) {
-      const modalBg = document.getElementById('readme-modal-bg');
-      const modalContent = document.getElementById('readme-modal-content');
-      modalBg.style.display = 'flex';
-      modalContent.innerHTML = 'Loading...';
-      // Try main branch first, then fallback to master
-      const urlMain = 'https://raw.githubusercontent.com/' + repo + '/main/README.md';
-      const urlMaster = 'https://raw.githubusercontent.com/' + repo + '/master/README.md';
-      fetch(urlMain)
-        .then(function(res) {
-          if (res.ok) return res.text();
-          return fetch(urlMaster).then(function(r) { return r.ok ? r.text() : 'README.md not found.'; });
-        })
-        .then(function(text) {
-          modalContent.innerHTML = marked(text);
+        window.showReadmeModal = function(repo) {
+          const modalBg = document.getElementById('readme-modal-bg');
+          const modalContent = document.getElementById('readme-modal-content');
+          modalBg.style.display = 'flex';
+          modalContent.innerHTML = 'Loading...';
+          // Try main branch first, then fallback to master
+          const urlMain = 'https://raw.githubusercontent.com/' + repo + '/main/README.md';
+          const urlMaster = 'https://raw.githubusercontent.com/' + repo + '/master/README.md';
+          fetch(urlMain)
+            .then(function(res) {
+              if (res.ok) return res.text();
+              return fetch(urlMaster).then(function(r) { return r.ok ? r.text() : 'README.md not found.'; });
+            })
+            .then(function(markdown) {
+              if (markdown === 'README.md not found.') {
+                modalContent.innerHTML = '<p>README.md not found.</p>';
+              } else {
+                modalContent.innerHTML = marked.parse(markdown);
+              }
+            })
+            .catch(function() {
+              modalContent.innerHTML = '<p>Error loading README.md</p>';
+            });
+        };
+        window.closeReadmeModal = function() {
+          document.getElementById('readme-modal-bg').style.display = 'none';
+        };
+        $(document).ready(function() {
+          $('#plugins').DataTable({
+            paging: false,
+            scrollY: '70vh',
+            scrollCollapse: true,
+            info: false
+          });
         });
-    }
-
-    function closeReadmeModal() {
-      document.getElementById('readme-modal-bg').style.display = 'none';
-    }
-
-    $(document).ready(function() {
-      $('#plugins').DataTable({
-        paging: false,
-        scrollY: '70vh',
-        scrollCollapse: true,
-        info: false // Remove "Showing X to Y of Z entries"
-      });
-    });
-  `;
+      `;
 }
 
 /**

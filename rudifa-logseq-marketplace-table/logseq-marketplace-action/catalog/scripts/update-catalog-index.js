@@ -11,15 +11,19 @@ const OUTPUT_FILE = "index.html";
 
 const GITHUB_API =
   "https://api.github.com/repos/logseq/marketplace/contents/packages";
-const RAW_BASE =
+
+const COMMITS_API =
+  "https://api.github.com/repos/logseq/marketplace/commits?path=packages";
+
+const RAW_LOGSEQ_MARKETPLACE_PACKAGES_URL =
   "https://raw.githubusercontent.com/logseq/marketplace/master/packages";
-
-
 
 // Parse command line arguments for verbose flag, max, and help
 const args = process.argv.slice(2);
-if (args.includes('--help') || args.includes('-h')) {
-  console.log(`Usage: node update-catalog-index.js [--max <number>] [--verbose|-v] [--help|-h]\n\nOptions:\n  --max <number>   Limit the number of packages processed\n  --verbose, -v    Enable verbose logging\n  --help, -h       Show this help message`);
+if (args.includes("--help") || args.includes("-h")) {
+  console.log(
+    `Usage: node update-catalog-index.js [--max <number>] [--verbose|-v] [--help|-h]\n\nOptions:\n  --max <number>   Limit the number of packages processed\n  --verbose, -v    Enable verbose logging\n  --help, -h       Show this help message`
+  );
   process.exit(0);
 }
 const verbose = args.includes("--verbose") || args.includes("-v");
@@ -151,7 +155,7 @@ async function processPackage(pkg, verbose = false) {
  * @returns {Promise<Object|null>} Manifest object with iconUrl, or null if not found.
  */
 async function fetchManifestAndIcon(packageName, verbose = false) {
-  const manifestUrl = `${RAW_BASE}/${packageName}/manifest.json`;
+  const manifestUrl = `${RAW_LOGSEQ_MARKETPLACE_PACKAGES_URL}/${packageName}/manifest.json`;
   try {
     const res = await fetch(manifestUrl, {headers: getGithubHeaders()});
     if (!res.ok) {
@@ -162,7 +166,7 @@ async function fetchManifestAndIcon(packageName, verbose = false) {
 
     // Add iconUrl if icon is present, using raw.githubusercontent.com for CORS compatibility
     if (manifest.icon) {
-      manifest.iconUrl = `${RAW_BASE}/${packageName}/${manifest.icon}`;
+      manifest.iconUrl = `${RAW_LOGSEQ_MARKETPLACE_PACKAGES_URL}/${packageName}/${manifest.icon}`;
     } else {
       manifest.iconUrl = "";
     }
@@ -183,7 +187,7 @@ async function fetchManifestAndIcon(packageName, verbose = false) {
  * @returns {Promise<{created_at: string, last_updated: string}>} Commit date info.
  */
 async function fetchCommitDates(packageName, verbose = false) {
-  const commitsApi = `https://api.github.com/repos/logseq/marketplace/commits?path=packages/${packageName}&per_page=100`;
+  const commitsApi = `${COMMITS_API}/${packageName}&per_page=100`;
   try {
     const res = await fetch(commitsApi, {headers: getGithubHeaders()});
     if (!res.ok) {
