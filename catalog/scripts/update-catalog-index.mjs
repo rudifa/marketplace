@@ -9,7 +9,7 @@ import fs from "fs";
 // Usage: node update-catalog-index.js
 // Output: catalog/index.html
 
-const OUTPUT_DIR = "catalog";
+const OUTPUT_DIR = ".";
 const OUTPUT_FILE = "index.html";
 const RESULTS_FILE = "results.json";
 
