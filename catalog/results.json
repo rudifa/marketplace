@@ -769,8 +769,8 @@
     "dir": "logseq-calview-plugin",
     "iconUrl": "https://raw.githubusercontent.com/logseq/marketplace/master/packages/logseq-calview-plugin/./icon.svg",
     "readmeUrl": "https://raw.githubusercontent.com/hkgnp/logseq-calview-plugin/main/README.md",
-    "created_at": "",
-    "last_updated": "",
+    "created_at": "2022-02-20T16:12:35Z",
+    "last_updated": "2022-02-20T16:12:35Z",
     "error": ""
   },
   {
@@ -782,8 +782,8 @@
     "dir": "logseq-cardbox",
     "iconUrl": "https://raw.githubusercontent.com/logseq/marketplace/master/packages/logseq-cardbox/./icon.png",
     "readmeUrl": "https://raw.githubusercontent.com/sosuisen/logseq-cardbox/main/README.md",
-    "created_at": "",
-    "last_updated": "",
+    "created_at": "2023-11-16T05:02:31Z",
+    "last_updated": "2023-11-16T05:02:31Z",
     "error": ""
   },
   {
@@ -795,8 +795,8 @@
     "dir": "logseq-case-converter",
     "iconUrl": "https://raw.githubusercontent.com/logseq/marketplace/master/packages/logseq-case-converter/icon.png",
     "readmeUrl": "https://raw.githubusercontent.com/sawhney17/logseq-case-converter/main/README.md",
-    "created_at": "",
-    "last_updated": "",
+    "created_at": "2022-02-14T08:55:41Z",
+    "last_updated": "2022-03-23T05:11:06Z",
     "error": ""
   },
   {
@@ -808,8 +808,8 @@
     "dir": "logseq-catppuccin",
     "iconUrl": "https://raw.githubusercontent.com/logseq/marketplace/master/packages/logseq-catppuccin/icon.png",
     "readmeUrl": "https://raw.githubusercontent.com/catppuccin/logseq/main/README.md",
-    "created_at": "",
-    "last_updated": "",
+    "created_at": "2023-01-29T21:48:22Z",
+    "last_updated": "2023-01-29T21:51:41Z",
     "error": ""
   },
   {
@@ -821,8 +821,8 @@
     "dir": "logseq-charspacing",
     "iconUrl": "https://raw.githubusercontent.com/logseq/marketplace/master/packages/logseq-charspacing/./icon.png",
     "readmeUrl": null,
-    "created_at": "",
-    "last_updated": "",
+    "created_at": "2021-12-14T09:48:08Z",
+    "last_updated": "2023-05-29T02:34:46Z",
     "error": "Missing README"
   },
   {
@@ -834,8 +834,8 @@
     "dir": "logseq-chartrender-plugin",
     "iconUrl": "https://raw.githubusercontent.com/logseq/marketplace/master/packages/logseq-chartrender-plugin/./icon.svg",
     "readmeUrl": "https://raw.githubusercontent.com/hkgnp/logseq-chartrender-plugin/main/README.md",
-    "created_at": "",
-    "last_updated": "",
+    "created_at": "2021-12-31T16:32:25Z",
+    "last_updated": "2022-02-06T03:04:26Z",
     "error": ""
   }
 ]
