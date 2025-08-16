@@ -42,8 +42,6 @@ main({verbose}).then(() => {
   process.exit(0);
 });
 
-
-
 /**
  * Main entry point for fetching Logseq marketplace plugin data and generating HTML output.
  * @param {Object} options
@@ -55,10 +53,15 @@ async function main({verbose = false} = {}) {
     const packages = await fetchPackageList(verbose);
 
     // Process packages using the worker function
-    const { results, errorOccurred } = await worker(packages, maxItems, verbose, retrievePackageDetails);
+    const {results, errorOccurred} = await worker(
+      packages,
+      maxItems,
+      verbose,
+      retrievePackageDetails
+    );
 
     if (errorOccurred) {
-      console.log('Processing stopped due to an error or rate limit.');
+      console.log("Processing stopped due to an error or rate limit.");
     }
 
     // // Filter out null results and sort by last_updated
@@ -94,7 +97,7 @@ async function main({verbose = false} = {}) {
     );
     console.log("Package Details saved to", `${outDir}/${RESULTS_FILE}`);
   } catch (e) {
-    console.error(e);
+    console.error("Error caught in main:", e.message);
   }
 }
 
@@ -118,7 +121,10 @@ async function worker(packages, maxItems, verbose, processFunction) {
 
   async function processPackages() {
     while (!errorOccurred) {
-      if (idx >= packages.length || (maxItems !== undefined && idx >= maxItems)) {
+      if (
+        idx >= packages.length ||
+        (maxItems !== undefined && idx >= maxItems)
+      ) {
         return;
       }
       const myIdx = idx++;
@@ -137,8 +143,11 @@ async function worker(packages, maxItems, verbose, processFunction) {
         }
       } catch (error) {
         console.error(`Error processing package ${pkg.name}:`, error);
-        if (error.message.includes('Rate limited') || error.message.includes('Too many requests')) {
-          console.error('Rate limit reached. Stopping all workers.');
+        if (
+          error.message.includes("Rate limited") ||
+          error.message.includes("Too many requests")
+        ) {
+          console.error("Rate limit reached. Stopping all workers.");
           errorOccurred = true;
           break;
         }
@@ -149,7 +158,7 @@ async function worker(packages, maxItems, verbose, processFunction) {
   const CONCURRENCY = 10;
   await Promise.all(Array(CONCURRENCY).fill().map(processPackages));
 
-  return { results, errorOccurred };
+  return {results, errorOccurred};
 }
 
 /**
@@ -164,7 +173,10 @@ async function fetchPackageList(verbose = false) {
       LOGSEQ_MARKETPLACE_PACKAGES_URL
     );
 
-  const res = await fetchWithCheck(LOGSEQ_MARKETPLACE_PACKAGES_URL, "fetchPackageList");
+  const res = await fetchWithCheck(
+    LOGSEQ_MARKETPLACE_PACKAGES_URL,
+    "fetchPackageList"
+  );
   if (!res) return [];
 
   const data = await res.json();
@@ -292,25 +304,26 @@ async function fetchCommitDates(packageName, verbose = false) {
 
     const res = await fetchWithCheck(commitsApi, "fetchCommitDates");
     if (!res) {
-      return { created_at: "", last_updated: "" };
+      return {created_at: "", last_updated: ""};
     }
 
     const commits = await res.json();
 
     if (!Array.isArray(commits) || commits.length === 0) {
-      return { created_at: "", last_updated: "" };
+      return {created_at: "", last_updated: ""};
     }
 
     // Commits are returned newest first
     const last_updated = commits[0]?.commit?.committer?.date || "";
-    const created_at = commits[commits.length - 1]?.commit?.committer?.date || "";
+    const created_at =
+      commits[commits.length - 1]?.commit?.committer?.date || "";
 
     process.stdout.write(".");
-    return { created_at, last_updated };
+    return {created_at, last_updated};
   } catch (err) {
     process.stdout.write("?");
     console.error(`Error fetching commit dates for ${packageName}:`, err);
-    return { created_at: "", last_updated: "" };
+    return {created_at: "", last_updated: ""};
   }
 }
 
@@ -344,33 +357,28 @@ async function getValidReadmeUrl(repo) {
  * @throws {Error} Throws an error for rate limiting (403) or too many requests (429).
  */
 async function fetchWithCheck(url, caller, options = {}) {
-  try {
-    const res = await fetch(url, { ...options, headers: getGithubHeaders() });
-    if (!res.ok) {
-      let errorText = "";
-      try {
-        errorText = await res.text();
-      } catch (e) {
-        errorText = "(could not read error body)";
-      }
-      console.error(
-        `${caller}: Failed to fetch. Status: ${res.status} ${res.statusText}. Body: ${errorText}`
-      );
-
-      // Throw for rate limiting or too many requests
-      if (res.status === 403) {
-        throw new Error(`${caller}: Rate limited. Status: ${res.status}`);
-      } else if (res.status === 429) {
-        throw new Error(`${caller}: Too many requests. Status: ${res.status}`);
-      }
-
-      return null;
+  const res = await fetch(url, {...options, headers: getGithubHeaders()});
+  if (!res.ok) {
+    let errorText = "";
+    try {
+      errorText = await res.text();
+    } catch (e) {
+      errorText = "(could not read error body)";
     }
-    return res;
-  } catch (error) {
-    console.error(`${caller}: Error during fetch:`, error);
-    throw error;
+    console.error(
+      `${caller}: Failed to fetch. Status: ${res.status} ${res.statusText}. Body: ${errorText}`
+    );
+
+    // Throw for rate limiting or too many requests
+    if (res.status === 403) {
+      throw new Error(`${caller}: Rate limited. Status: ${res.status}`);
+    } else if (res.status === 429) {
+      throw new Error(`${caller}: Too many requests. Status: ${res.status}`);
+    }
+
+    return null;
   }
+  return res;
 }
 
 /**
