@@ -1,0 +1,14 @@
+{
+  "name": "logseq-marketplace-catalog",
+  "version": "1.0.0",
+  "author": "rudifa",
+  "type": "module",
+  "scripts": {
+    "build": "scripts/update-catalog-index.mjs",
+    "dev": "scripts/update-catalog-index.mjs --max 12",
+    "preview": "open index.html"
+  },
+  "dependencies": {
+    "node-fetch": "^3.3.2"
+  }
+}
