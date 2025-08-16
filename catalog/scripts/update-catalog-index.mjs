@@ -48,7 +48,6 @@ main({verbose}).then(() => {
  * @param {boolean} options.verbose - Enable verbose logging.
  */
 async function main({verbose = false} = {}) {
-  getGithubHeaders(true);
   try {
     // Fetch package list from GitHub logseq marketplace repo
     const packages = await fetchPackageList(verbose);
