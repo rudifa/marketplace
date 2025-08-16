@@ -416,7 +416,15 @@ function generateHtml(results) {
   const rows = results.map(generateTableRow).join("");
   const clientScripts = generateClientScripts();
   const now = new Date();
-  const formattedDate = now.toLocaleString('en-GB', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' }).replace(/\//g, '-');
+  const formattedDate = now.toLocaleString('en-GB', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    timeZone: 'UTC'
+  }).replace(/\//g, '-');
   const numPackages = results.length;
 
   return `<!DOCTYPE html>
@@ -453,7 +461,7 @@ function generateHtml(results) {
         </div>
       </div>
       <div class="footer">
-        Page generated: <span id="footer-date">${formattedDate}</span> &mdash; Plugins listed: <span id="footer-count">${numPackages}</span>
+        Page generated: <span id="footer-date">${formattedDate} UTC</span> &mdash; Plugins listed: <span id="footer-count">${numPackages}</span>
       </div>
       <script>${clientScripts}</script>
     </body>
