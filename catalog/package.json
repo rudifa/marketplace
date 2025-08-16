@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "scripts/update-catalog-index.mjs",
-    "dev": "scripts/update-catalog-index.mjs --max 12",
+    "dev": "scripts/update-catalog-index.mjs --max 24",
     "preview": "open index.html"
   },
   "dependencies": {

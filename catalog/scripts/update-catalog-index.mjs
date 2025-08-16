@@ -482,6 +482,8 @@ function generateStyles() {
       flex-direction: column;
       min-height: 100vh;
       box-sizing: border-box;
+      background-color: #012b36;
+      border: 1px solid #85c8c8;
     }
     header {
       background-color: #012b36;
@@ -495,19 +497,25 @@ function generateStyles() {
     }
     main {
       flex: 1;
-      padding: 20px;
+      padding: 20px 15px 20px 15px;
+      background-color: white;
+      margin: 0 15px 0 15px;
     }
     .table-container {
-      margin-bottom: 3em;
+      margin-bottom: 2em;
+    }
+    #plugins tbody tr:hover {
+      background-color: #eafafa !important;
+      border-left: 4px solid #85c8c8;
+      transition: background 0.2s, border 0.2s;
     }
     .footer {
-      background-color: #f5f5f5;
       padding: 1.5em 0 1em 0;
       text-align: center;
-      color: #888;
       font-size: 0.95em;
-      border-top: 1px solid #e0e0e0;
       margin-top: 0;
+      color: #85c8c8;
+      background-color: #012b36;
     }
     div.dataTables_wrapper {
       width: 100%;
@@ -521,6 +529,7 @@ function generateStyles() {
     .dataTables_filter input {
       width: 250px;
       padding: 5px;
+      margin: 0 15px 10px 0;
     }
     .modal-bg {
       display: none;
@@ -566,6 +575,30 @@ function generateStyles() {
     .modal-body {
       padding: 1em;
     }
+
+    #plugins {
+      width: 100% !important;
+      table-layout: fixed;
+    }
+
+    #plugins th, #plugins td {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 0;
+    }
+
+    #plugins th {
+      position: sticky;
+      top: 0;
+      background-color: #f8f8f8;
+      z-index: 1;
+    }
+
+    .dataTables_wrapper .dataTables_scroll {
+      overflow: auto;
+    }
+
   `;
 }
 
@@ -755,11 +788,63 @@ function closeReadmeModal() {
  * Initializes the DataTable for the plugins table.
  */
 function initDataTable() {
-  $("#plugins").DataTable({
+  const table = $("#plugins").DataTable({
     paging: false,
     scrollY: "70vh",
     scrollCollapse: true,
     info: false,
     order: [], // No initial sort, preserve server order, but allow user sorting
+    autoWidth: false, // Disable auto-width calculation
+    columnDefs: [
+      { width: '40px', targets: 0, className: 'icon-column' },
+      { width: '100px', targets: 1, className: 'name-column' },
+      { width: '250px', targets: 2, className: 'description-column' },
+      { width: '100px', targets: 3, className: 'author-column' },
+      { width: '150px', targets: 4, className: 'repo-column' },
+      { width: '80px', targets: 5, className: 'created-column' },
+      { width: '80px', targets: 6, className: 'updated-column' },
+      { width: '100px', targets: 7, className: 'error-column' }
+    ]
   });
+
+  function adjustColumnWidths() {
+    const tableWidth = $('#plugins').width();
+
+    // Define minimum widths for each column
+    const minWidths = [40, 80, 150, 80, 100, 80, 80, 80];
+
+    // Calculate available width after accounting for minimum widths
+    const availableWidth = tableWidth - minWidths.reduce((a, b) => a + b, 0);
+
+    // Define relative weights for flexible columns
+    const weights = [0, 1, 3, 1, 2, 1, 1, 1];
+    const totalWeight = weights.reduce((a, b) => a + b, 0);
+
+    // Calculate and set new widths
+    table.columns().every(function(index) {
+      const minWidth = minWidths[index];
+      const weight = weights[index];
+      let newWidth = Math.max(minWidth, minWidth + (availableWidth * (weight / totalWeight)));
+
+      $(this.header()).css({
+        'width': newWidth + 'px',
+        'min-width': minWidth + 'px',
+        'white-space': 'normal'
+      });
+
+      this.nodes().to$().css({
+        'width': newWidth + 'px',
+        'min-width': minWidth + 'px',
+        'white-space': 'normal'
+      });
+    });
+
+    table.columns.adjust().draw();
+  }
+
+  // Initial adjustment
+  adjustColumnWidths();
+
+  // Adjust on window resize
+  $(window).on('resize', adjustColumnWidths);
 }
