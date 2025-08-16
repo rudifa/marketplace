@@ -415,28 +415,34 @@ function generateHtml(results) {
   const header = generateTableHeader();
   const rows = results.map(generateTableRow).join("");
   const clientScripts = generateClientScripts();
+  const now = new Date();
+  const formattedDate = now.toLocaleString('en-GB', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' }).replace(/\//g, '-');
+  const numPackages = results.length;
 
   return `<!DOCTYPE html>
-    <html>
+    <html lang="en">
     <head>
       <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <title>Logseq Marketplace Plugins</title>
       <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
       <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
       <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-      <style>
-        ${styles}
-      </style>
+      <style>${styles}</style>
     </head>
     <body>
-      <h1>Logseq Marketplace Plugins</h1>
-      <table id="plugins" class="display">
-        <thead>
-          ${header}
-        </thead>
-        <tbody>${rows}</tbody>
-      </table>
+      <header>
+        <h1>Logseq Marketplace Plugins</h1>
+      </header>
+      <main>
+        <div class="table-container">
+          <table id="plugins" class="display">
+            <thead>${header}</thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>
+      </main>
       <div class="modal-bg" id="readme-modal-bg">
         <div class="modal-content">
           <div class="modal-header">
@@ -446,91 +452,108 @@ function generateHtml(results) {
           <div class="modal-body" id="readme-modal-content">Loading...</div>
         </div>
       </div>
-      <script>
-        ${clientScripts}
-      </script>
+      <div class="footer">
+        Page generated: <span id="footer-date">${formattedDate}</span> &mdash; Plugins listed: <span id="footer-count">${numPackages}</span>
+      </div>
+      <script>${clientScripts}</script>
     </body>
     </html>`;
 }
 
-/**
- * Generates the CSS styles for the HTML page.
- * @returns {string} CSS styles as a string.
- */
 function generateStyles() {
   return `
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 20px;
-        box-sizing: border-box;
-      }
-      h1 {
-        text-align: center;
-        margin: 0;
-        padding: 20px;
-        width: 100%;
-        font-size: 24px;
-        color: #85c8c8;
-        background-color: #012b36;
-      }
-      div.dataTables_wrapper {
-        width: 100%;
-        margin: 0 auto;
-      }
-      /* Modal styles */
-      .modal-bg {
-        display: none;
-        position: fixed;
-        z-index: 1000;
-        left: 0; top: 0; width: 100vw; height: 100vh;
-        background: rgba(0,0,0,0.5);
-        justify-content: center; align-items: center;
-      }
-      .modal-content {
-        background: #fff;
-        max-width: 80vw;
-        max-height: 80vh;
-        overflow: auto;
-        border-radius: 8px;
-        position: relative;
-        transform: scale(0.7);
-        opacity: 0;
-        transition: transform 0.25s ease, opacity 0.2s;
-      }
-      .modal-content.modal-animate {
-        transform: scale(1);
-        opacity: 1;
-      }
-      .modal-header {
-        position: sticky;
-        top: 0;
-        background-color: #fff;
-        padding: 1em;
-        border-bottom: 1px solid #ddd;
-        z-index: 1001;
-      }
-      .modal-close {
-        float: right;
-        font-size: 2em;
-        color: #888;
-        cursor: pointer;
-      }
-      .modal-body {
-        padding: 1em;
-      }
-      /* Custom styles for the search box */
-      .dataTables_filter {
-        float: right;
-        margin-right: 0px;
-        margin-bottom: 10px;
-      }
-      .dataTables_filter input {
-        width: 250px;
-        padding: 5px;
-      }
-    </style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      box-sizing: border-box;
+    }
+    header {
+      background-color: #012b36;
+      padding: 20px;
+      text-align: center;
+    }
+    h1 {
+      margin: 0;
+      color: #85c8c8;
+      font-size: 24px;
+    }
+    main {
+      flex: 1;
+      padding: 20px;
+    }
+    .table-container {
+      margin-bottom: 3em;
+    }
+    .footer {
+      background-color: #f5f5f5;
+      padding: 1.5em 0 1em 0;
+      text-align: center;
+      color: #888;
+      font-size: 0.95em;
+      border-top: 1px solid #e0e0e0;
+      margin-top: 0;
+    }
+    div.dataTables_wrapper {
+      width: 100%;
+      margin: 0 auto;
+    }
+    .dataTables_filter {
+      float: right;
+      margin-right: 0;
+      margin-bottom: 10px;
+    }
+    .dataTables_filter input {
+      width: 250px;
+      padding: 5px;
+    }
+    .modal-bg {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-content {
+      background: #fff;
+      max-width: 80vw;
+      max-height: 80vh;
+      overflow: auto;
+      border-radius: 8px;
+      position: relative;
+      transform: scale(0.7);
+      opacity: 0;
+      transition: transform 0.25s ease, opacity 0.2s;
+    }
+    .modal-content.modal-animate {
+      transform: scale(1);
+      opacity: 1;
+    }
+    .modal-header {
+      position: sticky;
+      top: 0;
+      background-color: #fff;
+      padding: 1em;
+      border-bottom: 1px solid #ddd;
+      z-index: 1001;
+    }
+    .modal-close {
+      float: right;
+      font-size: 2em;
+      color: #888;
+      cursor: pointer;
+    }
+    .modal-body {
+      padding: 1em;
+    }
   `;
 }
 

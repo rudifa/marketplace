@@ -1,94 +1,116 @@
 <!DOCTYPE html>
-    <html>
+    <html lang="en">
     <head>
       <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <title>Logseq Marketplace Plugins</title>
       <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
       <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
       <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
       <style>
-        
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 20px;
-        box-sizing: border-box;
-      }
-      h1 {
-        text-align: center;
-        margin: 0;
-        padding: 20px;
-        width: 100%;
-        font-size: 24px;
-        color: #85c8c8;
-        background-color: #012b36;
-      }
-      div.dataTables_wrapper {
-        width: 100%;
-        margin: 0 auto;
-      }
-      /* Modal styles */
-      .modal-bg {
-        display: none;
-        position: fixed;
-        z-index: 1000;
-        left: 0; top: 0; width: 100vw; height: 100vh;
-        background: rgba(0,0,0,0.5);
-        justify-content: center; align-items: center;
-      }
-      .modal-content {
-        background: #fff;
-        max-width: 80vw;
-        max-height: 80vh;
-        overflow: auto;
-        border-radius: 8px;
-        position: relative;
-        transform: scale(0.7);
-        opacity: 0;
-        transition: transform 0.25s ease, opacity 0.2s;
-      }
-      .modal-content.modal-animate {
-        transform: scale(1);
-        opacity: 1;
-      }
-      .modal-header {
-        position: sticky;
-        top: 0;
-        background-color: #fff;
-        padding: 1em;
-        border-bottom: 1px solid #ddd;
-        z-index: 1001;
-      }
-      .modal-close {
-        float: right;
-        font-size: 2em;
-        color: #888;
-        cursor: pointer;
-      }
-      .modal-body {
-        padding: 1em;
-      }
-      /* Custom styles for the search box */
-      .dataTables_filter {
-        float: right;
-        margin-right: 0px;
-        margin-bottom: 10px;
-      }
-      .dataTables_filter input {
-        width: 250px;
-        padding: 5px;
-      }
-    </style>
-  
-      </style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      box-sizing: border-box;
+    }
+    header {
+      background-color: #012b36;
+      padding: 20px;
+      text-align: center;
+    }
+    h1 {
+      margin: 0;
+      color: #85c8c8;
+      font-size: 24px;
+    }
+    main {
+      flex: 1;
+      padding: 20px;
+    }
+    .table-container {
+      margin-bottom: 3em;
+    }
+    .footer {
+      background-color: #f5f5f5;
+      padding: 1.5em 0 1em 0;
+      text-align: center;
+      color: #888;
+      font-size: 0.95em;
+      border-top: 1px solid #e0e0e0;
+      margin-top: 0;
+    }
+    div.dataTables_wrapper {
+      width: 100%;
+      margin: 0 auto;
+    }
+    .dataTables_filter {
+      float: right;
+      margin-right: 0;
+      margin-bottom: 10px;
+    }
+    .dataTables_filter input {
+      width: 250px;
+      padding: 5px;
+    }
+    .modal-bg {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-content {
+      background: #fff;
+      max-width: 80vw;
+      max-height: 80vh;
+      overflow: auto;
+      border-radius: 8px;
+      position: relative;
+      transform: scale(0.7);
+      opacity: 0;
+      transition: transform 0.25s ease, opacity 0.2s;
+    }
+    .modal-content.modal-animate {
+      transform: scale(1);
+      opacity: 1;
+    }
+    .modal-header {
+      position: sticky;
+      top: 0;
+      background-color: #fff;
+      padding: 1em;
+      border-bottom: 1px solid #ddd;
+      z-index: 1001;
+    }
+    .modal-close {
+      float: right;
+      font-size: 2em;
+      color: #888;
+      cursor: pointer;
+    }
+    .modal-body {
+      padding: 1em;
+    }
+  </style>
     </head>
     <body>
-      <h1>Logseq Marketplace Plugins</h1>
-      <table id="plugins" class="display">
-        <thead>
-          
+      <header>
+        <h1>Logseq Marketplace Plugins</h1>
+      </header>
+      <main>
+        <div class="table-container">
+          <table id="plugins" class="display">
+            <thead>
       <tr>
         <th>Icon</th>
         <th>Name</th>
@@ -99,9 +121,8 @@
         <th>Last Updated</th>
         <th>Error</th>
       </tr>
-  
-        </thead>
-        <tbody>
+  </thead>
+            <tbody>
     <tr>
       <td><img src="https://raw.githubusercontent.com/logseq/marketplace/master/packages/block-pin/icon.png" alt="icon" width="24" height="24"></td>
       <td>block-pin</td>
@@ -233,591 +254,10 @@
       <td>2023-01-06</td>
       <td></td>
     </tr>
-  
-    <tr>
-      <td><img src="https://raw.githubusercontent.com/logseq/marketplace/master/packages/logseq-ac-keijiban/icon.png" alt="icon" width="24" height="24"></td>
-      <td>logseq-ac-keijiban</td>
-      <td><a href="#" onclick="showReadmeModal('https://raw.githubusercontent.com/matteron/logseq-ac-keijiban/main/README.md')">Display a random quote from the bullitein board in Animal Crossing Wild World</a></td>
-      <td>breadfruit_burial</td>
-      <td><a href="https://github.com/matteron/logseq-ac-keijiban" target="_blank">matteron/logseq-ac-keijiban</a></td>
-      <td>2023-11-09</td>
-      <td>2023-11-09</td>
-      <td></td>
-    </tr>
-  
-    <tr>
-      <td><img src="https://raw.githubusercontent.com/logseq/marketplace/master/packages/logseq-add-para-properties/icon.png" alt="icon" width="24" height="24"></td>
-      <td>logseq-add-para-properties</td>
-      <td><a href="#" onclick="showReadmeModal('https://raw.githubusercontent.com/georgeguimaraes/logseq-plugin-add-PARA-properties/main/README.md')">Easily add PARA into your workflow. Comes with a PARA page to list all your Projects, Areas, Resources.</a></td>
-      <td>George Guimarães</td>
-      <td><a href="https://github.com/georgeguimaraes/logseq-plugin-add-PARA-properties" target="_blank">georgeguimaraes/logseq-plugin-add-PARA-properties</a></td>
-      <td>2023-08-29</td>
-      <td>2023-08-29</td>
-      <td></td>
-    </tr>
-  
-    <tr>
-      <td><img src="https://raw.githubusercontent.com/logseq/marketplace/master/packages/logseq-agenda/icon.png" alt="icon" width="24" height="24"></td>
-      <td>logseq-agenda</td>
-      <td><a href="#" onclick="showReadmeModal('https://raw.githubusercontent.com/haydenull/logseq-plugin-agenda/main/README.md')">An agenda manager plugin for logseq</a></td>
-      <td>haydenull</td>
-      <td><a href="https://github.com/haydenull/logseq-plugin-agenda" target="_blank">haydenull/logseq-plugin-agenda</a></td>
-      <td>2022-03-06</td>
-      <td>2022-03-15</td>
-      <td></td>
-    </tr>
-  
-    <tr>
-      <td></td>
-      <td>logseq-ai-assistant</td>
-      <td>A Logseq plugin empowered by AI for effortless note-taking.</td>
-      <td>unickcheng</td>
-      <td><a href="https://github.com/UNICKCHENG/logseq-ai-assistant" target="_blank">UNICKCHENG/logseq-ai-assistant</a></td>
-      <td>2023-05-31</td>
-      <td>2023-06-01</td>
-      <td>Missing package icon, Missing README</td>
-    </tr>
-  
-    <tr>
-      <td><img src="https://raw.githubusercontent.com/logseq/marketplace/master/packages/logseq-ai-auto-tags/./logo.svg" alt="icon" width="24" height="24"></td>
-      <td>logseq-ai-auto-tags</td>
-      <td><a href="#" onclick="showReadmeModal('https://raw.githubusercontent.com/b-yp/logseq-ai-auto-tags/master/README.md')">Using AI to automatically tag blocks and pages</a></td>
-      <td>b-yp</td>
-      <td><a href="https://github.com/b-yp/logseq-ai-auto-tags" target="_blank">b-yp/logseq-ai-auto-tags</a></td>
-      <td>2023-11-01</td>
-      <td>2023-11-01</td>
-      <td></td>
-    </tr>
-  
-    <tr>
-      <td><img src="https://raw.githubusercontent.com/logseq/marketplace/master/packages/logseq-ai-query-generator/./logo.png" alt="icon" width="24" height="24"></td>
-      <td>logseq-plugin-ai-query</td>
-      <td><a href="#" onclick="showReadmeModal('https://raw.githubusercontent.com/dailydaniel/logseq-plugin-ai-query/main/README.md')">Logseq plugin to generate advanced queries by typing in natural language</a></td>
-      <td>Daniel Zholkovsky</td>
-      <td><a href="https://github.com/dailydaniel/logseq-plugin-ai-query" target="_blank">dailydaniel/logseq-plugin-ai-query</a></td>
-      <td>2024-08-30</td>
-      <td>2024-08-30</td>
-      <td></td>
-    </tr>
-  
-    <tr>
-      <td><img src="https://raw.githubusercontent.com/logseq/marketplace/master/packages/logseq-aisearch/icon.svg" alt="icon" width="24" height="24"></td>
-      <td>logseq-aisearch</td>
-      <td>Perform a global search within the logseq document and output relevant content.</td>
-      <td>Chii_Magnus</td>
-      <td><a href="https://github.com/chiimagnus/logseq-AIsearch" target="_blank">chiimagnus/logseq-AIsearch</a></td>
-      <td>2024-10-23</td>
-      <td>2025-02-19</td>
-      <td>Missing README</td>
-    </tr>
-  
-    <tr>
-      <td><img src="https://raw.githubusercontent.com/logseq/marketplace/master/packages/logseq-allday-theme/icon.png" alt="icon" width="24" height="24"></td>
-      <td>logseq-allday-theme</td>
-      <td><a href="#" onclick="showReadmeModal('https://raw.githubusercontent.com/ttytm/logseq-allday-theme/main/README.md')">A clean theme styled for high readability and minimal eye strain.</a></td>
-      <td>Turiiya</td>
-      <td><a href="https://github.com/ttytm/logseq-allday-theme" target="_blank">ttytm/logseq-allday-theme</a></td>
-      <td>2021-12-15</td>
-      <td>2023-08-09</td>
-      <td></td>
-    </tr>
-  
-    <tr>
-      <td><img src="https://raw.githubusercontent.com/logseq/marketplace/master/packages/logseq-anki-sync/./icon.png" alt="icon" width="24" height="24"></td>
-      <td>logseq-anki-sync</td>
-      <td><a href="#" onclick="showReadmeModal('https://raw.githubusercontent.com/debanjandhar12/logseq-anki-sync/main/README.md')">An logseq to anki syncing plugin with superpowers - image occlusion, card direction, incremental cards, and a lot more.</a></td>
-      <td>debanjandhar12</td>
-      <td><a href="https://github.com/debanjandhar12/logseq-anki-sync" target="_blank">debanjandhar12/logseq-anki-sync</a></td>
-      <td>2021-12-12</td>
-      <td>2024-02-23</td>
-      <td></td>
-    </tr>
-  
-    <tr>
-      <td><img src="https://raw.githubusercontent.com/logseq/marketplace/master/packages/logseq-another-embed/./icon.png" alt="icon" width="24" height="24"></td>
-      <td>logseq-another-embed</td>
-      <td>This plugin provides 2 extra ways to embed blocks/pages.</td>
-      <td>sethyuan</td>
-      <td><a href="https://github.com/sethyuan/logseq-plugin-another-embed" target="_blank">sethyuan/logseq-plugin-another-embed</a></td>
-      <td>2022-08-02</td>
-      <td>2023-05-29</td>
-      <td>Missing README</td>
-    </tr>
-  
-    <tr>
-      <td><img src="https://raw.githubusercontent.com/logseq/marketplace/master/packages/logseq-arc-theme/arc-icon.png" alt="icon" width="24" height="24"></td>
-      <td>logseq-arc-theme</td>
-      <td><a href="#" onclick="showReadmeModal('https://raw.githubusercontent.com/andyburris/logseq-arc-theme/main/README.md')"> A Logseq theme based on Arc by The Browser Company</a></td>
-      <td>@andyburris</td>
-      <td><a href="https://github.com/andyburris/logseq-arc-theme" target="_blank">andyburris/logseq-arc-theme</a></td>
-      <td>2022-09-28</td>
-      <td>2022-09-28</td>
-      <td></td>
-    </tr>
-  
-    <tr>
-      <td><img src="https://raw.githubusercontent.com/logseq/marketplace/master/packages/logseq-archive-webpage/icon.png" alt="icon" width="24" height="24"></td>
-      <td>logseq-archive-webpage</td>
-      <td><a href="#" onclick="showReadmeModal('https://raw.githubusercontent.com/patmigliaccio/logseq-archive-webpage/main/README.md')">Archive URLs directly in Logseq and save locally.</a></td>
-      <td>Pat Migliaccio</td>
-      <td><a href="https://github.com/patmigliaccio/logseq-archive-webpage" target="_blank">patmigliaccio/logseq-archive-webpage</a></td>
-      <td>2023-11-10</td>
-      <td>2023-11-11</td>
-      <td></td>
-    </tr>
-  
-    <tr>
-      <td><img src="https://raw.githubusercontent.com/logseq/marketplace/master/packages/logseq-ask-pdf/icon.png" alt="icon" width="24" height="24"></td>
-      <td>logseq-ask-pdf</td>
-      <td><a href="#" onclick="showReadmeModal('https://raw.githubusercontent.com/hi-jin/logseq-ask-pdf/main/README.md')">A plugin that allows you to ask questions about PDF highlights using Large Language Models (LLM)</a></td>
-      <td>hi-jin</td>
-      <td><a href="https://github.com/hi-jin/logseq-ask-pdf" target="_blank">hi-jin/logseq-ask-pdf</a></td>
-      <td>2024-08-05</td>
-      <td>2024-08-13</td>
-      <td></td>
-    </tr>
-  
-    <tr>
-      <td><img src="https://raw.githubusercontent.com/logseq/marketplace/master/packages/logseq-assets-plus/icon.png" alt="icon" width="24" height="24"></td>
-      <td>logseq-assets-plus</td>
-      <td><a href="#" onclick="showReadmeModal('https://raw.githubusercontent.com/xyhp915/logseq-assets-plus/main/README.md')">A Logseq plugin to enhance the assets features.</a></td>
-      <td>xyhp915</td>
-      <td><a href="https://github.com/xyhp915/logseq-assets-plus" target="_blank">xyhp915/logseq-assets-plus</a></td>
-      <td>2023-10-17</td>
-      <td>2023-10-17</td>
-      <td></td>
-    </tr>
-  
-    <tr>
-      <td><img src="https://raw.githubusercontent.com/logseq/marketplace/master/packages/logseq-atlas-theme/icon.png" alt="icon" width="24" height="24"></td>
-      <td>logseq-atlas-theme</td>
-      <td><a href="#" onclick="showReadmeModal('https://raw.githubusercontent.com/sethfair/logseq-atlas-theme/main/README.md')">Atlas theme provides a pure and distraction-free experience with always a dark sidebar.</a></td>
-      <td>Seth Fair</td>
-      <td><a href="https://github.com/sethfair/logseq-atlas-theme" target="_blank">sethfair/logseq-atlas-theme</a></td>
-      <td>2021-11-02</td>
-      <td>2021-11-19</td>
-      <td></td>
-    </tr>
-  
-    <tr>
-      <td><img src="https://raw.githubusercontent.com/logseq/marketplace/master/packages/logseq-atmos-theme/icon.png" alt="icon" width="24" height="24"></td>
-      <td>logseq-atmos-theme</td>
-      <td><a href="#" onclick="showReadmeModal('https://raw.githubusercontent.com/Mat4m0/logseq-atmos-theme/main/README.md')">A theme inspired by One Dark Pro</a></td>
-      <td>Mat4m0</td>
-      <td><a href="https://github.com/Mat4m0/logseq-atmos-theme" target="_blank">Mat4m0/logseq-atmos-theme</a></td>
-      <td>2022-09-19</td>
-      <td>2022-10-11</td>
-      <td></td>
-    </tr>
-  
-    <tr>
-      <td><img src="https://raw.githubusercontent.com/logseq/marketplace/master/packages/logseq-audio-memo/./logo.svg" alt="icon" width="24" height="24"></td>
-      <td>logseq-audio-memo</td>
-      <td><a href="#" onclick="showReadmeModal('https://raw.githubusercontent.com/b-yp/logseq-audio-memo/master/README.md')">Plugin for recording audio and inserting documents.</a></td>
-      <td>b-yp</td>
-      <td><a href="https://github.com/b-yp/logseq-audio-memo" target="_blank">b-yp/logseq-audio-memo</a></td>
-      <td>2023-06-19</td>
-      <td>2023-06-21</td>
-      <td></td>
-    </tr>
-  
-    <tr>
-      <td><img src="https://raw.githubusercontent.com/logseq/marketplace/master/packages/logseq-autoclass-plugin/./logo.png" alt="icon" width="24" height="24"></td>
-      <td>logseq-autoclass-plugin</td>
-      <td><a href="#" onclick="showReadmeModal('https://raw.githubusercontent.com/JWangL5/logseq-autoclass-plugin/master/README.md')">Automatically add the class property</a></td>
-      <td>JWangL5</td>
-      <td><a href="https://github.com/JWangL5/logseq-autoclass-plugin" target="_blank">JWangL5/logseq-autoclass-plugin</a></td>
-      <td>2025-01-09</td>
-      <td>2025-01-09</td>
-      <td></td>
-    </tr>
-  
-    <tr>
-      <td><img src="https://raw.githubusercontent.com/logseq/marketplace/master/packages/logseq-autolink-autotag/./icon.png" alt="icon" width="24" height="24"></td>
-      <td>logseq-autolink-autotag</td>
-      <td><a href="#" onclick="showReadmeModal('https://raw.githubusercontent.com/braladin/logseq-autolink-autotag/main/README.md')">A Logseq plugin to auto-link pages and auto-tag blocks</a></td>
-      <td>braladin</td>
-      <td><a href="https://github.com/braladin/logseq-autolink-autotag" target="_blank">braladin/logseq-autolink-autotag</a></td>
-      <td>2025-04-19</td>
-      <td>2025-04-24</td>
-      <td></td>
-    </tr>
-  
-    <tr>
-      <td></td>
-      <td>logseq-automatic-linker-international</td>
-      <td></td>
-      <td></td>
-      <td></td>
-      <td>2025-02-23</td>
-      <td>2025-02-24</td>
-      <td>Missing manifest</td>
-    </tr>
-  
-    <tr>
-      <td><img src="https://raw.githubusercontent.com/logseq/marketplace/master/packages/logseq-automatic-linker/./logo.png" alt="icon" width="24" height="24"></td>
-      <td>logseq-automatic-linker</td>
-      <td><a href="#" onclick="showReadmeModal('https://raw.githubusercontent.com/sawhney17/logseq-automatic-linker/main/README.md')">A plugin to automatically link to existing pages while typing or parse a block for potential links</a></td>
-      <td>Aryan Sawhney</td>
-      <td><a href="https://github.com/sawhney17/logseq-automatic-linker" target="_blank">sawhney17/logseq-automatic-linker</a></td>
-      <td>2022-05-04</td>
-      <td>2022-05-05</td>
-      <td></td>
-    </tr>
-  
-    <tr>
-      <td><img src="https://raw.githubusercontent.com/logseq/marketplace/master/packages/logseq-awesome-content/icon.png" alt="icon" width="24" height="24"></td>
-      <td>logseq-awesome-content</td>
-      <td><a href="#" onclick="showReadmeModal('https://raw.githubusercontent.com/yoyurec/logseq-awesome-content/main/README.md')">Enhanced content blocks (tasks, quotes, flashcards, headers, queries, diagrams, etc...)</a></td>
-      <td>yoyurec</td>
-      <td><a href="https://github.com/yoyurec/logseq-awesome-content" target="_blank">yoyurec/logseq-awesome-content</a></td>
-      <td>2023-03-06</td>
-      <td>2023-03-06</td>
-      <td></td>
-    </tr>
-  
-    <tr>
-      <td><img src="https://raw.githubusercontent.com/logseq/marketplace/master/packages/logseq-awesome-links/icon.png" alt="icon" width="24" height="24"></td>
-      <td>logseq-awesome-links</td>
-      <td><a href="#" onclick="showReadmeModal('https://raw.githubusercontent.com/yoyurec/logseq-awesome-links/main/README.md')">Favicons for external links, page icons for internal</a></td>
-      <td>yoyurec</td>
-      <td><a href="https://github.com/yoyurec/logseq-awesome-links" target="_blank">yoyurec/logseq-awesome-links</a></td>
-      <td>2022-09-22</td>
-      <td>2023-03-13</td>
-      <td></td>
-    </tr>
-  
-    <tr>
-      <td><img src="https://raw.githubusercontent.com/logseq/marketplace/master/packages/logseq-awesome-props/icon.png" alt="icon" width="24" height="24"></td>
-      <td>logseq-awesome-props</td>
-      <td><a href="#" onclick="showReadmeModal('https://raw.githubusercontent.com/yoyurec/logseq-awesome-props/main/README.md')">Restyled and iconized properties for Logseq ala Notion/Tana</a></td>
-      <td>yoyurec</td>
-      <td><a href="https://github.com/yoyurec/logseq-awesome-props" target="_blank">yoyurec/logseq-awesome-props</a></td>
-      <td>2023-02-15</td>
-      <td>2023-02-15</td>
-      <td></td>
-    </tr>
-  
-    <tr>
-      <td><img src="https://raw.githubusercontent.com/logseq/marketplace/master/packages/logseq-awesome-styler/icon.png" alt="icon" width="24" height="24"></td>
-      <td>logseq-awesome-styler</td>
-      <td><a href="#" onclick="showReadmeModal('https://raw.githubusercontent.com/yoyurec/logseq-awesome-styler/main/README.md')">Totally customizable theme with presets: colors, backgrounds, fonts and sizes, etc...</a></td>
-      <td>yoyurec</td>
-      <td><a href="https://github.com/yoyurec/logseq-awesome-styler" target="_blank">yoyurec/logseq-awesome-styler</a></td>
-      <td>2022-10-02</td>
-      <td>2022-10-21</td>
-      <td></td>
-    </tr>
-  
-    <tr>
-      <td><img src="https://raw.githubusercontent.com/logseq/marketplace/master/packages/logseq-awesome-ui/icon.png" alt="icon" width="24" height="24"></td>
-      <td>logseq-awesome-ui</td>
-      <td><a href="#" onclick="showReadmeModal('https://raw.githubusercontent.com/yoyurec/logseq-awesome-ui/main/README.md')">Reworked, simplified, fixed and pumped-up Logseq layout.</a></td>
-      <td>yoyurec</td>
-      <td><a href="https://github.com/yoyurec/logseq-awesome-ui" target="_blank">yoyurec/logseq-awesome-ui</a></td>
-      <td>2022-09-30</td>
-      <td>2023-03-13</td>
-      <td></td>
-    </tr>
-  
-    <tr>
-      <td><img src="https://raw.githubusercontent.com/logseq/marketplace/master/packages/logseq-banners-plugin/./logo.png" alt="icon" width="24" height="24"></td>
-      <td>logseq-banners-plugin</td>
-      <td><a href="#" onclick="showReadmeModal('https://raw.githubusercontent.com/yoyurec/logseq-banners-plugin/main/README.md')">Enliven your notes with custom Notion style banners and icons!</a></td>
-      <td>Aryan Sawhney & Yurii Piskun</td>
-      <td><a href="https://github.com/yoyurec/logseq-banners-plugin" target="_blank">yoyurec/logseq-banners-plugin</a></td>
-      <td>2022-06-27</td>
-      <td>2022-07-16</td>
-      <td></td>
-    </tr>
-  
-    <tr>
-      <td><img src="https://raw.githubusercontent.com/logseq/marketplace/master/packages/logseq-batch-op/./icon.png" alt="icon" width="24" height="24"></td>
-      <td>logseq-batch-op</td>
-      <td>Perform queries on the current graph and batch process on the results.</td>
-      <td>sethyuan</td>
-      <td><a href="https://github.com/sethyuan/logseq-plugin-batch-op" target="_blank">sethyuan/logseq-plugin-batch-op</a></td>
-      <td>2022-06-24</td>
-      <td>2023-05-29</td>
-      <td>Missing README</td>
-    </tr>
-  
-    <tr>
-      <td><img src="https://raw.githubusercontent.com/logseq/marketplace/master/packages/logseq-bear-cub-theme/icon.png" alt="icon" width="24" height="24"></td>
-      <td>logseq-bear-cub-theme</td>
-      <td><a href="#" onclick="showReadmeModal('https://raw.githubusercontent.com/Sh00Fly/logseq-bear-cub-theme/main/README.md')">The Bear Cub theme is minimalistic and functional.  This theme doesn't distract you with an explosion of color and graphical elements. Instead, it helps you stay focused. It creates a clear distinction between different structural and functional elements, which helps you see a bigger picture at a glance at any time.</a></td>
-      <td>Sh00Fly</td>
-      <td><a href="https://github.com/Sh00Fly/logseq-bear-cub-theme" target="_blank">Sh00Fly/logseq-bear-cub-theme</a></td>
-      <td>2023-06-20</td>
-      <td>2023-06-20</td>
-      <td></td>
-    </tr>
-  
-    <tr>
-      <td><img src="https://raw.githubusercontent.com/logseq/marketplace/master/packages/logseq-bear-theme/icon.png" alt="icon" width="24" height="24"></td>
-      <td>logseq-bear-theme</td>
-      <td><a href="#" onclick="showReadmeModal('https://raw.githubusercontent.com/rcvd/logseq-bear-theme/main/README.md')">You're braver than you believe, stronger than you seem and smarter than you think. A bear theme for Logseq</a></td>
-      <td>Alexander Rink</td>
-      <td><a href="https://github.com/rcvd/logseq-bear-theme" target="_blank">rcvd/logseq-bear-theme</a></td>
-      <td>2021-11-22</td>
-      <td>2022-01-04</td>
-      <td></td>
-    </tr>
-  
-    <tr>
-      <td><img src="https://raw.githubusercontent.com/logseq/marketplace/master/packages/logseq-better-workflow/icon.png" alt="icon" width="24" height="24"></td>
-      <td>logseq-better-workflow</td>
-      <td>Use a visual editor to create custom workflows and cycle though them with a simple click.</td>
-      <td>AlonX2</td>
-      <td><a href="https://github.com/AlonX2/BetterWorkflow" target="_blank">AlonX2/BetterWorkflow</a></td>
-      <td>2025-01-17</td>
-      <td>2025-01-19</td>
-      <td>Missing README</td>
-    </tr>
-  
-    <tr>
-      <td><img src="https://raw.githubusercontent.com/logseq/marketplace/master/packages/logseq-bidi/icon.png" alt="icon" width="24" height="24"></td>
-      <td>logseq-bidi</td>
-      <td><a href="#" onclick="showReadmeModal('https://raw.githubusercontent.com/dobidi/logseq-bidi/main/README.md')">A Logseq plugin for adding bidirectional text support, making it possible to manage knowledge in both LTR and RTL languages.</a></td>
-      <td>Mostafa Ahangarha</td>
-      <td><a href="https://github.com/dobidi/logseq-bidi" target="_blank">dobidi/logseq-bidi</a></td>
-      <td>2023-08-23</td>
-      <td>2023-08-29</td>
-      <td></td>
-    </tr>
-  
-    <tr>
-      <td><img src="https://raw.githubusercontent.com/logseq/marketplace/master/packages/logseq-bionic-speedreader/./icon.png" alt="icon" width="24" height="24"></td>
-      <td>logseq-bionic-speedreader</td>
-      <td><a href="#" onclick="showReadmeModal('https://raw.githubusercontent.com/sawhney17/logseq-bionic-speedreader/main/README.md')">A plugin to help read faster, with better comprehension and more retention.</a></td>
-      <td>Aryan Sawhney</td>
-      <td><a href="https://github.com/sawhney17/logseq-bionic-speedreader" target="_blank">sawhney17/logseq-bionic-speedreader</a></td>
-      <td>2022-05-29</td>
-      <td>2022-05-29</td>
-      <td></td>
-    </tr>
-  
-    <tr>
-      <td><img src="https://raw.githubusercontent.com/logseq/marketplace/master/packages/logseq-block-calendar/icon.png" alt="icon" width="24" height="24"></td>
-      <td>logseq-block-calendar</td>
-      <td><a href="#" onclick="showReadmeModal('https://raw.githubusercontent.com/vipzhicheng/logseq-plugin-block-calendar/master/README.md')">Render a calendar in block, so you can put it onto right sidebar..</a></td>
-      <td>vipzhicheng</td>
-      <td><a href="https://github.com/vipzhicheng/logseq-plugin-block-calendar" target="_blank">vipzhicheng/logseq-plugin-block-calendar</a></td>
-      <td>2022-07-14</td>
-      <td>2022-07-19</td>
-      <td></td>
-    </tr>
-  
-    <tr>
-      <td><img src="https://raw.githubusercontent.com/logseq/marketplace/master/packages/logseq-block-extractor/icon.png" alt="icon" width="24" height="24"></td>
-      <td>logseq-block-extractor</td>
-      <td><a href="#" onclick="showReadmeModal('https://raw.githubusercontent.com/inchanS/logseq-block-extractor/main/README.md')"> Filter the reference block for a specific page in Logseq and download it as a markdown file.</a></td>
-      <td>Inchan Song</td>
-      <td><a href="https://github.com/inchanS/logseq-block-extractor" target="_blank">inchanS/logseq-block-extractor</a></td>
-      <td>2025-06-05</td>
-      <td>2025-06-06</td>
-      <td></td>
-    </tr>
-  
-    <tr>
-      <td><img src="https://raw.githubusercontent.com/logseq/marketplace/master/packages/logseq-block-tabs/./icon.png" alt="icon" width="24" height="24"></td>
-      <td>logseq-block-tabs</td>
-      <td><a href="#" onclick="showReadmeModal('https://raw.githubusercontent.com/jaychinee/logseq-block-tabs/main/README.md')">A logseq plugin to render a tabs in block, Sub-block as tab container.</a></td>
-      <td>jay.chinee@outlook.com</td>
-      <td><a href="https://github.com/jaychinee/logseq-block-tabs" target="_blank">jaychinee/logseq-block-tabs</a></td>
-      <td>2025-08-02</td>
-      <td>2025-08-04</td>
-      <td></td>
-    </tr>
-  
-    <tr>
-      <td><img src="https://raw.githubusercontent.com/logseq/marketplace/master/packages/logseq-block-to-page/icon.png" alt="icon" width="24" height="24"></td>
-      <td>logseq-block-to-page</td>
-      <td><a href="#" onclick="showReadmeModal('https://raw.githubusercontent.com/hyrijk/logseq-plugin-block-to-page/master/README.md')">Turn block into page</a></td>
-      <td>hyrijk</td>
-      <td><a href="https://github.com/hyrijk/logseq-plugin-block-to-page" target="_blank">hyrijk/logseq-plugin-block-to-page</a></td>
-      <td>2021-09-29</td>
-      <td>2021-09-29</td>
-      <td></td>
-    </tr>
-  
-    <tr>
-      <td></td>
-      <td>logseq-blocknav</td>
-      <td><a href="#" onclick="showReadmeModal('https://raw.githubusercontent.com/kerfufflev2/logseq-plugin-blocknav/main/README.md')">Block navigation shortcuts</a></td>
-      <td>KerfuffleV2</td>
-      <td><a href="https://github.com/kerfufflev2/logseq-plugin-blocknav" target="_blank">kerfufflev2/logseq-plugin-blocknav</a></td>
-      <td>2022-05-30</td>
-      <td>2022-05-30</td>
-      <td>Missing package icon</td>
-    </tr>
-  
-    <tr>
-      <td><img src="https://raw.githubusercontent.com/logseq/marketplace/master/packages/logseq-bonofix-theme/icon.png" alt="icon" width="24" height="24"></td>
-      <td>logseq-bonofix-theme</td>
-      <td><a href="#" onclick="showReadmeModal('https://raw.githubusercontent.com/sansui233/logseq-bonofix-theme/master/README.md')">A clean theme focus on bujo and long time focusing experience</a></td>
-      <td>Sansui233</td>
-      <td><a href="https://github.com/sansui233/logseq-bonofix-theme" target="_blank">sansui233/logseq-bonofix-theme</a></td>
-      <td>2021-09-07</td>
-      <td>2021-09-07</td>
-      <td></td>
-    </tr>
-  
-    <tr>
-      <td><img src="https://raw.githubusercontent.com/logseq/marketplace/master/packages/logseq-book-fetch/./icon.png" alt="icon" width="24" height="24"></td>
-      <td>logseq-book-fetch</td>
-      <td><a href="#" onclick="showReadmeModal('https://raw.githubusercontent.com/LuloDev/logseq-book-fetch/main/README.md')">Fetches book data based on an ISBN using the Google Books API.</a></td>
-      <td>LuloDev</td>
-      <td><a href="https://github.com/LuloDev/logseq-book-fetch" target="_blank">LuloDev/logseq-book-fetch</a></td>
-      <td>2024-03-08</td>
-      <td>2024-03-10</td>
-      <td></td>
-    </tr>
-  
-    <tr>
-      <td><img src="https://raw.githubusercontent.com/logseq/marketplace/master/packages/logseq-brc/./icon.png" alt="icon" width="24" height="24"></td>
-      <td>logseq-brc</td>
-      <td><a href="#" onclick="showReadmeModal('https://raw.githubusercontent.com/tejonaco/logseq-brc/master/README.md')">Make block references perdurable adding context</a></td>
-      <td>tejonaco</td>
-      <td><a href="https://github.com/tejonaco/logseq-brc" target="_blank">tejonaco/logseq-brc</a></td>
-      <td>2024-05-01</td>
-      <td>2024-05-01</td>
-      <td></td>
-    </tr>
-  
-    <tr>
-      <td><img src="https://raw.githubusercontent.com/logseq/marketplace/master/packages/logseq-browser/icon.png" alt="icon" width="24" height="24"></td>
-      <td>logseq-browser</td>
-      <td><a href="#" onclick="showReadmeModal('https://raw.githubusercontent.com/haydenull/logseq-plugin-browser/main/README.md')">A browser plugin for logseq</a></td>
-      <td>haydenull</td>
-      <td><a href="https://github.com/haydenull/logseq-plugin-browser" target="_blank">haydenull/logseq-plugin-browser</a></td>
-      <td>2022-01-17</td>
-      <td>2022-01-17</td>
-      <td></td>
-    </tr>
-  
-    <tr>
-      <td><img src="https://raw.githubusercontent.com/logseq/marketplace/master/packages/logseq-bujo-theme/icon.png" alt="icon" width="24" height="24"></td>
-      <td>logseq-bujo-theme</td>
-      <td><a href="#" onclick="showReadmeModal('https://raw.githubusercontent.com/stdword/logseq-bujo-theme/main/README.md')">Sepia, Coffee, White, Black: 4 themes inspired by Bullet Journals</a></td>
-      <td>PiotrSss & stdword</td>
-      <td><a href="https://github.com/stdword/logseq-bujo-theme" target="_blank">stdword/logseq-bujo-theme</a></td>
-      <td>2022-11-12</td>
-      <td>2024-01-13</td>
-      <td></td>
-    </tr>
-  
-    <tr>
-      <td><img src="https://raw.githubusercontent.com/logseq/marketplace/master/packages/logseq-bullet-threading/./logo.png" alt="icon" width="24" height="24"></td>
-      <td>logseq-bullet-threading</td>
-      <td>Add bullet threading to your active blocks in Logseq.</td>
-      <td>pengx17</td>
-      <td><a href="https://github.com/pengx17/logseq-plugin-bullet-threading" target="_blank">pengx17/logseq-plugin-bullet-threading</a></td>
-      <td>2021-12-30</td>
-      <td>2021-12-30</td>
-      <td>Missing README</td>
-    </tr>
-  
-    <tr>
-      <td><img src="https://raw.githubusercontent.com/logseq/marketplace/master/packages/logseq-calendars-plugin/./icon.png" alt="icon" width="24" height="24"></td>
-      <td>logseq-calendars-plugin</td>
-      <td><a href="#" onclick="showReadmeModal('https://raw.githubusercontent.com/sawhney17/logseq-calendars-plugin/main/README.md')">Sync your logseq daily note with your google, icloud or outlook calendar</a></td>
-      <td>Aryan Sawhney</td>
-      <td><a href="https://github.com/sawhney17/logseq-calendars-plugin" target="_blank">sawhney17/logseq-calendars-plugin</a></td>
-      <td>2022-01-28</td>
-      <td>2022-01-28</td>
-      <td></td>
-    </tr>
-  
-    <tr>
-      <td><img src="https://raw.githubusercontent.com/logseq/marketplace/master/packages/logseq-calibre-annotation/./icon.jpg" alt="icon" width="24" height="24"></td>
-      <td>logseq-calibre-annotation</td>
-      <td><a href="#" onclick="showReadmeModal('https://raw.githubusercontent.com/duydl/logseq-calibre-annotation/main/README.md')">View ebooks from Calibre and sync annotations</a></td>
-      <td>duydl</td>
-      <td><a href="https://github.com/duydl/logseq-calibre-annotation" target="_blank">duydl/logseq-calibre-annotation</a></td>
-      <td>2023-10-01</td>
-      <td>2023-10-01</td>
-      <td></td>
-    </tr>
-  
-    <tr>
-      <td><img src="https://raw.githubusercontent.com/logseq/marketplace/master/packages/logseq-calibre-metadata/./icon.jpg" alt="icon" width="24" height="24"></td>
-      <td>logseq-calibre-metadata</td>
-      <td><a href="#" onclick="showReadmeModal('https://raw.githubusercontent.com/duydl/logseq-calibre-metadata/main/README.md')">Create pages for Calibre books</a></td>
-      <td>duydl</td>
-      <td><a href="https://github.com/duydl/logseq-calibre-metadata" target="_blank">duydl/logseq-calibre-metadata</a></td>
-      <td></td>
-      <td></td>
-      <td></td>
-    </tr>
-  
-    <tr>
-      <td><img src="https://raw.githubusercontent.com/logseq/marketplace/master/packages/logseq-calview-plugin/./icon.svg" alt="icon" width="24" height="24"></td>
-      <td>logseq-calview-plugin</td>
-      <td><a href="#" onclick="showReadmeModal('https://raw.githubusercontent.com/hkgnp/logseq-calview-plugin/main/README.md')">This plugin offers a calendar from within Logseq that captures your blocks with event parameters in a calendar view.</a></td>
-      <td>hkgnp</td>
-      <td><a href="https://github.com/hkgnp/logseq-calview-plugin" target="_blank">hkgnp/logseq-calview-plugin</a></td>
-      <td></td>
-      <td></td>
-      <td></td>
-    </tr>
-  
-    <tr>
-      <td><img src="https://raw.githubusercontent.com/logseq/marketplace/master/packages/logseq-cardbox/./icon.png" alt="icon" width="24" height="24"></td>
-      <td>logseq-cardbox</td>
-      <td><a href="#" onclick="showReadmeModal('https://raw.githubusercontent.com/sosuisen/logseq-cardbox/main/README.md')">Plugin to add thumbnail cards to Logseq that are displayed in order of update.</a></td>
-      <td>Hidekazu Kubota</td>
-      <td><a href="https://github.com/sosuisen/logseq-cardbox" target="_blank">sosuisen/logseq-cardbox</a></td>
-      <td></td>
-      <td></td>
-      <td></td>
-    </tr>
-  
-    <tr>
-      <td><img src="https://raw.githubusercontent.com/logseq/marketplace/master/packages/logseq-case-converter/icon.png" alt="icon" width="24" height="24"></td>
-      <td>Logseq Case converter</td>
-      <td><a href="#" onclick="showReadmeModal('https://raw.githubusercontent.com/sawhney17/logseq-case-converter/main/README.md')">A utility to quickly change the casing of a block</a></td>
-      <td>Aryan Sawhney</td>
-      <td><a href="https://github.com/sawhney17/logseq-case-converter" target="_blank">sawhney17/logseq-case-converter</a></td>
-      <td></td>
-      <td></td>
-      <td></td>
-    </tr>
-  
-    <tr>
-      <td><img src="https://raw.githubusercontent.com/logseq/marketplace/master/packages/logseq-catppuccin/icon.png" alt="icon" width="24" height="24"></td>
-      <td>logseq-catppuccin</td>
-      <td><a href="#" onclick="showReadmeModal('https://raw.githubusercontent.com/catppuccin/logseq/main/README.md')">🦫 Soothing pastel theme for Logseq</a></td>
-      <td>Soumik (griimick)</td>
-      <td><a href="https://github.com/catppuccin/logseq" target="_blank">catppuccin/logseq</a></td>
-      <td></td>
-      <td></td>
-      <td></td>
-    </tr>
-  
-    <tr>
-      <td><img src="https://raw.githubusercontent.com/logseq/marketplace/master/packages/logseq-charspacing/./icon.png" alt="icon" width="24" height="24"></td>
-      <td>logseq-charspacing</td>
-      <td>Add space between Chinese and ASCII characters to make document look nicer.</td>
-      <td>sethyuan</td>
-      <td><a href="https://github.com/sethyuan/logseq-plugin-charspacing" target="_blank">sethyuan/logseq-plugin-charspacing</a></td>
-      <td></td>
-      <td></td>
-      <td>Missing README</td>
-    </tr>
-  
-    <tr>
-      <td><img src="https://raw.githubusercontent.com/logseq/marketplace/master/packages/logseq-chartrender-plugin/./icon.svg" alt="icon" width="24" height="24"></td>
-      <td>logseq-chartrender-plugin</td>
-      <td><a href="#" onclick="showReadmeModal('https://raw.githubusercontent.com/hkgnp/logseq-chartrender-plugin/main/README.md')">Create pie, line, bar and area charts using block data. Allows changing of chart type and colours on the fly!</a></td>
-      <td>hkgnp</td>
-      <td><a href="https://github.com/hkgnp/logseq-chartrender-plugin" target="_blank">hkgnp/logseq-chartrender-plugin</a></td>
-      <td></td>
-      <td></td>
-      <td></td>
-    </tr>
   </tbody>
-      </table>
+          </table>
+        </div>
+      </main>
       <div class="modal-bg" id="readme-modal-bg">
         <div class="modal-content">
           <div class="modal-header">
@@ -827,8 +267,10 @@
           <div class="modal-body" id="readme-modal-content">Loading...</div>
         </div>
       </div>
+      <div class="footer">
+        Page generated: <span id="footer-date">16-08-2025, 18:15:01</span> &mdash; Plugins listed: <span id="footer-count">12</span>
+      </div>
       <script>
-        
     // Converts relative image and link URLs in markdown to absolute URLs based on the README location
     function convertRelativeUrlsToAbsolute(markdown, readmeUrl) {
   if (!readmeUrl) return markdown;
@@ -936,7 +378,6 @@
 
     // Initialize DataTable on document ready
     $(document).ready(initDataTable);
-  
-      </script>
+  </script>
     </body>
     </html>
