@@ -3,7 +3,6 @@
 import fetch from "node-fetch";
 import fs from "fs";
 
-
 // Script to fetch Logseq marketplace plugin package details from GitHub
 // and generate an HTML page with a table of plugins.
 // Usage: node update-catalog-index.js
@@ -137,7 +136,11 @@ async function main({verbose = false} = {}) {
  * @returns {Promise<Array>} List of package objects from GitHub API.
  */
 async function fetchPackageList(verbose = false) {
-  if (verbose) console.log("Fetching package list from GitHub...");
+  if (verbose)
+    console.log(
+      "Fetching package list from GitHub repo:",
+      LOGSEQ_MARKETPLACE_PACKAGES_URL
+    );
   const res = await fetch(LOGSEQ_MARKETPLACE_PACKAGES_URL, {
     headers: getGithubHeaders(),
   });
@@ -151,19 +154,10 @@ async function fetchPackageList(verbose = false) {
     console.error(
       `Failed to fetch package list. Status: ${res.status} ${res.statusText}. Body: ${errorText}`
     );
-    throw new Error("Failed to fetch package list");
+    return [];
   }
 
   const data = await res.json();
-
-  // Additional check for API error messages (defensive)
-  if (
-    data &&
-    data.message &&
-    data.message.includes("API rate limit exceeded")
-  ) {
-    throw new Error("GitHub API rate limit exceeded! Are you authenticated?");
-  }
 
   if (verbose) console.log(`Found ${data.length} packages.`);
   return data;
@@ -223,20 +217,26 @@ async function retrievePackageDetails(pkg, verbose = false) {
  */
 async function fetchManifest(packageName, verbose = false) {
   const manifestUrl = `${RAW_LOGSEQ_MARKETPLACE_PACKAGES_URL}/${packageName}/manifest.json`;
+  if (verbose)
+    console.log(
+      `fetchManifest: Fetching manifest for ${packageName}: ${manifestUrl}`
+    );
   try {
     const res = await fetch(manifestUrl, {headers: getGithubHeaders()});
     if (!res.ok) {
+      let errorText = "";
+      try {
+        errorText = await res.text();
+      } catch (e) {
+        errorText = "(could not read error body)";
+      }
+      console.error(
+        `fetchManifest: Could not fetch manifest for ${packageName}. Status: ${res.status} ${res.statusText}. Body: ${errorText}`
+      );
       return null;
     }
     const manifest = await res.json();
-    // Additional check for API error messages (defensive)
-    if (
-      manifest &&
-      manifest.message &&
-      manifest.message.includes("API rate limit exceeded")
-    ) {
-      throw new Error("GitHub API rate limit exceeded! Are you authenticated?");
-    }
+
     if (verbose) console.log(`Fetched manifest for ${packageName}`);
     return manifest;
   } catch (err) {
@@ -282,10 +282,20 @@ async function fetchIconUrl(packageName, manifest, verbose = false) {
 async function fetchCommitDates(packageName, verbose = false) {
   const commitsApi = `${COMMITS_API}/${packageName}&per_page=100`;
   try {
+    if (verbose)
+      console.log(
+        `fetchCommitDates: Fetching commit dates for ${packageName}: ${commitsApi}`
+      );
     const res = await fetch(commitsApi, {headers: getGithubHeaders()});
     if (!res.ok) {
+      let errorText = "";
+      try {
+        errorText = await res.text();
+      } catch (e) {
+        errorText = "(could not read error body)";
+      }
       console.error(
-        `fetchCommitDates: Could not fetch commits for ${packageName}`
+        `fetchCommitDates: Could not fetch commits for ${packageName}. Status: ${res.status} ${res.statusText}. Body: ${errorText}`
       );
       return {created_at: "", last_updated: ""};
     }
@@ -530,7 +540,8 @@ function generateTableRow(pkg) {
  * @returns {string} Client-side JavaScript as a string.
  */
 function generateClientScripts() {
-  const convertRelativeUrlsToAbsoluteString = convertRelativeUrlsToAbsolute.toString();
+  const convertRelativeUrlsToAbsoluteString =
+    convertRelativeUrlsToAbsolute.toString();
   const showReadmeModalString = showReadmeModal.toString();
   const closeReadmeModalString = closeReadmeModal.toString();
   const initDataTableString = initDataTable.toString();
@@ -589,40 +600,42 @@ function convertRelativeUrlsToAbsolute(markdown, readmeUrl) {
  * @param {string} readmeUrl - The URL of the README file to display.
  */
 function showReadmeModal(readmeUrl) {
-  const modalBg = document.getElementById('readme-modal-bg');
-  const modalContent = modalBg.querySelector('.modal-content');
-  const modalBody = document.getElementById('readme-modal-content');
-  const modalTitle = modalContent.querySelector('.modal-header h2');
-  modalBg.style.display = 'flex';
-  modalContent.classList.remove('modal-animate');
-  modalContent.style.visibility = 'hidden';
-  modalBody.innerHTML = '';
-  modalTitle.textContent = 'README'; // Default title
+  const modalBg = document.getElementById("readme-modal-bg");
+  const modalContent = modalBg.querySelector(".modal-content");
+  const modalBody = document.getElementById("readme-modal-content");
+  const modalTitle = modalContent.querySelector(".modal-header h2");
+  modalBg.style.display = "flex";
+  modalContent.classList.remove("modal-animate");
+  modalContent.style.visibility = "hidden";
+  modalBody.innerHTML = "";
+  modalTitle.textContent = "README"; // Default title
 
   // Animate in after a short delay to allow display
-  setTimeout(function() {
-    modalContent.classList.add('modal-animate');
+  setTimeout(function () {
+    modalContent.classList.add("modal-animate");
   }, 10);
 
-  let loadingTimeout = setTimeout(function() {
-    modalContent.style.visibility = 'visible';
-    modalBody.innerHTML = 'Loading...';
+  let loadingTimeout = setTimeout(function () {
+    modalContent.style.visibility = "visible";
+    modalBody.innerHTML = "Loading...";
   }, 500);
 
   if (!readmeUrl) {
     clearTimeout(loadingTimeout);
-    modalContent.style.visibility = 'visible';
-    modalContent.classList.add('modal-animate');
-    modalBody.innerHTML = '<p>README.md not found.</p>';
+    modalContent.style.visibility = "visible";
+    modalContent.classList.add("modal-animate");
+    modalBody.innerHTML = "<p>README.md not found.</p>";
     return;
   }
 
   fetch(readmeUrl)
-    .then(function(res) { return res.text(); })
-    .then(function(markdown) {
+    .then(function (res) {
+      return res.text();
+    })
+    .then(function (markdown) {
       clearTimeout(loadingTimeout);
-      modalContent.style.visibility = 'visible';
-      modalContent.classList.add('modal-animate');
+      modalContent.style.visibility = "visible";
+      modalContent.classList.add("modal-animate");
 
       // Preprocess markdown to convert relative links to absolute URLs
       var processed = convertRelativeUrlsToAbsolute(markdown, readmeUrl);
@@ -635,22 +648,22 @@ function showReadmeModal(readmeUrl) {
 
       modalBody.innerHTML = marked.parse(processed);
     })
-    .catch(function() {
+    .catch(function () {
       clearTimeout(loadingTimeout);
-      modalContent.style.visibility = 'visible';
-      modalContent.classList.add('modal-animate');
-      modalBody.innerHTML = '<p>Error loading README.md</p>';
+      modalContent.style.visibility = "visible";
+      modalContent.classList.add("modal-animate");
+      modalBody.innerHTML = "<p>Error loading README.md</p>";
     });
 }
 /**
  * Closes the README modal.
  */
 function closeReadmeModal() {
-  const modalBg = document.getElementById('readme-modal-bg');
-  const modalBox = modalBg.querySelector('.modal-content');
-  modalBox.classList.remove('modal-animate');
-  setTimeout(function() {
-    modalBg.style.display = 'none';
+  const modalBg = document.getElementById("readme-modal-bg");
+  const modalBox = modalBg.querySelector(".modal-content");
+  modalBox.classList.remove("modal-animate");
+  setTimeout(function () {
+    modalBg.style.display = "none";
   }, 200);
 }
 
@@ -658,11 +671,11 @@ function closeReadmeModal() {
  * Initializes the DataTable for the plugins table.
  */
 function initDataTable() {
-  $('#plugins').DataTable({
+  $("#plugins").DataTable({
     paging: false,
-    scrollY: '70vh',
+    scrollY: "70vh",
     scrollCollapse: true,
     info: false,
-    order: [] // No initial sort, preserve server order, but allow user sorting
+    order: [], // No initial sort, preserve server order, but allow user sorting
   });
 }
