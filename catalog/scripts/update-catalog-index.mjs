@@ -42,6 +42,8 @@ main({verbose}).then(() => {
   process.exit(0);
 });
 
+
+
 /**
  * Main entry point for fetching Logseq marketplace plugin data and generating HTML output.
  * @param {Object} options
@@ -51,52 +53,24 @@ async function main({verbose = false} = {}) {
   try {
     // Fetch package list from GitHub logseq marketplace repo
     const packages = await fetchPackageList(verbose);
-    const results = [];
 
-    // Concurrency limit
-    const CONCURRENCY = 10;
-    let idx = 0;
-    let count = 0;
-    async function worker() {
-      while (true) {
-        let myIdx;
-        // Atomically get the next index
-        if (
-          idx >= packages.length ||
-          (maxItems !== undefined && idx >= maxItems)
-        )
-          return;
-        myIdx = idx;
-        idx++;
-        const pkg = packages[myIdx];
-        const result = await retrievePackageDetails(pkg, verbose);
-        if (result) results[myIdx] = result;
-        count++;
-        if (count % 25 === 0) {
-          console.log(` Processed ${count} packages`);
-        }
-        if (maxItems && count >= maxItems) {
-          console.log(` Processed ${count} packages. Stopping early.`);
-          break;
-        }
-      }
+    // Process packages using the worker function
+    const { results, errorOccurred } = await worker(packages, maxItems, verbose, retrievePackageDetails);
+
+    if (errorOccurred) {
+      console.log('Processing stopped due to an error or rate limit.');
     }
-    // Start CONCURRENCY workers
-    await Promise.all(
-      Array(CONCURRENCY)
-        .fill(0)
-        .map(() => worker())
-    );
 
-    // Sort results by last_updated (descending)
-    const sortedResults = results.filter(Boolean).sort((a, b) => {
-      // If either date is missing, treat as oldest
-      if (!a.last_updated && !b.last_updated) return 0;
-      if (!a.last_updated) return 1;
-      if (!b.last_updated) return -1;
-      // Compare as ISO date strings
-      return b.last_updated.localeCompare(a.last_updated);
-    });
+    // // Filter out null results and sort by last_updated
+    // const sortedResults = results.filter(Boolean).sort((a, b) => {
+    //   if (!a.last_updated && !b.last_updated) return 0;
+    //   if (!a.last_updated) return 1;
+    //   if (!b.last_updated) return -1;
+    //   return b.last_updated.localeCompare(a.last_updated);
+    // });
+
+    const sortedResults = results.filter(Boolean);
+
     // Generate HTML page
     const html = generateHtml(sortedResults);
 
@@ -107,18 +81,16 @@ async function main({verbose = false} = {}) {
       fs.mkdirSync(outDir, {recursive: true});
     }
     fs.writeFileSync(`${outDir}/${outFile}`, html);
-    /* if (verbose) */ {
-      console.log(
-        "\nFetched",
-        results.filter(Boolean).length,
-        `plugins. Output: ${outDir}/${outFile}`
-      );
-    }
+    console.log(
+      "\nFetched",
+      sortedResults.length,
+      `plugins. Output: ${outDir}/${outFile}`
+    );
 
     // Write results to JSON file
     fs.writeFileSync(
       `${outDir}/${RESULTS_FILE}`,
-      JSON.stringify(results, null, 2)
+      JSON.stringify(sortedResults, null, 2)
     );
     console.log("Package Details saved to", `${outDir}/${RESULTS_FILE}`);
   } catch (e) {
@@ -131,6 +103,56 @@ async function main({verbose = false} = {}) {
 // ==================================================================================
 
 /**
+ * Worker function to process packages concurrently.
+ * @param {Object[]} packages - Array of package objects to process.
+ * @param {number} maxItems - Maximum number of items to process (optional).
+ * @param {boolean} verbose - Enable verbose logging.
+ * @param {function} processFunction - Function to process each package.
+ * @returns {Promise<{results: Object[], errorOccurred: boolean}>} - Processed results and error flag.
+ */
+async function worker(packages, maxItems, verbose, processFunction) {
+  let idx = 0;
+  let count = 0;
+  let errorOccurred = false;
+  const results = [];
+
+  async function processPackages() {
+    while (!errorOccurred) {
+      if (idx >= packages.length || (maxItems !== undefined && idx >= maxItems)) {
+        return;
+      }
+      const myIdx = idx++;
+      const pkg = packages[myIdx];
+      try {
+        const result = await processFunction(pkg, verbose);
+        if (result) results[myIdx] = result;
+        count++;
+        if (count % 25 === 0) {
+          console.log(` Processed ${count} packages`);
+        }
+        if (maxItems && count >= maxItems) {
+          console.log(` Processed ${count} packages. Stopping early.`);
+          errorOccurred = true;
+          break;
+        }
+      } catch (error) {
+        console.error(`Error processing package ${pkg.name}:`, error);
+        if (error.message.includes('Rate limited') || error.message.includes('Too many requests')) {
+          console.error('Rate limit reached. Stopping all workers.');
+          errorOccurred = true;
+          break;
+        }
+      }
+    }
+  }
+
+  const CONCURRENCY = 10;
+  await Promise.all(Array(CONCURRENCY).fill().map(processPackages));
+
+  return { results, errorOccurred };
+}
+
+/**
  * Fetch the list of package directories from the Logseq marketplace GitHub repository.
  * @param {boolean} verbose - Enable verbose logging.
  * @returns {Promise<Array>} List of package objects from GitHub API.
@@ -141,21 +163,9 @@ async function fetchPackageList(verbose = false) {
       "Fetching package list from GitHub repo:",
       LOGSEQ_MARKETPLACE_PACKAGES_URL
     );
-  const res = await fetch(LOGSEQ_MARKETPLACE_PACKAGES_URL, {
-    headers: getGithubHeaders(),
-  });
-  if (!res.ok) {
-    let errorText = "";
-    try {
-      errorText = await res.text();
-    } catch (e) {
-      errorText = "(could not read error body)";
-    }
-    console.error(
-      `Failed to fetch package list. Status: ${res.status} ${res.statusText}. Body: ${errorText}`
-    );
-    return [];
-  }
+
+  const res = await fetchWithCheck(LOGSEQ_MARKETPLACE_PACKAGES_URL, "fetchPackageList");
+  if (!res) return [];
 
   const data = await res.json();
 
@@ -217,31 +227,24 @@ async function retrievePackageDetails(pkg, verbose = false) {
  */
 async function fetchManifest(packageName, verbose = false) {
   const manifestUrl = `${RAW_LOGSEQ_MARKETPLACE_PACKAGES_URL}/${packageName}/manifest.json`;
-  if (verbose)
+  if (verbose) {
     console.log(
       `fetchManifest: Fetching manifest for ${packageName}: ${manifestUrl}`
     );
+  }
+
   try {
-    const res = await fetch(manifestUrl, {headers: getGithubHeaders()});
-    if (!res.ok) {
-      let errorText = "";
-      try {
-        errorText = await res.text();
-      } catch (e) {
-        errorText = "(could not read error body)";
-      }
-      console.error(
-        `fetchManifest: Could not fetch manifest for ${packageName}. Status: ${res.status} ${res.statusText}. Body: ${errorText}`
-      );
-      return null;
-    }
+    const res = await fetchWithCheck(manifestUrl, "fetchManifest");
+    if (!res) return null;
+
     const manifest = await res.json();
 
     if (verbose) console.log(`Fetched manifest for ${packageName}`);
     return manifest;
   } catch (err) {
-    if (verbose)
+    if (verbose) {
       console.log(`Error fetching manifest for ${packageName}:`, err);
+    }
     return null;
   }
 }
@@ -272,7 +275,6 @@ async function fetchIconUrl(packageName, manifest, verbose = false) {
   return "";
 }
 
-// Fetch commit dates for a package directory
 /**
  * Fetch the first and last commit dates for a given package directory.
  * @param {string} packageName - The name of the package directory.
@@ -282,40 +284,33 @@ async function fetchIconUrl(packageName, manifest, verbose = false) {
 async function fetchCommitDates(packageName, verbose = false) {
   const commitsApi = `${COMMITS_API}/${packageName}&per_page=100`;
   try {
-    if (verbose)
+    if (verbose) {
       console.log(
         `fetchCommitDates: Fetching commit dates for ${packageName}: ${commitsApi}`
       );
-    const res = await fetch(commitsApi, {headers: getGithubHeaders()});
-    if (!res.ok) {
-      let errorText = "";
-      try {
-        errorText = await res.text();
-      } catch (e) {
-        errorText = "(could not read error body)";
-      }
-      console.error(
-        `fetchCommitDates: Could not fetch commits for ${packageName}. Status: ${res.status} ${res.statusText}. Body: ${errorText}`
-      );
-      return {created_at: "", last_updated: ""};
+    }
+
+    const res = await fetchWithCheck(commitsApi, "fetchCommitDates");
+    if (!res) {
+      return { created_at: "", last_updated: "" };
     }
 
     const commits = await res.json();
 
     if (!Array.isArray(commits) || commits.length === 0) {
-      return {created_at: "", last_updated: ""};
+      return { created_at: "", last_updated: "" };
     }
+
     // Commits are returned newest first
     const last_updated = commits[0]?.commit?.committer?.date || "";
-    const created_at =
-      commits[commits.length - 1]?.commit?.committer?.date || "";
+    const created_at = commits[commits.length - 1]?.commit?.committer?.date || "";
+
     process.stdout.write(".");
-    return {created_at, last_updated};
+    return { created_at, last_updated };
   } catch (err) {
     process.stdout.write("?");
-
     console.error(`Error fetching commit dates for ${packageName}:`, err);
-    return {created_at: "", last_updated: ""};
+    return { created_at: "", last_updated: "" };
   }
 }
 
@@ -337,6 +332,44 @@ async function getValidReadmeUrl(repo) {
     return null;
   } catch (e) {
     return null;
+  }
+}
+
+/**
+ * Fetch data from a URL with error checking and handling.
+ * @param {string} url - The URL to fetch from.
+ * @param {string} caller - The name of the calling function (for error reporting).
+ * @param {Object} options - Additional options for fetch (optional).
+ * @returns {Promise<Response|null>} The fetch response or null if failed.
+ * @throws {Error} Throws an error for rate limiting (403) or too many requests (429).
+ */
+async function fetchWithCheck(url, caller, options = {}) {
+  try {
+    const res = await fetch(url, { ...options, headers: getGithubHeaders() });
+    if (!res.ok) {
+      let errorText = "";
+      try {
+        errorText = await res.text();
+      } catch (e) {
+        errorText = "(could not read error body)";
+      }
+      console.error(
+        `${caller}: Failed to fetch. Status: ${res.status} ${res.statusText}. Body: ${errorText}`
+      );
+
+      // Throw for rate limiting or too many requests
+      if (res.status === 403) {
+        throw new Error(`${caller}: Rate limited. Status: ${res.status}`);
+      } else if (res.status === 429) {
+        throw new Error(`${caller}: Too many requests. Status: ${res.status}`);
+      }
+
+      return null;
+    }
+    return res;
+  } catch (error) {
+    console.error(`${caller}: Error during fetch:`, error);
+    throw error;
   }
 }
 
