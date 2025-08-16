@@ -14,11 +14,13 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - run: cd catalog
-      - run: npm install
-      - run: node scripts/update-catalog-index.mjs
+        - run: npm install
+          working-directory: catalog
+        - run: node scripts/update-catalog-index.mjs
+          working-directory: catalog
+        - run: git add index.html
+          working-directory: catalog
       - run: git config user.name "GitHub Actions"
       - run: git config user.email "actions@github.com"
-      - run: git add index.html
       - run: git commit -m "Update catalog" || echo "No changes"
       - run: git push
