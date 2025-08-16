@@ -18,9 +18,8 @@ This project generates an **interactive, searchable, sortable table** of all pac
 1. **Install dependencies:**
 
 ```sh
+cd catalog
 npm install
-# If you want to use the README modal feature in Node.js, also install:
-npm install marked
 ```
 
 2. **(Optional) Set a GitHub token** for higher API rate limits:
@@ -34,10 +33,20 @@ export GITHUB_TOKEN=your_token_here
 To generate/update the catalog HTML:
 
 ```sh
-node catalog/scripts/update-catalog-index.mjs
+cd catalog
+node scripts/update-catalog-index.mjs
 ```
 
-The output will be written to `catalog/index.html`.
+which will update `catalog/index.html` and `catalog/results.json`.
+
+## Usage with npm scripts
+
+```
+cd catalog
+npm run build    # builds full catalog
+npm run dev      # builds a small catalog (12 plugins), for faster development
+npm run preview   # opens the catalog in your default browser
+```
 
 ## How the README Modal Works
 
