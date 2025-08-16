@@ -18,7 +18,7 @@ jobs:
         working-directory: catalog
       - run: node scripts/update-catalog-index.mjs --max 65
         working-directory: catalog
-      - run: git add index.html
+      - run: git add index.html results.json
         working-directory: catalog
       - run: git config user.name "GitHub Actions"
       - run: git config user.email "actions@github.com"
