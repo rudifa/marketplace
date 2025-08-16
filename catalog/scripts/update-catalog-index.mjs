@@ -142,7 +142,7 @@ async function worker(packages, maxItems, verbose, processFunction) {
           break;
         }
       } catch (error) {
-        console.error(`Error processing package ${pkg.name}:`, error);
+        console.error(`Error processing package ${pkg.name}:`, error.message);
         if (
           error.message.includes("Rate limited") ||
           error.message.includes("Too many requests")
@@ -151,6 +151,11 @@ async function worker(packages, maxItems, verbose, processFunction) {
           errorOccurred = true;
           break;
         }
+        // For other errors, continue processing but log the error
+        results[myIdx] = {
+          name: pkg.name,
+          error: error.message,
+        };
       }
     }
   }
@@ -357,28 +362,31 @@ async function getValidReadmeUrl(repo) {
  * @throws {Error} Throws an error for rate limiting (403) or too many requests (429).
  */
 async function fetchWithCheck(url, caller, options = {}) {
-  const res = await fetch(url, {...options, headers: getGithubHeaders()});
-  if (!res.ok) {
-    let errorText = "";
-    try {
-      errorText = await res.text();
-    } catch (e) {
-      errorText = "(could not read error body)";
-    }
-    console.error(
-      `${caller}: Failed to fetch. Status: ${res.status} ${res.statusText}. Body: ${errorText}`
-    );
+  try {
+    const res = await fetch(url, {...options, headers: getGithubHeaders()});
+    if (!res.ok) {
+      let errorText = "";
+      try {
+        errorText = await res.text();
+      } catch (e) {
+        errorText = "(could not read error body)";
+      }
+      console.error(
+        `${caller}: Failed to fetch. Status: ${res.status} ${res.statusText}. Body: ${errorText}`
+      );
 
-    // Throw for rate limiting or too many requests
-    if (res.status === 403) {
-      throw new Error(`${caller}: Rate limited. Status: ${res.status}`);
-    } else if (res.status === 429) {
-      throw new Error(`${caller}: Too many requests. Status: ${res.status}`);
-    }
+      // Throw for rate limiting or too many requests
+      if (res.status === 403 || res.status === 429) {
+        throw new Error(`${caller}: Rate limited or too many requests. Status: ${res.status}`);
+      }
 
-    return null;
+      return null;
+    }
+    return res;
+  } catch (error) {
+    console.error(`${caller}: Error during fetch:`, error.message);
+    throw error; // Re-throw the error to be caught by the calling function
   }
-  return res;
 }
 
 /**
