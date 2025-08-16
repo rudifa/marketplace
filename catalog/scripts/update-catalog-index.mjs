@@ -48,6 +48,7 @@ main({verbose}).then(() => {
  * @param {boolean} options.verbose - Enable verbose logging.
  */
 async function main({verbose = false} = {}) {
+  getGithubHeaders(true);
   try {
     // Fetch package list from GitHub logseq marketplace repo
     const packages = await fetchPackageList(verbose);
@@ -63,14 +64,6 @@ async function main({verbose = false} = {}) {
     if (errorOccurred) {
       console.log("Processing stopped due to an error or rate limit.");
     }
-
-    // // Filter out null results and sort by last_updated
-    // const sortedResults = results.filter(Boolean).sort((a, b) => {
-    //   if (!a.last_updated && !b.last_updated) return 0;
-    //   if (!a.last_updated) return 1;
-    //   if (!b.last_updated) return -1;
-    //   return b.last_updated.localeCompare(a.last_updated);
-    // });
 
     const sortedResults = results.filter(Boolean);
 
@@ -138,7 +131,7 @@ async function worker(packages, maxItems, verbose, processFunction) {
         }
         if (maxItems && count >= maxItems) {
           console.log(` Processed ${count} packages. Stopping early.`);
-          errorOccurred = true;
+          // this is not an error!
           break;
         }
       } catch (error) {
@@ -377,7 +370,9 @@ async function fetchWithCheck(url, caller, options = {}) {
 
       // Throw for rate limiting or too many requests
       if (res.status === 403 || res.status === 429) {
-        throw new Error(`${caller}: Rate limited or too many requests. Status: ${res.status}`);
+        throw new Error(
+          `${caller}: Rate limited or too many requests. Status: ${res.status}`
+        );
       }
 
       return null;
@@ -393,10 +388,18 @@ async function fetchWithCheck(url, caller, options = {}) {
  * Get headers for GitHub API requests, including authorization if GITHUB_TOKEN is set.
  * @returns {Object} Headers object for fetch requests.
  */
-function getGithubHeaders() {
+function getGithubHeaders(verbose = false) {
   const headers = {Accept: "application/vnd.github.v3+json"};
   if (process.env.GITHUB_TOKEN) {
     headers["Authorization"] = `token ${process.env.GITHUB_TOKEN}`;
+  }
+  if (verbose) {
+    console.log(
+      "getGithubHeaders: Using GitHub token:",
+      !!process.env.GITHUB_TOKEN,
+      "\nHeaders.Accept:",
+      headers.Accept
+    );
   }
   return headers;
 }
@@ -416,15 +419,17 @@ function generateHtml(results) {
   const rows = results.map(generateTableRow).join("");
   const clientScripts = generateClientScripts();
   const now = new Date();
-  const formattedDate = now.toLocaleString('en-GB', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-    timeZone: 'UTC'
-  }).replace(/\//g, '-');
+  const formattedDate = now
+    .toLocaleString("en-GB", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      timeZone: "UTC",
+    })
+    .replace(/\//g, "-");
   const numPackages = results.length;
 
   return `<!DOCTYPE html>
