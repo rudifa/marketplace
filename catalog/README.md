@@ -37,7 +37,7 @@ cd catalog
 node scripts/update-catalog-index.mjs
 ```
 
-which will update `catalog/index.html` and `catalog/results.json`.
+which will update `catalog/index.html` and `catalog/`.
 
 ## Usage with npm scripts
 
