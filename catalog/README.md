@@ -34,7 +34,7 @@ To generate/update the catalog HTML:
 
 ```sh
 cd catalog
-node scripts/update-catalog-index.mjs
+node scripts/update-catalog-index.js
 ```
 
 which will update `catalog/index.html` and `catalog/`.
@@ -56,7 +56,7 @@ npm run preview   # opens the catalog in your default browser
 
 ## Development
 
-- The main script is `catalog/scripts/update-catalog-index.mjs` (Node, ESM)
+- The main script is `catalog/scripts/update-catalog-index.js` (Node, ESM)
 - Output is in `catalog/index.html`
 - You can customize the table columns or modal logic in the script as needed
 

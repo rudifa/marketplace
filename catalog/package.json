@@ -4,12 +4,12 @@
   "author": "rudifa",
   "type": "module",
   "scripts": {
-    "build": "scripts/update-catalog-index.mjs",
-    "build:min": "scripts/update-catalog-index.mjs --max 12",
-    "dev": "scripts/update-catalog-index.mjs --max 24",
-    "fetch": "scripts/fetch-plugins-data.mjs",
-    "fetch:min": "scripts/fetch-plugins-data.mjs --max 12",
-    "html": "scripts/generate-plugins-table.mjs",
+    "build": "scripts/update-catalog-index.js",
+    "build:min": "scripts/update-catalog-index.js --max 12",
+    "dev": "scripts/update-catalog-index.js --max 24",
+    "fetch": "scripts/fetch-plugins-data.js",
+    "fetch:min": "scripts/fetch-plugins-data.js --max 12",
+    "html": "scripts/generate-plugins-table.js",
     "show": "open index.html"
   },
   "dependencies": {

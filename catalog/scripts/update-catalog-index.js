@@ -38,12 +38,12 @@ async function main({verbose = false} = {}) {
   try {
     // Run the fetch script
     console.log("Fetching Logseq marketplace plugin data...");
-    const fetchScript = await import("./fetch-plugins-data.mjs");
+    const fetchScript = await import("./fetch-plugins-data.js");
     await fetchScript.main({verbose, maxItems});
 
     // Run the generate script
     console.log("Generating HTML output...");
-    const generateScript = await import("./generate-plugins-table.mjs");
+    const generateScript = await import("./generate-plugins-table.js");
     await generateScript.main({verbose});
 
     console.log("Done!");
