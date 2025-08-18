@@ -44,7 +44,7 @@ if (maxIdx !== -1 && args.length > maxIdx + 1) {
  * Run main if this script is executed directly
  */
 if (import.meta.url === `file://${process.argv[1]}` || import.meta.url === process.argv[1]) {
-  main({verbose}).then(() => {
+  main({verbose, maxItems}).then(() => {
     if (verbose) console.log("Script execution completed.");
     process.exit(0);
   });
