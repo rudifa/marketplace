@@ -3,3 +3,6 @@ node_modules/
 .tmp/
 
 # development only
+index.html
+plugins-table.html
+plugins-data.json
