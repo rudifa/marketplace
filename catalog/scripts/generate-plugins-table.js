@@ -5,9 +5,9 @@ import fs from "fs";
 
 export {main};
 
-// Script to fetch Logseq marketplace plugin package details from GitHub
+// Script to process Logseq marketplace pluginData from a local file
 // and generate an HTML page with a table of plugins.
-// Usage: node update-catalog-index.js
+// Usage: node generate-plugins-table.js
 // Output: catalog/index.html
 
 const DIR = ".";
@@ -45,13 +45,13 @@ if (import.meta.url === `file://${process.argv[1]}` || import.meta.url === proce
  */
 async function main({verbose = false} = {}) {
   try {
-    // Read package data from input file
-    const packageData = JSON.parse(
+    // Read plugin data from input file
+    const pluginsData = JSON.parse(
       fs.readFileSync(`${DIR}/${INPUT_FILE}`, "utf-8")
     );
 
     // Generate HTML page
-    const html = generateHtml(packageData);
+    const html = generateHtml(pluginsData);
 
     // Write HTML to OUTPUT_FILE
     if (!fs.existsSync(DIR)) {
@@ -60,7 +60,7 @@ async function main({verbose = false} = {}) {
     fs.writeFileSync(`${DIR}/${OUTPUT_FILE}`, html);
     console.log(
       "Found",
-      packageData.length,
+      pluginsData.length,
       `packages. Output: ${DIR}/${OUTPUT_FILE}`
     );
   } catch (e) {
@@ -74,13 +74,13 @@ async function main({verbose = false} = {}) {
 
 /**
  * Generates the complete HTML page for the Logseq Marketplace Plugins.
- * @param {Array} results - Array of processed package objects.
+ * @param {Array} pluginsData - Array of processed plugin objects.
  * @returns {string} Complete HTML string.
  */
-function generateHtml(results) {
+function generateHtml(pluginsData) {
   const styles = generateStyles();
   const header = generateTableHeader();
-  const rows = results.map(generateTableRow).join("");
+  const rows = pluginsData.map(generateTableRow).join("");
   const clientScripts = generateClientScripts();
   const now = new Date();
   const formattedDate = now
@@ -94,7 +94,7 @@ function generateHtml(results) {
       timeZone: "UTC",
     })
     .replace(/\//g, "-");
-  const numPackages = results.length;
+  const pluginCount = pluginsData.length;
 
   return `<!DOCTYPE html>
     <html lang="en">
@@ -130,7 +130,7 @@ function generateHtml(results) {
         </div>
       </div>
       <div class="footer">
-        Page generated: <span id="footer-date">${formattedDate} UTC</span> &mdash; Plugins listed: <span id="footer-count">${numPackages}</span>
+        Page generated: <span id="footer-date">${formattedDate} UTC</span> &mdash; Plugins listed: <span id="footer-count">${pluginCount}</span>
       </div>
       <script>${clientScripts}</script>
     </body>
@@ -300,32 +300,32 @@ function generateTableHeader() {
 }
 
 /**
- * Generates the HTML for a single table row based on the package data.
- * @param {Object} pkg - The package object.
+ * Generates the HTML for a single table row based on the plugin data.
+ * @param {Object} plugin - The plugin object.
  * @returns {string} HTML string for a table row.
  */
-function generateTableRow(pkg) {
-  const iconCell = pkg.iconUrl
-    ? `<img src="${pkg.iconUrl}" alt="icon" width="24" height="24">`
+function generateTableRow(plugin) {
+  const iconCell = plugin.iconUrl
+    ? `<img src="${plugin.iconUrl}" alt="icon" width="24" height="24">`
     : "";
-  const descCell = pkg.description
-    ? pkg.readmeUrl
-      ? `<a href="#" onclick="showReadmeModal('${pkg.readmeUrl}')">${pkg.description}</a>`
-      : pkg.description
+  const descCell = plugin.description
+    ? plugin.readmeUrl
+      ? `<a href="#" onclick="showReadmeModal('${plugin.readmeUrl}')">${plugin.description}</a>`
+      : plugin.description
     : "";
-  const repoCell = pkg.repo
-    ? `<a href="https://github.com/${pkg.repo}" target="_blank">${pkg.repo}</a>`
+  const repoCell = plugin.repo
+    ? `<a href="https://github.com/${plugin.repo}" target="_blank">${plugin.repo}</a>`
     : "";
   return `
     <tr>
       <td>${iconCell}</td>
-      <td>${pkg.name || ""}</td>
+      <td>${plugin.name || ""}</td>
       <td>${descCell}</td>
-      <td>${pkg.author || ""}</td>
+      <td>${plugin.author || ""}</td>
       <td>${repoCell}</td>
-      <td>${pkg.created_at ? pkg.created_at.slice(0, 10) : ""}</td>
-      <td>${pkg.last_updated ? pkg.last_updated.slice(0, 10) : ""}</td>
-      <td>${pkg.error || ""}</td>
+      <td>${plugin.created_at ? plugin.created_at.slice(0, 10) : ""}</td>
+      <td>${plugin.last_updated ? plugin.last_updated.slice(0, 10) : ""}</td>
+      <td>${plugin.error || ""}</td>
     </tr>
   `;
 }

@@ -12,7 +12,7 @@ const OUTPUT_DIR = ".";
 const OUTPUT_FILE = "plugins-table.html";
 
 // Read input data
-const packages = JSON.parse(fs.readFileSync(INPUT_FILE, "utf-8"));
+const pluginsData = JSON.parse(fs.readFileSync(INPUT_FILE, "utf-8"));
 
 // Ensure output directory exists
 if (!fs.existsSync(OUTPUT_DIR)) {
@@ -28,21 +28,21 @@ const outputFilePath = `${OUTPUT_DIR}/${OUTPUT_FILE}`;
 main();
 
 /**
- * Main entry point. Generates the HTML file from plugin data.
- * Reads plugin data, generates HTML, and writes it to plugins-table.html.
+ * Main entry point. Generates the HTML file from plugins data.
+ * Reads plugins data, generates HTML, and writes it to plugins-table.html.
  */
 function main() {
-  const html = generateHtml(packages);
+  const html = generateHtml(pluginsData);
   fs.writeFileSync(outputFilePath, html);
   console.log("Generated", OUTPUT_FILE);
 }
 
 /**
- * Generates the complete HTML for the plugin table page.
- * @param {Array<Object>} plugins - Array of plugin objects.
+ * Generates the complete HTML for the plugins table page.
+ * @param {Array<Object>} pluginsData - Array of plugin objects.
  * @returns {string} The full HTML page as a string.
  */
-function generateHtml(plugins) {
+function generateHtml(pluginsData) {
   const columns = getColumns();
   return `<!DOCTYPE html>
 <html lang='en'>
@@ -73,7 +73,7 @@ function generateHtml(plugins) {
           .join("")}
       </tr></thead>
       <tbody>
-        ${renderTableRows(plugins)}
+        ${renderTableRows(pluginsData)}
       </tbody>
     </table>
   </div>
@@ -183,7 +183,7 @@ function generateStyles() {
 
 
 /**
- * Returns the column definitions for the plugin table.
+ * Returns the column definitions for the plugins table.
  * @returns {Array<{key: string, label: string}>} Array of column objects
  */
 function getColumns() {
@@ -200,7 +200,7 @@ function getColumns() {
 }
 
 /**
- * Renders the table rows for the plugin table.
+ * Renders the table rows for the plugins table.
  * @param {Array<Object>} data - Array of plugin objects.
  * @returns {string} HTML string for all table rows.
  */
