@@ -72,11 +72,7 @@ function generateHtml(pluginsData) {
   </div>
 </div>
 <div class="footer">
-  Page generated: <span id="footer-date">${formatDateToUTC(
-    new Date()
-  )} UTC</span> &mdash; Plugins listed: <span id="footer-count">${
-    pluginsData.length
-  }</span>
+  Page generated: <span id="footer-date">${formatNowToUTC()} UTC</span> &mdash; Plugins listed: <span id="footer-count">${pluginsData.length}</span>
 </div>
 <script>
   const columns = ${JSON.stringify(getColumns())};
@@ -101,6 +97,9 @@ function generateHtml(pluginsData) {
 </html>`;
 }
 
+function formatNowToUTC() {
+  return formatDateToUTC(new Date());
+}
 /**
  * Formats a Date object as a UTC string in 'DD-MM-YYYY, HH:MM:SS' format (en-GB), with / replaced by -.
  * @param {Date} date - The date to format.

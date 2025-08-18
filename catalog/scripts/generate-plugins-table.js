@@ -119,19 +119,15 @@ function generateHtml(pluginsData) {
         </div>
       </div>
       <div class="footer">
-        Page generated: <span id="footer-date">${formatDateToUTC(
-          new Date()
-        )} UTC</span> &mdash; Plugins listed: <span id="footer-count">${
-          pluginsData.length
-        }</span>
+        Page generated: <span id="footer-date">${formatNowToUTC()} UTC</span> &mdash; Plugins listed: <span id="footer-count">${pluginsData.length}</span>
       </div>
       <script>${generateClientScripts()}</script>
     </body>
     </html>`;
 }
 
-function renderTableDataRows(pluginsData) {
-    return pluginsData.map(generateTableRow).join("");
+function formatNowToUTC() {
+  return formatDateToUTC(new Date());
 }
 
 /**
@@ -313,6 +309,11 @@ function renderTableHeaderRow() {
         <th>Error</th>
       </tr>
   `;
+}
+
+
+function renderTableDataRows(pluginsData) {
+    return pluginsData.map(generateTableRow).join("");
 }
 
 /**
