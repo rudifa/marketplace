@@ -105,7 +105,7 @@ function generateHtml(pluginsData) {
         <div class="table-container">
           <table id="plugin-table" class="display">
             <thead>${renderTableHeaderRow()}</thead>
-            <tbody>${pluginsData.map(generateTableRow).join("")}</tbody>
+            <tbody>${renderTableDataRows(pluginsData)}</tbody>
           </table>
         </div>
       </main>
@@ -128,6 +128,10 @@ function generateHtml(pluginsData) {
       <script>${generateClientScripts()}</script>
     </body>
     </html>`;
+}
+
+function renderTableDataRows(pluginsData) {
+    return pluginsData.map(generateTableRow).join("");
 }
 
 /**

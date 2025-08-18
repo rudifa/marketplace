@@ -66,7 +66,7 @@ function generateHtml(pluginsData) {
     <table id='plugin-table' border='1'>
     <thead>${renderTableHeaderRow()}</thead>
       <tbody>
-        ${renderTableRows(pluginsData)}
+        ${renderTableDataRows(pluginsData)}
       </tbody>
     </table>
   </div>
@@ -251,12 +251,12 @@ function getColumns() {
 
 /**
  * Renders the table rows for the plugins table.
- * @param {Array<Object>} data - Array of plugin objects.
+ * @param {Array<Object>} pluginsData - Array of plugin objects.
  * @returns {string} HTML string for all table rows.
  */
-function renderTableRows(data) {
+function renderTableDataRows(pluginsData) {
   const columns = getColumns();
-  return data
+  return pluginsData
     .map((plugin) => {
       return (
         `<tr>` +
