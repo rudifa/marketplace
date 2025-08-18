@@ -16,7 +16,7 @@ jobs:
           node-version: 20
       - run: npm install
         working-directory: catalog
-      - run: node scripts/update-catalog-index.mjs
+      - run: node scripts/update-catalog-index.js
         working-directory: catalog
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
