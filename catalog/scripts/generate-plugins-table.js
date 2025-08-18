@@ -78,12 +78,12 @@ async function main({verbose = false} = {}) {
  * @returns {string} Complete HTML string.
  */
 function generateHtml(pluginsData) {
-  const styles = generateStyles();
-  const header = generateTableHeader();
-  const rows = pluginsData.map(generateTableRow).join("");
-  const clientScripts = generateClientScripts();
-  const formattedDate = formatDateToUTC(new Date()); // now
-  const pluginCount = pluginsData.length;
+//   const styles = generateStyles();
+//   const header = generateTableHeader();
+//   const rows = pluginsData.map(generateTableRow).join("");
+//   const clientScripts = generateClientScripts();
+//   const formattedDate = formatDateToUTC(new Date()); // now
+//   const pluginCount = pluginsData.length;
 
   return `<!DOCTYPE html>
     <html lang="en">
@@ -95,7 +95,7 @@ function generateHtml(pluginsData) {
       <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
       <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-      <style>${styles}</style>
+      <style>${generateStyles()}</style>
     </head>
     <body>
       <header>
@@ -104,8 +104,8 @@ function generateHtml(pluginsData) {
       <main>
         <div class="table-container">
           <table id="plugin-table" class="display">
-            <thead>${header}</thead>
-            <tbody>${rows}</tbody>
+            <thead>${generateTableHeader()}</thead>
+            <tbody>${pluginsData.map(generateTableRow).join("")}</tbody>
           </table>
         </div>
       </main>
@@ -119,9 +119,13 @@ function generateHtml(pluginsData) {
         </div>
       </div>
       <div class="footer">
-        Page generated: <span id="footer-date">${formattedDate} UTC</span> &mdash; Plugins listed: <span id="footer-count">${pluginCount}</span>
+        Page generated: <span id="footer-date">${formatDateToUTC(
+          new Date()
+        )} UTC</span> &mdash; Plugins listed: <span id="footer-count">${
+          pluginsData.length
+        }</span>
       </div>
-      <script>${clientScripts}</script>
+      <script>${generateClientScripts()}</script>
     </body>
     </html>`;
 }

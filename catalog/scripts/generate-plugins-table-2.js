@@ -47,9 +47,9 @@ function main() {
  * @returns {string} The full HTML page as a string.
  */
 function generateHtml(pluginsData) {
-  const columns = getColumns();
-  const formattedDate = formatDateToUTC(new Date()); // now
-  const pluginCount = pluginsData.length;
+//   const columns = getColumns();
+//   const formattedDate = formatDateToUTC(new Date()); // now
+//   const pluginCount = pluginsData.length;
   return `<!DOCTYPE html>
 <html lang='en'>
 <head>
@@ -65,7 +65,7 @@ function generateHtml(pluginsData) {
   <div class='table-container'>
     <table id='plugin-table' border='1'>
       <thead><tr>
-        ${columns
+        ${getColumns()
           .map(
             (col) =>
               `<th${
@@ -85,7 +85,11 @@ function generateHtml(pluginsData) {
   </div>
 </div>
 <div class="footer">
-  Page generated: <span id="footer-date">${formattedDate} UTC</span> &mdash; Plugins listed: <span id="footer-count">${pluginCount}</span>
+  Page generated: <span id="footer-date">${formatDateToUTC(
+    new Date()
+  )} UTC</span> &mdash; Plugins listed: <span id="footer-count">${
+    pluginsData.length
+  }</span>
 </div>
 <script>
   const columns = ${JSON.stringify(getColumns())};
