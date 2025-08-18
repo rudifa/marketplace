@@ -104,7 +104,7 @@ function generateHtml(pluginsData) {
       <main>
         <div class="table-container">
           <table id="plugin-table" class="display">
-            <thead>${generateTableHeader()}</thead>
+            <thead>${renderTableHeaderRow()}</thead>
             <tbody>${pluginsData.map(generateTableRow).join("")}</tbody>
           </table>
         </div>
@@ -296,7 +296,7 @@ function generateStyles() {
  * Generates the table header for the Logseq Marketplace Plugins table.
  * @returns {string} HTML string containing the table header.
  */
-function generateTableHeader() {
+function renderTableHeaderRow() {
   return `
       <tr>
         <th>Icon</th>

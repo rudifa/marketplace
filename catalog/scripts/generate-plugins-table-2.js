@@ -64,20 +64,7 @@ function generateHtml(pluginsData) {
   <h1>Logseq Marketplace Plugins</h1>
   <div class='table-container'>
     <table id='plugin-table' border='1'>
-      <thead><tr>
-        ${getColumns()
-          .map(
-            (col) =>
-              `<th${
-                col.key === "created_at" || col.key === "last_updated"
-                  ? " class='date-column'"
-                  : ""
-              } onclick=\"sortTable('${col.key}')\">${escapeHtml(
-                col.label
-              )}</th>`
-          )
-          .join("")}
-      </tr></thead>
+    <thead>${renderTableHeaderRow()}</thead>
       <tbody>
         ${renderTableRows(pluginsData)}
       </tbody>
@@ -226,6 +213,23 @@ function generateStyles() {
       background-color: #012b36;
     }
   `;
+}
+
+/**
+ * Renders the table header for the plugins table.
+ * @returns {string} HTML string for the table header row.
+ */
+function renderTableHeaderRow() {
+  return (
+    '<tr>' +
+    getColumns()
+      .map((col) => {
+        const classAttr = (col.key === "created_at" || col.key === "last_updated") ? " class=\"date-column\"" : "";
+        return `<th${classAttr} onclick='sortTable("${col.key}")'>${escapeHtml(col.label)}</th>`;
+      })
+      .join("") +
+    '</tr>'
+  );
 }
 
 /**
