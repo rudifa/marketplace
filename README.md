@@ -2,13 +2,17 @@
 
 A packages manager for Logseq marketplace plugins.
 
+## Marketplace Catalog
+
+Here you can view the [live catalog](https://rudifa.github.io/marketplace/docs/index.html) of Logseq marketplace plugins.
+
 ## How to write a plugin for Logseq?
 
 This [repo](https://github.com/logseq/logseq-plugin-samples) contains sample code illustrating the Logseq Plugin API. You can read, play with or adapt from these samples to create your own plugins.
 
 Plugin APIs: https://plugins-doc.logseq.com/.
 
-> ⚠️ To avoid loading plugin failures occasionally and for performance reasons, 
+> ⚠️ To avoid loading plugin failures occasionally and for performance reasons,
 > it is recommended to keep the plugin SDK [@logseq/libs](https://www.npmjs.com/package/@logseq/libs) as up-to-date as possible.
 
 Ensure that your plugin has a `publish.yml` file, so when you create a release from a tag, it will do the build dance and make you a zip file. Then make a tag (something like v0.0.1), and create a release from it. Ensure the following are true before submitting your plugin:
@@ -31,10 +35,10 @@ Ensure that your plugin has a `publish.yml` file, so when you create a release f
     - `web` - [optional] Whether the web browser platform is supported. default: `false`
     - `effect` - [optional] Whether the sandbox is running under the same origin with host. default: `false`
     - `unsupportedGraphType` - [optional] Flag to indicate that which graph type does not to be supported. value: `file` | `db`
-      > ⚠️ `effect`? - it's not recommended to turn on this option if you don't 
-      need a specific feature (_the current built-in plugin API does not satisfy_), 
-      which may affect the stability of the program. If it does need to be turned on, 
-      the market review process will be more strict, while there is no guarantee 
+      > ⚠️ `effect`? - it's not recommended to turn on this option if you don't
+      need a specific feature (_the current built-in plugin API does not satisfy_),
+      which may affect the stability of the program. If it does need to be turned on,
+      the market review process will be more strict, while there is no guarantee
       that it will not be allowed to be turned on in the future.
 3. Make a Github Pull Request :)
 

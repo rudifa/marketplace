@@ -20,9 +20,17 @@ jobs:
         working-directory: catalog
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - run: git add index.html package-data.json
-        working-directory: catalog
+      - name: Ensure docs folder exists and move index.html
+        run: |
+          mkdir -p docs
+          mv catalog/index.html docs/
+      - name: Update README with correct GitHub Pages owner
+        run: |
+          OWNER=${GITHUB_REPOSITORY_OWNER}
+          # Replace only the owner part in the URL
+          sed -i -E "s|(https://)[^./]+(\.github\.io/marketplace/docs/index.html)|\1$OWNER\2|g" README.md
+      - run: git add docs/index.html catalog/plugins-data.json README.md
       - run: git config user.name "GitHub Actions"
       - run: git config user.email "actions@github.com"
-      - run: git commit -m "Update catalog" || echo "No changes"
+      - run: git commit -m "Update catalog docs/index.html and README" || echo "No changes"
       - run: git push
