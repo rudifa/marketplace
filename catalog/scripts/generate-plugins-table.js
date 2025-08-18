@@ -209,27 +209,42 @@ function generateStyles() {
       align-items: center;
     }
     .modal-content {
-      background: #fff;
+      display: flex;
+      flex-direction: column;
       max-width: 80vw;
       max-height: 80vh;
-      overflow: auto;
+      background: #fff;
       border-radius: 8px;
       position: relative;
       transform: scale(0.7);
       opacity: 0;
       transition: transform 0.25s ease, opacity 0.2s;
-    }
-    .modal-content.modal-animate {
-      transform: scale(1);
-      opacity: 1;
+      overflow: hidden; /* Prevents scrollbars on modal-content itself */
     }
     .modal-header {
       position: sticky;
       top: 0;
       background-color: #fff;
-      padding: 1em;
+      padding: 1em 2.5em 1em 1em;
       border-bottom: 1px solid #ddd;
-      z-index: 1001;
+      z-index: 1002;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+      flex-shrink: 0;
+    }
+    .modal-body {
+      overflow-y: auto;
+      max-height: 60vh; /* or calc(80vh - header height) */
+      padding: 1em;
+    }
+
+    .modal-content.modal-animate {
+      transform: scale(1);
+      opacity: 1;
+    }
+    .modal-header h2 {
+      font-size: 2em;
+      margin: 0;
+      color: #222;
     }
     .modal-close {
       float: right;
@@ -237,9 +252,7 @@ function generateStyles() {
       color: #888;
       cursor: pointer;
     }
-    .modal-body {
-      padding: 1em;
-    }
+
 
     #plugins {
       width: 100% !important;
@@ -428,7 +441,10 @@ function showReadmeModal(readmeUrl) {
         modalTitle.textContent = titleMatch[1];
       }
 
-      modalBody.innerHTML = marked.parse(processed);
+  modalBody.innerHTML = marked.parse(processed);
+  // Hide the first heading in the modal body (to avoid duplicate title)
+  const firstHeading = modalBody.querySelector('h1, h2, h3, h4, h5, h6');
+  if (firstHeading) firstHeading.style.display = 'none';
     })
     .catch(function () {
       clearTimeout(loadingTimeout);
