@@ -79,27 +79,42 @@
       align-items: center;
     }
     .modal-content {
-      background: #fff;
+      display: flex;
+      flex-direction: column;
       max-width: 80vw;
       max-height: 80vh;
-      overflow: auto;
+      background: #fff;
       border-radius: 8px;
       position: relative;
       transform: scale(0.7);
       opacity: 0;
       transition: transform 0.25s ease, opacity 0.2s;
-    }
-    .modal-content.modal-animate {
-      transform: scale(1);
-      opacity: 1;
+      overflow: hidden; /* Prevents scrollbars on modal-content itself */
     }
     .modal-header {
       position: sticky;
       top: 0;
       background-color: #fff;
-      padding: 1em;
+      padding: 1em 2.5em 1em 1em;
       border-bottom: 1px solid #ddd;
-      z-index: 1001;
+      z-index: 1002;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+      flex-shrink: 0;
+    }
+    .modal-body {
+      overflow-y: auto;
+      max-height: 60vh; /* or calc(80vh - header height) */
+      padding: 1em;
+    }
+
+    .modal-content.modal-animate {
+      transform: scale(1);
+      opacity: 1;
+    }
+    .modal-header h2 {
+      font-size: 2em;
+      margin: 0;
+      color: #222;
     }
     .modal-close {
       float: right;
@@ -107,23 +122,21 @@
       color: #888;
       cursor: pointer;
     }
-    .modal-body {
-      padding: 1em;
-    }
 
-    #plugins {
+
+  #plugin-table {
       width: 100% !important;
       table-layout: fixed;
     }
 
-    #plugins th, #plugins td {
+  #plugin-table th, #plugin-table td {
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
       max-width: 0;
     }
 
-    #plugins th {
+  #plugin-table th {
       position: sticky;
       top: 0;
       background-color: #f8f8f8;
@@ -142,7 +155,7 @@
       </header>
       <main>
         <div class="table-container">
-          <table id="plugins" class="display">
+          <table id="plugin-table" class="display">
             <thead>
       <tr>
         <th>Icon</th>
@@ -5295,7 +5308,7 @@
         </div>
       </div>
       <div class="footer">
-        Page generated: <span id="footer-date">18-08-2025, 12:22:02 UTC</span> &mdash; Plugins listed: <span id="footer-count">466</span>
+        Page generated: <span id="footer-date">18-08-2025, 22:37:03 UTC</span> &mdash; Plugins listed: <span id="footer-count">466</span>
       </div>
       <script>
     // Converts relative image and link URLs in markdown to absolute URLs based on the README location
@@ -5368,7 +5381,10 @@
         modalTitle.textContent = titleMatch[1];
       }
 
-      modalBody.innerHTML = marked.parse(processed);
+  modalBody.innerHTML = marked.parse(processed);
+  // Hide the first heading in the modal body (to avoid duplicate title)
+  const firstHeading = modalBody.querySelector('h1, h2, h3, h4, h5, h6');
+  if (firstHeading) firstHeading.style.display = 'none';
     })
     .catch(function () {
       clearTimeout(loadingTimeout);
@@ -5392,7 +5408,7 @@
     function initDataTable() {
   // HERE header and data columns do resize together
   // BUT initial auto widths are not the best
-  const table = $("#plugins").DataTable({
+  const table = $("#plugin-table").DataTable({
     paging: false,
     scrollY: "70vh",
     scrollCollapse: true,
