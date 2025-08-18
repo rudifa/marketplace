@@ -103,7 +103,7 @@ function generateHtml(pluginsData) {
       </header>
       <main>
         <div class="table-container">
-          <table id="plugins" class="display">
+          <table id="plugin-table" class="display">
             <thead>${header}</thead>
             <tbody>${rows}</tbody>
           </table>
@@ -262,19 +262,19 @@ function generateStyles() {
     }
 
 
-    #plugins {
+  #plugin-table {
       width: 100% !important;
       table-layout: fixed;
     }
 
-    #plugins th, #plugins td {
+  #plugin-table th, #plugin-table td {
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
       max-width: 0;
     }
 
-    #plugins th {
+  #plugin-table th {
       position: sticky;
       top: 0;
       background-color: #f8f8f8;
@@ -479,7 +479,7 @@ function closeReadmeModal() {
 function initDataTable() {
   // HERE header and data columns do resize together
   // BUT initial auto widths are not the best
-  const table = $("#plugins").DataTable({
+  const table = $("#plugin-table").DataTable({
     paging: false,
     scrollY: "70vh",
     scrollCollapse: true,
