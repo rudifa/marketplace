@@ -4,13 +4,13 @@
   "author": "rudifa",
   "type": "module",
   "scripts": {
-    "build": "scripts/update-catalog-index.js",
-    "build:min": "scripts/update-catalog-index.js --max 12",
+    "build": "scripts/update-catalog-index.js && scripts/generate-plugins-table-2.js",
+    "build:min": "scripts/update-catalog-index.js --max 36 && scripts/generate-plugins-table-2.js",
     "dev": "scripts/update-catalog-index.js --max 24",
     "fetch": "scripts/fetch-plugins-data.js",
     "fetch:min": "scripts/fetch-plugins-data.js --max 12",
-    "html": "scripts/generate-plugins-table.js",
-    "show": "open index.html"
+    "html": "scripts/generate-plugins-table.js && scripts/generate-plugins-table-2.js",
+    "show": "open index.html && open plugins-table.html"
   },
   "dependencies": {
     "node-fetch": "^3.3.2"
