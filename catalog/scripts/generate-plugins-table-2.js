@@ -16,7 +16,7 @@ const pluginsData = JSON.parse(fs.readFileSync(INPUT_FILE, "utf-8"));
 
 // Ensure output directory exists
 if (!fs.existsSync(OUTPUT_DIR)) {
-  fs.mkdirSync(OUTPUT_DIR, { recursive: true });
+  fs.mkdirSync(OUTPUT_DIR, {recursive: true});
 }
 
 // Full output file path
@@ -34,7 +34,11 @@ main();
 function main() {
   const html = generateHtml(pluginsData);
   fs.writeFileSync(outputFilePath, html);
-  console.log("Generated", OUTPUT_FILE);
+  console.log(
+    "Found",
+    pluginsData.length,
+    `packages. Output: ${OUTPUT_DIR}/${OUTPUT_FILE}`
+  );
 }
 
 /**
@@ -44,6 +48,8 @@ function main() {
  */
 function generateHtml(pluginsData) {
   const columns = getColumns();
+  const formattedDate = formatDateToUTC(new Date()); // now
+  const pluginCount = pluginsData.length;
   return `<!DOCTYPE html>
 <html lang='en'>
 <head>
@@ -78,6 +84,9 @@ function generateHtml(pluginsData) {
     </table>
   </div>
 </div>
+<div class="footer">
+  Page generated: <span id="footer-date">${formattedDate} UTC</span> &mdash; Plugins listed: <span id="footer-count">${pluginCount}</span>
+</div>
 <script>
   const columns = ${JSON.stringify(getColumns())};
   let sortKey = 'name';
@@ -102,15 +111,41 @@ function generateHtml(pluginsData) {
 }
 
 /**
+ * Formats a Date object as a UTC string in 'DD-MM-YYYY, HH:MM:SS' format (en-GB), with / replaced by -.
+ * @param {Date} date - The date to format.
+ * @returns {string} The formatted UTC date string.
+ */
+function formatDateToUTC(date) {
+  return date
+    .toLocaleString("en-GB", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      timeZone: "UTC",
+    })
+    .replace(/\//g, "-");
+}
+/**
  * Generates the CSS styles for the plugin table page.
  * @returns {string} The CSS styles as a string.
  */
 function generateStyles() {
   return `
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
     .plugin-table-container {
       display: flex;
       flex-direction: column;
-      height: 100vh;
+      flex: 1 1 auto;
       overflow: hidden;
       background-color: #002c38;
       box-sizing: border-box;
@@ -131,7 +166,7 @@ function generateStyles() {
       color: #fff;
     }
     .table-container {
-      flex: 1;
+      max-height: calc(100vh - 135px); /* adjust 150px as needed for header/footer */
       overflow-y: auto;
       margin: 1rem 12px;
       background-color: #fff;
@@ -178,9 +213,16 @@ function generateStyles() {
     tbody tr {
       transition: all 0.2s ease;
     }
+    .footer {
+      padding: 1.5em 0 1em 0;
+      text-align: center;
+      font-size: 0.95em;
+      margin-top: 0;
+      color: #85c8c8;
+      background-color: #012b36;
+    }
   `;
 }
-
 
 /**
  * Returns the column definitions for the plugins table.

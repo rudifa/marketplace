@@ -82,18 +82,7 @@ function generateHtml(pluginsData) {
   const header = generateTableHeader();
   const rows = pluginsData.map(generateTableRow).join("");
   const clientScripts = generateClientScripts();
-  const now = new Date();
-  const formattedDate = now
-    .toLocaleString("en-GB", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-      timeZone: "UTC",
-    })
-    .replace(/\//g, "-");
+  const formattedDate = formatDateToUTC(new Date()); // now
   const pluginCount = pluginsData.length;
 
   return `<!DOCTYPE html>
@@ -135,6 +124,25 @@ function generateHtml(pluginsData) {
       <script>${clientScripts}</script>
     </body>
     </html>`;
+}
+
+/**
+ * Formats a Date object as a UTC string in 'DD-MM-YYYY, HH:MM:SS' format (en-GB), with / replaced by -.
+ * @param {Date} date - The date to format.
+ * @returns {string} The formatted UTC date string.
+ */
+function formatDateToUTC(date) {
+  return date
+    .toLocaleString("en-GB", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      timeZone: "UTC",
+    })
+    .replace(/\//g, "-");
 }
 
 function generateStyles() {
