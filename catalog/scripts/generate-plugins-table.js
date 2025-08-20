@@ -27,11 +27,13 @@ if (args.includes("--help") || args.includes("-h")) {
 }
 const verbose = args.includes("--verbose") || args.includes("-v");
 
-
 /**
  * Run main if this script is executed directly
  */
-if (import.meta.url === `file://${process.argv[1]}` || import.meta.url === process.argv[1]) {
+if (
+  import.meta.url === `file://${process.argv[1]}` ||
+  import.meta.url === process.argv[1]
+) {
   main({verbose}).then(() => {
     if (verbose) console.log("Script execution completed.");
     process.exit(0);
@@ -78,13 +80,6 @@ async function main({verbose = false} = {}) {
  * @returns {string} Complete HTML string.
  */
 function generateHtml(pluginsData) {
-//   const styles = generateStyles();
-//   const header = generateTableHeader();
-//   const rows = pluginsData.map(generateTableRow).join("");
-//   const clientScripts = generateClientScripts();
-//   const formattedDate = formatDateToUTC(new Date()); // now
-//   const pluginCount = pluginsData.length;
-
   return `<!DOCTYPE html>
     <html lang="en">
     <head>
@@ -102,12 +97,7 @@ function generateHtml(pluginsData) {
         <h1>Logseq Marketplace Plugins</h1>
       </header>
       <main>
-        <div class="table-container">
-          <table id="plugin-table" class="display">
-            <thead>${renderTableHeaderRow()}</thead>
-            <tbody>${renderTableDataRows(pluginsData)}</tbody>
-          </table>
-        </div>
+        ${renderDataTable(pluginsData)}
       </main>
       <div class="modal-bg" id="readme-modal-bg">
         <div class="modal-content">
@@ -119,80 +109,50 @@ function generateHtml(pluginsData) {
         </div>
       </div>
       <div class="footer">
-        Page generated: <span id="footer-date">${formatNowToUTC()} UTC</span> &mdash; Plugins listed: <span id="footer-count">${pluginsData.length}</span>
+        Page generated: <span id="footer-date">${formatNowToUTC()} UTC</span> &mdash; Plugins listed: <span id="footer-count">${
+    pluginsData.length
+  }</span>
       </div>
       <script>${generateClientScripts()}</script>
     </body>
     </html>`;
 }
 
-function formatNowToUTC() {
-  return formatDateToUTC(new Date());
-}
-
 /**
- * Formats a Date object as a UTC string in 'DD-MM-YYYY, HH:MM:SS' format (en-GB), with / replaced by -.
- * @param {Date} date - The date to format.
- * @returns {string} The formatted UTC date string.
+ * Renders the table container and table for the plugins data.
+ * @param {Array} pluginsData - Array of processed plugin objects.
+ * @returns {string} HTML string for the table container and table.
  */
-function formatDateToUTC(date) {
-  return date
-    .toLocaleString("en-GB", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-      timeZone: "UTC",
-    })
-    .replace(/\//g, "-");
-}
+function renderDataTable(pluginsData) {
+  const initDataTableString = initDataTable.toString();
 
-function generateStyles() {
-  return `
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
-      box-sizing: border-box;
-      background-color: #012b36;
-      border: 1px solid #85c8c8;
-    }
-    header {
-      background-color: #012b36;
-      padding: 20px;
-      text-align: center;
-    }
-    h1 {
-      margin: 0;
-      color: #85c8c8;
-      font-size: 24px;
-    }
-    main {
-      flex: 1;
-      padding: 20px 15px 20px 15px;
-      background-color: white;
-      margin: 0 15px 0 15px;
-    }
+  const tableStyles = `
     .table-container {
       margin-bottom: 2em;
+    }
+    #plugin-table {
+      width: 100% !important;
+      table-layout: fixed;
+    }
+    #plugin-table th, #plugin-table td {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 0;
+    }
+    #plugin-table th {
+      position: sticky;
+      top: 0;
+      background-color: #f8f8f8;
+      z-index: 1;
     }
     #plugins tbody tr:hover {
       background-color: #eafafa !important;
       border-left: 4px solid #85c8c8;
       transition: background 0.2s, border 0.2s;
     }
-    .footer {
-      padding: 1.5em 0 1em 0;
-      text-align: center;
-      font-size: 0.95em;
-      margin-top: 0;
-      color: #85c8c8;
-      background-color: #012b36;
+    .dataTables_wrapper .dataTables_scroll {
+      overflow: auto;
     }
     div.dataTables_wrapper {
       width: 100%;
@@ -208,87 +168,22 @@ function generateStyles() {
       padding: 5px;
       margin: 0 15px 10px 0;
     }
-    .modal-bg {
-      display: none;
-      position: fixed;
-      z-index: 1000;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.5);
-      justify-content: center;
-      align-items: center;
-    }
-    .modal-content {
-      display: flex;
-      flex-direction: column;
-      max-width: 80vw;
-      max-height: 80vh;
-      background: #fff;
-      border-radius: 8px;
-      position: relative;
-      transform: scale(0.7);
-      opacity: 0;
-      transition: transform 0.25s ease, opacity 0.2s;
-      overflow: hidden; /* Prevents scrollbars on modal-content itself */
-    }
-    .modal-header {
-      position: sticky;
-      top: 0;
-      background-color: #fff;
-      padding: 1em 2.5em 1em 1em;
-      border-bottom: 1px solid #ddd;
-      z-index: 1002;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.03);
-      flex-shrink: 0;
-    }
-    .modal-body {
-      overflow-y: auto;
-      max-height: 60vh; /* or calc(80vh - header height) */
-      padding: 1em;
-    }
+  `;
 
-    .modal-content.modal-animate {
-      transform: scale(1);
-      opacity: 1;
-    }
-    .modal-header h2 {
-      font-size: 2em;
-      margin: 0;
-      color: #222;
-    }
-    .modal-close {
-      float: right;
-      font-size: 2em;
-      color: #888;
-      cursor: pointer;
-    }
+  return `
+    <style>${tableStyles}</style>
+    <div class="table-container">
+      <table id="plugin-table" class="display">
+        <thead>${renderTableHeaderRow()}</thead>
+        <tbody>${renderTableDataRows(pluginsData)}</tbody>
+      </table>
+    </div>
+     <script>
+       ${initDataTableString}
 
-
-  #plugin-table {
-      width: 100% !important;
-      table-layout: fixed;
-    }
-
-  #plugin-table th, #plugin-table td {
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 0;
-    }
-
-  #plugin-table th {
-      position: sticky;
-      top: 0;
-      background-color: #f8f8f8;
-      z-index: 1;
-    }
-
-    .dataTables_wrapper .dataTables_scroll {
-      overflow: auto;
-    }
-
+      // Initialize DataTable on document ready
+      $(document).ready(initDataTable);
+     </script>
   `;
 }
 
@@ -312,9 +207,13 @@ function renderTableHeaderRow() {
   `;
 }
 
-
+/**
+ * Renders the data rows for the plugins table.
+ * @param {Array<Object>} pluginsData - An array of plugin objects containing the data to be displayed.
+ * @returns {string} A string of HTML containing all the table rows for the plugins data.
+ */
 function renderTableDataRows(pluginsData) {
-    return pluginsData.map(generateTableRow).join("");
+  return pluginsData.map(generateTableRow).join("");
 }
 
 /**
@@ -350,6 +249,128 @@ function generateTableRow(plugin) {
 }
 
 /**
+ * Initializes the DataTable for the plugins table.
+ */
+function initDataTable() {
+  // HERE header and data columns do resize together
+  // BUT initial auto widths are not the best
+  const table = $("#plugin-table").DataTable({
+    paging: false,
+    scrollY: "70vh",
+    scrollCollapse: true,
+    info: false,
+    order: [], // No initial sort, preserve server order, but allow user sorting
+  });
+
+  $(window).on("resize", function () {
+    table.columns.adjust().draw();
+  });
+}
+
+/**
+ * Generates the CSS styles for the Logseq Marketplace Plugins page.
+ * @returns {string} A string containing CSS styles for the page layout, header, main content, footer, and modal.
+ */
+function generateStyles() {
+  return `
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      box-sizing: border-box;
+      background-color: #012b36;
+      border: 1px solid #85c8c8;
+    }
+    header {
+      background-color: #012b36;
+      padding: 20px;
+      text-align: center;
+    }
+    h1 {
+      margin: 0;
+      color: #85c8c8;
+      font-size: 24px;
+    }
+    main {
+      flex: 1;
+      padding: 20px 15px 20px 15px;
+      background-color: white;
+      margin: 0 15px 0 15px;
+    }
+    .footer {
+      padding: 1.5em 0 1em 0;
+      text-align: center;
+      font-size: 0.95em;
+      margin-top: 0;
+      color: #85c8c8;
+      background-color: #012b36;
+    }
+    .modal-bg {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-content {
+      display: flex;
+      flex-direction: column;
+      max-width: 80vw;
+      max-height: 80vh;
+      background: #fff;
+      border-radius: 8px;
+      position: relative;
+      transform: scale(0.7);
+      opacity: 0;
+      transition: transform 0.25s ease, opacity 0.2s;
+      overflow: hidden;
+    }
+    .modal-header {
+      position: sticky;
+      top: 0;
+      background-color: #fff;
+      padding: 1em 2.5em 1em 1em;
+      border-bottom: 1px solid #ddd;
+      z-index: 1002;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+      flex-shrink: 0;
+    }
+    .modal-body {
+      overflow-y: auto;
+      max-height: 60vh;
+      padding: 1em;
+    }
+    .modal-content.modal-animate {
+      transform: scale(1);
+      opacity: 1;
+    }
+    .modal-header h2 {
+      font-size: 2em;
+      margin: 0;
+      color: #222;
+    }
+    .modal-close {
+      float: right;
+      font-size: 2em;
+      color: #888;
+      cursor: pointer;
+    }
+  `;
+}
+
+function formatNowToUTC() {
+  return formatDateToUTC(new Date());
+}
+
+/**
  * Generates the client-side JavaScript to be included in the HTML.
  * @returns {string} Client-side JavaScript as a string.
  */
@@ -358,7 +379,6 @@ function generateClientScripts() {
     convertRelativeUrlsToAbsolute.toString();
   const showReadmeModalString = showReadmeModal.toString();
   const closeReadmeModalString = closeReadmeModal.toString();
-  const initDataTableString = initDataTable.toString();
 
   return `
     // Converts relative image and link URLs in markdown to absolute URLs based on the README location
@@ -370,16 +390,31 @@ function generateClientScripts() {
     // Close README modal
     ${closeReadmeModalString}
 
-    // Initialize DataTable
-    ${initDataTableString}
 
     // Assign functions to window object
     window.showReadmeModal = showReadmeModal;
     window.closeReadmeModal = closeReadmeModal;
 
-    // Initialize DataTable on document ready
-    $(document).ready(initDataTable);
   `;
+}
+
+/**
+ * Formats a Date object as a UTC string in 'DD-MM-YYYY, HH:MM:SS' format (en-GB), with / replaced by -.
+ * @param {Date} date - The date to format.
+ * @returns {string} The formatted UTC date string.
+ */
+function formatDateToUTC(date) {
+  return date
+    .toLocaleString("en-GB", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      timeZone: "UTC",
+    })
+    .replace(/\//g, "-");
 }
 
 /**
@@ -460,10 +495,10 @@ function showReadmeModal(readmeUrl) {
         modalTitle.textContent = titleMatch[1];
       }
 
-  modalBody.innerHTML = marked.parse(processed);
-  // Hide the first heading in the modal body (to avoid duplicate title)
-  const firstHeading = modalBody.querySelector('h1, h2, h3, h4, h5, h6');
-  if (firstHeading) firstHeading.style.display = 'none';
+      modalBody.innerHTML = marked.parse(processed);
+      // Hide the first heading in the modal body (to avoid duplicate title)
+      const firstHeading = modalBody.querySelector("h1, h2, h3, h4, h5, h6");
+      if (firstHeading) firstHeading.style.display = "none";
     })
     .catch(function () {
       clearTimeout(loadingTimeout);
@@ -482,23 +517,4 @@ function closeReadmeModal() {
   setTimeout(function () {
     modalBg.style.display = "none";
   }, 200);
-}
-
-/**
- * Initializes the DataTable for the plugins table.
- */
-function initDataTable() {
-  // HERE header and data columns do resize together
-  // BUT initial auto widths are not the best
-  const table = $("#plugin-table").DataTable({
-    paging: false,
-    scrollY: "70vh",
-    scrollCollapse: true,
-    info: false,
-    order: [], // No initial sort, preserve server order, but allow user sorting
-  });
-
-  $(window).on("resize", function () {
-    table.columns.adjust().draw();
-  });
 }
