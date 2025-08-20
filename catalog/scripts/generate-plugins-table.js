@@ -304,6 +304,7 @@ function renderTableHeaderRow() {
         <th>Description</th>
         <th>Author</th>
         <th>Repo</th>
+        <th>Branch</th>
         <th>Created</th>
         <th>Last Updated</th>
         <th>Error</th>
@@ -340,6 +341,7 @@ function generateTableRow(plugin) {
       <td>${descCell}</td>
       <td>${plugin.author || ""}</td>
       <td>${repoCell}</td>
+      <td>${plugin.defaultBranch || ""}</td>
       <td>${plugin.created_at ? plugin.created_at.slice(0, 10) : ""}</td>
       <td>${plugin.last_updated ? plugin.last_updated.slice(0, 10) : ""}</td>
       <td>${plugin.error || ""}</td>
