@@ -4,7 +4,7 @@
   "author": "rudifa",
   "type": "module",
   "scripts": {
-    "build": "scripts/update-catalog-index.js && scripts/generate-plugins-table-2.js",
+    "build": "scripts/update-catalog-index.js && scripts/generate-plugins-table-2.js && open index.html",
     "build:min": "scripts/update-catalog-index.js --max 36 && scripts/generate-plugins-table-2.js",
     "dev": "scripts/update-catalog-index.js --max 24",
     "fetch": "scripts/fetch-plugins-data.js",
