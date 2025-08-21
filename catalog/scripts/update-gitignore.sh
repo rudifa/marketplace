@@ -6,33 +6,9 @@ set -e
 
 
 MODE="$1"
-FILES=("index.html" "plugins-table.html" "plugins-data.json")
+FILES=("index.html" "plugins-data.json")
 GITIGNORE=".gitignore"
 
-# Helper: check if a file is in .gitignore
-is_ignored() {
-  grep -Fxq "$1" "$GITIGNORE"
-}
-
-if [[ -z "$MODE" ]]; then
-  # No arg: report current mode
-  dev=1
-  for f in "${FILES[@]}"; do
-    if ! is_ignored "$f"; then
-      dev=0
-      break
-    fi
-  done
-  if [[ $dev -eq 1 ]]; then
-    echo "dev"
-  else
-    echo "prod"
-  fi
-  exit 0
-fi
-
-FILES=("index.html" "plugins-table.html" "plugins-data.json")
-GITIGNORE=".gitignore"
 
 # Helper: check if a file is in .gitignore
 is_ignored() {
@@ -57,7 +33,7 @@ if [[ "$MODE" == "dev" ]]; then
       echo "Deleted $f from working directory"
     fi
   done
-else
+elif [[ "$MODE" == "prod" ]]; then
   # Remove files from .gitignore if present
   TMP=$(mktemp)
   cp "$GITIGNORE" "$TMP"
@@ -71,4 +47,8 @@ else
     rm "$TMP"
     echo "$GITIGNORE already conforms (prod)"
   fi
+else
+  echo "Invalid mode: $MODE"
+  echo "Usage: ./update-gitignore.sh [prod|dev]"
+  exit 1
 fi

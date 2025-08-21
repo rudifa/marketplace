@@ -7,10 +7,10 @@ export {main};
 
 // Script to process Logseq marketplace pluginData from a local file
 // and generate an HTML page with a table of plugins.
-// Usage: node generate-plugins-table.js
+// Usage: node generate-plugins-table-html.js
 // Output: catalog/index.html
 
-const DIR = ".";
+const DIR = "./generated";
 
 const INPUT_FILE = "plugins-data.json";
 const OUTPUT_FILE = "index.html";
@@ -87,17 +87,12 @@ function generateHtml(pluginsData) {
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <title>Logseq Marketplace Plugins</title>
       <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
-<link
-      rel="stylesheet"
-      href="https://cdn.datatables.net/scroller/2.2.0/css/scroller.dataTables.min.css" />
-
+      <link rel="stylesheet" href="https://cdn.datatables.net/scroller/2.2.0/css/scroller.dataTables.min.css" />
       <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
       <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-
-          <script src="https://cdn.datatables.net/scroller/2.2.0/js/dataTables.scroller.min.js"></script>
-
+      <script src="https://cdn.datatables.net/scroller/2.2.0/js/dataTables.scroller.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-      <style>${generateStyles()}</style>
+      <style>${renderStyles()}</style>
     </head>
     <body>
       <header>
@@ -106,19 +101,10 @@ function generateHtml(pluginsData) {
       <main>
         ${renderDataTable(pluginsData)}
       </main>
-      <div class="modal-bg" id="readme-modal-bg">
-        <div class="modal-content">
-          <div class="modal-header">
-            <span class="modal-close" onclick="closeReadmeModal()">&times;</span>
-            <h2>README</h2>
-          </div>
-          <div class="modal-body" id="readme-modal-content">Loading...</div>
-        </div>
-      </div>
+      ${renderReadmeModal()}
       <div class="footer">
-        Page generated: <span id="footer-date">${formatNowToUTC()} UTC</span> &mdash; Plugins listed: <span id="footer-count">${
-    pluginsData.length
-  }</span>
+        Page generated: <span id="footer-date">${formatNowToUTC()} UTC</span> &mdash;
+        Plugins listed: <span id="footer-count">${pluginsData.length}</span>
       </div>
       <script>${generateClientScripts()}</script>
     </body>
@@ -126,192 +112,10 @@ function generateHtml(pluginsData) {
 }
 
 /**
- * Renders the table container and table for the plugins data.
- * @param {Array} pluginsData - Array of processed plugin objects.
- * @returns {string} HTML string for the table container and table.
+ * Renders the CSS styles for the Logseq Marketplace Plugins page.
+ * @returns {string} A string containing CSS styles for the page layout, header, main content and footer.
  */
-function renderDataTable(pluginsData) {
-  const initDataTableString = initDataTable.toString();
-
-  const tableStyles = `
-    .table-container {
-      margin-bottom: 2em;
-    }
-    #plugin-table {
-      width: 100% !important;
-    //   table-layout: fixed;
-        table-layout: auto;
-    }
-    #plugin-table th, #plugin-table td {
-    //   white-space: nowrap;
-            white-space: normal !important;
-        overflow-wrap: break-word;
-
-    //   overflow: hidden;
-    //   text-overflow: ellipsis;
-    //   max-width: 0;
-    }
-    #plugin-table th {
-      position: sticky;
-      top: 0;
-      background-color: #f8f8f8;
-      z-index: 1;
-    }
-    #plugins tbody tr:hover {
-      background-color: #eafafa !important;
-      border-left: 4px solid #85c8c8;
-      transition: background 0.2s, border 0.2s;
-    }
-    .dataTables_wrapper .dataTables_scroll {
-      overflow: auto;
-    }
-    div.dataTables_wrapper {
-      width: 100%;
-      margin: 0 auto;
-    }
-    .dataTables_filter {
-      float: right;
-      margin-right: 0;
-      margin-bottom: 10px;
-    }
-    .dataTables_filter input {
-      width: 250px;
-      padding: 5px;
-      margin: 0 15px 10px 0;
-    }
-
-         /* Wrapping columns */
-      .wrap {
-        white-space: normal !important;
-        overflow-wrap: break-word;
-      }
-
-      /* Long unbroken words column */
-      .breaklong {
-        white-space: normal !important;
-        overflow-wrap: anywhere;
-      }
-
-      /* Truncate with ellipsis */
-      .truncate {
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-  `;
-
-  return `
-    <style>${tableStyles}</style>
-    <div class="table-container">
-      <table id="plugin-table" class="display">
-        <thead>${renderTableHeaderRow()}</thead>
-        <tbody>${renderTableDataRows(pluginsData)}</tbody>
-      </table>
-    </div>
-     <script>
-       ${initDataTableString}
-
-      // Initialize DataTable on document ready
-      $(document).ready(initDataTable);
-     </script>
-  `;
-}
-
-/**
- * Generates the table header for the Logseq Marketplace Plugins table.
- * @returns {string} HTML string containing the table header.
- */
-function renderTableHeaderRow() {
-  return `
-      <tr>
-        <th>Icon</th>
-        <th>Name</th>
-        <th>Description</th>
-        <th>Author</th>
-        <th>Repo</th>
-        <th>Branch</th>
-        <th>Created</th>
-        <th>Last Updated</th>
-        <th>Error</th>
-      </tr>
-  `;
-}
-
-/**
- * Renders the data rows for the plugins table.
- * @param {Array<Object>} pluginsData - An array of plugin objects containing the data to be displayed.
- * @returns {string} A string of HTML containing all the table rows for the plugins data.
- */
-function renderTableDataRows(pluginsData) {
-  return pluginsData.map(generateTableRow).join("");
-}
-
-/**
- * Generates the HTML for a single table row based on the plugin data.
- * @param {Object} plugin - The plugin object.
- * @returns {string} HTML string for a table row.
- */
-function generateTableRow(plugin) {
-  const iconCell = plugin.iconUrl
-    ? `<img src="${plugin.iconUrl}" alt="icon" width="24" height="24">`
-    : "";
-  const descCell = plugin.description
-    ? plugin.readmeUrl
-      ? `<a href="#" onclick="showReadmeModal('${plugin.readmeUrl}')">${plugin.description}</a>`
-      : plugin.description
-    : "";
-  const repoCell = plugin.repo
-    ? plugin.repoUrl
-      ? `<a href="${plugin.repoUrl}" target="_blank">${plugin.repo}</a>`
-      : plugin.repo
-    : "";
-  return `
-    <tr>
-      <td>${iconCell}</td>
-      <td>${plugin.name || ""}</td>
-      <td>${descCell}</td>
-      <td>${plugin.author || ""}</td>
-      <td>${repoCell}</td>
-      <td>${plugin.defaultBranch || ""}</td>
-      <td>${plugin.created_at ? plugin.created_at.slice(0, 10) : ""}</td>
-      <td>${plugin.last_updated ? plugin.last_updated.slice(0, 10) : ""}</td>
-      <td>${plugin.error || ""}</td>
-    </tr>
-  `;
-}
-
-/**
- * Initializes the DataTable for the plugins table.
- */
-function initDataTable() {
-  // HERE header and data columns do resize together
-  // BUT initial auto widths are not the best
-  const table = $("#plugin-table").DataTable({
-    // paging: false,
-    // scrollY: "70vh",
-    // scrollCollapse: true,
-    // info: false,
-    // order: [], // No initial sort, preserve server order, but allow user sorting
-    paging: true, // required for Scroller
-    pageLength: 466, // show all rows in one "page" effectively
-    autoWidth: true,
-    scrollY: "70vh", // vertical scroll container height
-    scrollX: true, // allows horizontal resizing & sticky header sync
-    scrollCollapse: true,
-    scroller: true,
-    info: false, // disable info text
-  });
-
-  $(window).on("resize", function () {
-    table.columns.adjust().draw();
-  });
-}
-
-/**
- * Generates the CSS styles for the Logseq Marketplace Plugins page.
- * @returns {string} A string containing CSS styles for the page layout, header, main content, footer, and modal.
- */
-function generateStyles() {
+function renderStyles() {
   return `
     body {
       font-family: Arial, sans-serif;
@@ -348,6 +152,184 @@ function generateStyles() {
       color: #85c8c8;
       background-color: #012b36;
     }
+  `;
+}
+
+/**
+ * Renders the table container and table for the plugins data.
+ * @param {Array} pluginsData - Array of processed plugin objects.
+ * @returns {string} HTML string for the table container and table.
+ */
+function renderDataTable(pluginsData) {
+  const tableStyles = `
+    .table-container {
+      margin-bottom: 2em;
+    }
+    #plugin-table {
+      width: 100% !important;
+      table-layout: auto;
+    }
+    #plugin-table th, #plugin-table td {
+      white-space: normal !important;
+      overflow-wrap: break-word;
+    }
+    #plugin-table th {
+      position: sticky;
+      top: 0;
+      background-color: #f8f8f8;
+      z-index: 1;
+      border-top: 1px solid #85c8c8;
+    }
+    #plugins tbody tr:hover {
+      background-color: #eafafa !important;
+      border-left: 4px solid #85c8c8;
+      transition: background 0.2s, border 0.2s;
+    }
+    .dataTables_wrapper .dataTables_scroll {
+      overflow: auto;
+    }
+    div.dataTables_wrapper {
+      width: 100%;
+      margin: 0 auto;
+    }
+    .dataTables_filter {
+      float: right;
+      margin-right: 0;
+      margin-bottom: 10px;
+    }
+    .dataTables_filter input {
+      width: 250px;
+      padding: 5px;
+      margin: 0 15px 10px 0;
+    }
+
+    /* Wrapping columns */
+    .wrap {
+      white-space: normal !important;
+      overflow-wrap: break-word;
+    }
+
+    /* Long unbroken words column */
+    .breaklong {
+      white-space: normal !important;
+      overflow-wrap: anywhere;
+    }
+
+    /* Truncate with ellipsis */
+    .truncate {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  `;
+
+  return `
+    <style>${tableStyles}</style>
+    <div class="table-container">
+      <table id="plugin-table" class="display">
+        <thead>${renderTableHeaderRow()}</thead>
+        <tbody>${renderTableDataRows(pluginsData)}</tbody>
+      </table>
+    </div>
+     <script>
+       ${initDataTable.toString()}
+
+      // Initialize DataTable on document ready
+      $(document).ready(initDataTable);
+     </script>
+  `;
+}
+
+/**
+ * Renders the table header for the Logseq Marketplace Plugins table.
+ * @returns {string} HTML string containing the table header.
+ */
+function renderTableHeaderRow() {
+  return `
+      <tr>
+        <th>Icon</th>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Author</th>
+        <th>Repo</th>
+        <th>Branch</th>
+        <th>Created</th>
+        <th>Last Updated</th>
+        <th>Error</th>
+      </tr>
+  `;
+}
+
+/**
+ * Renders the data rows for the plugins table.
+ * @param {Array<Object>} pluginsData - An array of plugin objects containing the data to be displayed.
+ * @returns {string} A string of HTML containing all the table rows for the plugins data.
+ */
+function renderTableDataRows(pluginsData) {
+  return pluginsData.map(renderPluginRow).join("");
+}
+
+/**
+ * Renders the HTML for a single table row based on the plugin data.
+ * @param {Object} plugin - The plugin object.
+ * @returns {string} HTML string for a table row.
+ */
+function renderPluginRow(plugin) {
+  const iconCell = plugin.iconUrl
+    ? `<img src="${plugin.iconUrl}" alt="icon" width="24" height="24">`
+    : "";
+  const descCell = plugin.description
+    ? plugin.readmeUrl
+      ? `<a href="#" onclick="showReadmeModal('${plugin.readmeUrl}')">${plugin.description}</a>`
+      : plugin.description
+    : "";
+  const repoCell = plugin.repo
+    ? plugin.repoUrl
+      ? `<a href="${plugin.repoUrl}" target="_blank">${plugin.repo}</a>`
+      : plugin.repo
+    : "";
+  return `
+    <tr>
+      <td>${iconCell}</td>
+      <td>${plugin.name || ""}</td>
+      <td>${descCell}</td>
+      <td>${plugin.author || ""}</td>
+      <td>${repoCell}</td>
+      <td>${plugin.defaultBranch || ""}</td>
+      <td>${plugin.created_at ? plugin.created_at.slice(0, 10) : ""}</td>
+      <td>${plugin.last_updated ? plugin.last_updated.slice(0, 10) : ""}</td>
+      <td>${plugin.error || ""}</td>
+    </tr>
+  `;
+}
+
+/**
+ * Initializes the DataTable for the plugins table.
+ */
+function initDataTable() {
+  const table = $("#plugin-table").DataTable({
+    order: [], // No initial sort, preserve server order, but allow user sorting
+    paging: true, // required for Scroller
+    autoWidth: true,
+    scrollY: "70vh", // vertical scroll container height
+    scrollX: true, // allows horizontal resizing & sticky header sync
+    scrollCollapse: true,
+    scroller: true,
+    info: false, // disable info text
+  });
+
+  $(window).on("resize", function () {
+    table.columns.adjust().draw();
+  });
+}
+
+/**
+ * Renders the modal HTML for displaying README content.
+ * @returns {string} HTML string for the README modal.
+ */
+function renderReadmeModal() {
+  return `
+    <style>
     .modal-bg {
       display: none;
       position: fixed;
@@ -403,7 +385,17 @@ function generateStyles() {
       color: #888;
       cursor: pointer;
     }
-  `;
+    </style>
+    <div class="modal-bg" id="readme-modal-bg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <span class="modal-close" onclick="closeReadmeModal()">&times;</span>
+          <h2>README</h2>
+        </div>
+        <div class="modal-body" id="readme-modal-content">Loading...</div>
+      </div>
+    </div>
+`;
 }
 
 function formatNowToUTC() {
@@ -422,19 +414,17 @@ function generateClientScripts() {
 
   return `
     // Converts relative image and link URLs in markdown to absolute URLs based on the README location
-    ${convertRelativeUrlsToAbsoluteString}
+    ${convertRelativeUrlsToAbsolute.toString()}
 
     // Show README modal
-    ${showReadmeModalString}
+    ${showReadmeModal.toString()}
 
     // Close README modal
-    ${closeReadmeModalString}
-
+    ${closeReadmeModal.toString()}
 
     // Assign functions to window object
     window.showReadmeModal = showReadmeModal;
     window.closeReadmeModal = closeReadmeModal;
-
   `;
 }
 

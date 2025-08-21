@@ -9,7 +9,7 @@ export {main};
 // Usage: node fetch-package-data.js
 // Output: catalog/plugins-data.json
 
-const OUTPUT_DIR = ".";
+const OUTPUT_DIR = "./generated";
 const DATA_FILE = "plugins-data.json";
 
 const LOGSEQ_MARKETPLACE_PACKAGES_URL =

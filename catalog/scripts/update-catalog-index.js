@@ -43,7 +43,7 @@ async function main({verbose = false} = {}) {
 
     // Run the generate script
     console.log("Generating HTML output...");
-    const generateScript = await import("./generate-plugins-table.js");
+    const generateScript = await import("./generate-plugins-table-html.js");
     await generateScript.main({verbose});
 
     console.log("Done!");
