@@ -87,8 +87,15 @@ function generateHtml(pluginsData) {
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <title>Logseq Marketplace Plugins</title>
       <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+<link
+      rel="stylesheet"
+      href="https://cdn.datatables.net/scroller/2.2.0/css/scroller.dataTables.min.css" />
+
       <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-      <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+      <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+          <script src="https://cdn.datatables.net/scroller/2.2.0/js/dataTables.scroller.min.js"></script>
+
       <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
       <style>${generateStyles()}</style>
     </head>
@@ -132,13 +139,17 @@ function renderDataTable(pluginsData) {
     }
     #plugin-table {
       width: 100% !important;
-      table-layout: fixed;
+    //   table-layout: fixed;
+        table-layout: auto;
     }
     #plugin-table th, #plugin-table td {
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 0;
+    //   white-space: nowrap;
+            white-space: normal !important;
+        overflow-wrap: break-word;
+
+    //   overflow: hidden;
+    //   text-overflow: ellipsis;
+    //   max-width: 0;
     }
     #plugin-table th {
       position: sticky;
@@ -168,6 +179,25 @@ function renderDataTable(pluginsData) {
       padding: 5px;
       margin: 0 15px 10px 0;
     }
+
+         /* Wrapping columns */
+      .wrap {
+        white-space: normal !important;
+        overflow-wrap: break-word;
+      }
+
+      /* Long unbroken words column */
+      .breaklong {
+        white-space: normal !important;
+        overflow-wrap: anywhere;
+      }
+
+      /* Truncate with ellipsis */
+      .truncate {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
   `;
 
   return `
@@ -231,7 +261,9 @@ function generateTableRow(plugin) {
       : plugin.description
     : "";
   const repoCell = plugin.repo
-    ? `<a href="https://github.com/${plugin.repo}" target="_blank">${plugin.repo}</a>`
+    ? plugin.repoUrl
+      ? `<a href="${plugin.repoUrl}" target="_blank">${plugin.repo}</a>`
+      : plugin.repo
     : "";
   return `
     <tr>
@@ -255,11 +287,19 @@ function initDataTable() {
   // HERE header and data columns do resize together
   // BUT initial auto widths are not the best
   const table = $("#plugin-table").DataTable({
-    paging: false,
-    scrollY: "70vh",
+    // paging: false,
+    // scrollY: "70vh",
+    // scrollCollapse: true,
+    // info: false,
+    // order: [], // No initial sort, preserve server order, but allow user sorting
+    paging: true, // required for Scroller
+    pageLength: 466, // show all rows in one "page" effectively
+    autoWidth: true,
+    scrollY: "70vh", // vertical scroll container height
+    scrollX: true, // allows horizontal resizing & sticky header sync
     scrollCollapse: true,
-    info: false,
-    order: [], // No initial sort, preserve server order, but allow user sorting
+    scroller: true,
+    info: false, // disable info text
   });
 
   $(window).on("resize", function () {
