@@ -2,14 +2,20 @@ name: Update Catalog
 on:
   push:
     branches:
-      - "**"
-      - master
+      - "**" # Run on any branch, including master and feature branches
   workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - name: Exit if commit is from GitHub Actions bot
+        run: |
+          echo "Actor: ${{ github.actor }}"
+          if [ "${{ github.actor }}" = "github-actions[bot]" ]; then
+            echo "Commit was made by the bot, stopping workflow."
+            exit 0
+          fi
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
