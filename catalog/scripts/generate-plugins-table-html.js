@@ -226,6 +226,11 @@ function renderDataTable(pluginsData) {
       padding: 5px;
       margin: 0 15px 10px 0;
     }
+    #toggle-columns {
+      padding: 3px 12px;
+      font-size: 0.95em;
+      cursor: pointer;
+    }
   `;
 
   return `
@@ -238,9 +243,23 @@ function renderDataTable(pluginsData) {
     </div>
 
     <script>
-      function initDataTable() {
-        $(document).ready(function () {
-          const table = $("#plugin-table").DataTable({
+
+    /**
+     * Initializes the jQuery DataTables with Scroller plugin.
+     */
+
+    function initDataTableWithToggle() {
+        let showMore = false;  // initial state
+        let table;             // declare first
+
+        // toggle function uses the variable
+        function toggleColumns() {
+            // if (!table) return;       // safety check
+            table.column(5).visible(showMore); // Branch
+            table.column(8).visible(showMore); // Error
+        }
+
+        table = $("#plugin-table").DataTable({
             order: [],
             paging: true,
             autoWidth: true,
@@ -250,13 +269,38 @@ function renderDataTable(pluginsData) {
             scroller: true,
             info: false,
             initComplete: function () {
-              $("#plugin-table").css("opacity", "1").addClass("ready");
-            }
-          });
-        });
-      }
+                const $table = this.api(); // jQuery DataTable API
+                $("#plugin-table").css("opacity", "1").addClass("ready");
 
-      initDataTable();
+                const $btn = $('<button type="button" id="toggle-columns" style="margin-left:10px;">more</button>');
+                $(".dataTables_filter").append($btn);
+
+                $btn.on("click", function () {
+                    showMore = !showMore;
+                    toggleColumns();
+                    $(this).text(showMore ? "less" : "more");
+                });
+
+                // Use the table API for toggleColumns
+                function toggleColumns() {
+                    $table.column(5).visible(showMore); // Branch
+                    $table.column(8).visible(showMore); // Error
+                }
+
+                // Initial column visibility **after draw**
+                $table.on("draw", function () {
+                    toggleColumns();
+                });
+                $table.draw();
+            }
+        });
+
+        // Initial column visibility
+        toggleColumns();
+    }
+
+    initDataTableWithToggle();
+
     </script>
   `;
 }

@@ -113,6 +113,11 @@
       padding: 5px;
       margin: 0 15px 10px 0;
     }
+    #toggle-columns {
+      padding: 3px 12px;
+      font-size: 0.95em;
+      cursor: pointer;
+    }
   </style>
     <div class="table-container">
       <table id="plugin-table" class="display">
@@ -5726,9 +5731,23 @@
     </div>
 
     <script>
-      function initDataTable() {
-        $(document).ready(function () {
-          const table = $("#plugin-table").DataTable({
+
+    /**
+     * Initializes the jQuery DataTables with Scroller plugin.
+     */
+
+    function initDataTableWithToggle() {
+        let showMore = false;  // initial state
+        let table;             // declare first
+
+        // toggle function uses the variable
+        function toggleColumns() {
+            // if (!table) return;       // safety check
+            table.column(5).visible(showMore); // Branch
+            table.column(8).visible(showMore); // Error
+        }
+
+        table = $("#plugin-table").DataTable({
             order: [],
             paging: true,
             autoWidth: true,
@@ -5738,13 +5757,38 @@
             scroller: true,
             info: false,
             initComplete: function () {
-              $("#plugin-table").css("opacity", "1").addClass("ready");
-            }
-          });
-        });
-      }
+                const $table = this.api(); // jQuery DataTable API
+                $("#plugin-table").css("opacity", "1").addClass("ready");
 
-      initDataTable();
+                const $btn = $('<button type="button" id="toggle-columns" style="margin-left:10px;">more</button>');
+                $(".dataTables_filter").append($btn);
+
+                $btn.on("click", function () {
+                    showMore = !showMore;
+                    toggleColumns();
+                    $(this).text(showMore ? "less" : "more");
+                });
+
+                // Use the table API for toggleColumns
+                function toggleColumns() {
+                    $table.column(5).visible(showMore); // Branch
+                    $table.column(8).visible(showMore); // Error
+                }
+
+                // Initial column visibility **after draw**
+                $table.on("draw", function () {
+                    toggleColumns();
+                });
+                $table.draw();
+            }
+        });
+
+        // Initial column visibility
+        toggleColumns();
+    }
+
+    initDataTableWithToggle();
+
     </script>
   
       </main>
@@ -5817,7 +5861,7 @@
     </div>
 
       <div class="footer">
-        Page generated: <span id="footer-date">22-08-2025, 13:26:52 UTC</span> &mdash;
+        Page generated: <span id="footer-date">22-08-2025, 14:14:15 UTC</span> &mdash;
         Plugins listed: <span id="footer-count">466</span>
       </div>
       <script>
