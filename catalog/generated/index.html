@@ -4,12 +4,22 @@
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <title>Logseq Marketplace Plugins</title>
-      <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
-      <link rel="stylesheet" href="https://cdn.datatables.net/scroller/2.2.0/css/scroller.dataTables.min.css" />
+
+      <!-- jQuery -->
       <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+      <!-- Core DataTables (v1.13.x) -->
+      <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
       <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+      <!-- Scroller extension (compatible with jQuery v1.x) -->
+      <link rel="stylesheet" href="https://cdn.datatables.net/scroller/2.2.0/css/scroller.dataTables.min.css">
       <script src="https://cdn.datatables.net/scroller/2.2.0/js/dataTables.scroller.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/datatables.net-responsive@2.5.0/js/dataTables.responsive.min.js"></script>
+
+      <!-- Marked for rendering Markdown READMEs -->
       <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
       <style>
     body {
       font-family: Arial, sans-serif;
@@ -61,10 +71,18 @@
     #plugin-table {
       width: 100% !important;
       table-layout: auto;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    #plugin-table.ready {
+      opacity: 1;
     }
     #plugin-table th, #plugin-table td {
       white-space: normal !important;
       overflow-wrap: break-word;
+    }
+    #plugin-table td.date-col, #plugin-table th.date-col {
+      white-space: nowrap !important;
     }
     #plugin-table th {
       position: sticky;
@@ -73,7 +91,7 @@
       z-index: 1;
       border-top: 1px solid #85c8c8;
     }
-    #plugins tbody tr:hover {
+    #plugin-table tbody tr:hover {
       background-color: #eafafa !important;
       border-left: 4px solid #85c8c8;
       transition: background 0.2s, border 0.2s;
@@ -95,25 +113,6 @@
       padding: 5px;
       margin: 0 15px 10px 0;
     }
-
-    /* Wrapping columns */
-    .wrap {
-      white-space: normal !important;
-      overflow-wrap: break-word;
-    }
-
-    /* Long unbroken words column */
-    .breaklong {
-      white-space: normal !important;
-      overflow-wrap: anywhere;
-    }
-
-    /* Truncate with ellipsis */
-    .truncate {
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
   </style>
     <div class="table-container">
       <table id="plugin-table" class="display">
@@ -125,8 +124,8 @@
         <th>Author</th>
         <th>Repo</th>
         <th>Branch</th>
-        <th>Created</th>
-        <th>Last Updated</th>
+        <th class="date-col">Created</th>
+        <th class="date-col">Last Updated</th>
         <th>Error</th>
       </tr>
   </thead>
@@ -138,8 +137,8 @@
       <td>Joodo <wyattliang@gmail.com></td>
       <td><a href="https://github.com/joodo/logseq-plugin-pin" target="_blank">joodo/logseq-plugin-pin</a></td>
       <td>main</td>
-      <td>2024-08-27</td>
-      <td>2024-08-29</td>
+      <td class="date-col">2024-08-27</td>
+      <td class="date-col">2024-08-29</td>
       <td></td>
     </tr>
   
@@ -150,8 +149,8 @@
       <td>Santi Younger (Fira variant by Martín Pozo)</td>
       <td><a href="https://github.com/Martin1887/CobraKaiFira" target="_blank">Martin1887/CobraKaiFira</a></td>
       <td>main</td>
-      <td>2023-05-26</td>
-      <td>2023-05-26</td>
+      <td class="date-col">2023-05-26</td>
+      <td class="date-col">2023-05-26</td>
       <td></td>
     </tr>
   
@@ -162,8 +161,8 @@
       <td>Santi Younger</td>
       <td><a href="https://github.com/santiyounger/Cobra" target="_blank">santiyounger/Cobra</a></td>
       <td>main</td>
-      <td>2021-10-14</td>
-      <td>2021-10-19</td>
+      <td class="date-col">2021-10-14</td>
+      <td class="date-col">2021-10-19</td>
       <td></td>
     </tr>
   
@@ -174,8 +173,8 @@
       <td>lsy</td>
       <td><a href="https://github.com/stillfox-lee/cubox-2-logseq" target="_blank">stillfox-lee/cubox-2-logseq</a></td>
       <td>master</td>
-      <td>2025-06-24</td>
-      <td>2025-06-24</td>
+      <td class="date-col">2025-06-24</td>
+      <td class="date-col">2025-06-24</td>
       <td></td>
     </tr>
   
@@ -186,8 +185,8 @@
       <td>Aleksei Gusev</td>
       <td><a href="https://github.com/hron/logseq-cycle-todo-dwim" target="_blank">hron/logseq-cycle-todo-dwim</a></td>
       <td>main</td>
-      <td>2024-12-03</td>
-      <td>2024-12-04</td>
+      <td class="date-col">2024-12-03</td>
+      <td class="date-col">2024-12-04</td>
       <td></td>
     </tr>
   
@@ -198,8 +197,8 @@
       <td>hkgnp</td>
       <td><a href="https://github.com/benjypng/darwis-mathlive-plugin" target="_blank">hkgnp/darwis-mathlive-plugin</a></td>
       <td>main</td>
-      <td>2023-04-14</td>
-      <td>2023-04-15</td>
+      <td class="date-col">2023-04-14</td>
+      <td class="date-col">2023-04-15</td>
       <td></td>
     </tr>
   
@@ -210,8 +209,8 @@
       <td>duiliuliu</td>
       <td><a href="https://github.com/duiliuliu/logseq-flomo-plugin" target="_blank">duiliuliu/logseq-flomo-plugin</a></td>
       <td>main</td>
-      <td>2022-05-19</td>
-      <td>2022-05-19</td>
+      <td class="date-col">2022-05-19</td>
+      <td class="date-col">2022-05-19</td>
       <td></td>
     </tr>
   
@@ -222,8 +221,8 @@
       <td>Kai Klostermann</td>
       <td><a href="https://github.com/OddDev/oddbox" target="_blank">OddDev/oddbox</a></td>
       <td>main</td>
-      <td>2024-10-02</td>
-      <td>2024-10-02</td>
+      <td class="date-col">2024-10-02</td>
+      <td class="date-col">2024-10-02</td>
       <td></td>
     </tr>
   
@@ -234,8 +233,8 @@
       <td>pb-pub</td>
       <td><a href="https://github.com/pb-pub/hanzi-writer-integration" target="_blank">pb-pub/hanzi-writer-integration</a></td>
       <td>master</td>
-      <td>2025-01-31</td>
-      <td>2025-02-04</td>
+      <td class="date-col">2025-01-31</td>
+      <td class="date-col">2025-02-04</td>
       <td></td>
     </tr>
   
@@ -246,8 +245,8 @@
       <td>Dmytro Dubinin</td>
       <td><a href="https://github.com/dmytrodubinin/Harmony-theme-for-Logseq" target="_blank">dmytrodubinin/Harmony-theme-for-Logseq</a></td>
       <td>main</td>
-      <td>2022-04-08</td>
-      <td>2022-06-08</td>
+      <td class="date-col">2022-04-08</td>
+      <td class="date-col">2022-06-08</td>
       <td></td>
     </tr>
   
@@ -258,8 +257,8 @@
       <td>Alex Qwxlea</td>
       <td><a href="https://github.com/QWxleA/log-stats" target="_blank">QWxleA/log-stats</a></td>
       <td>main</td>
-      <td>2022-04-12</td>
-      <td>2022-04-12</td>
+      <td class="date-col">2022-04-12</td>
+      <td class="date-col">2022-04-12</td>
       <td></td>
     </tr>
   
@@ -270,8 +269,8 @@
       <td>hankhank10</td>
       <td><a href="https://github.com/hankhank10/loglink-plugin" target="_blank">hankhank10/loglink-plugin</a></td>
       <td>main</td>
-      <td>2023-01-05</td>
-      <td>2023-01-06</td>
+      <td class="date-col">2023-01-05</td>
+      <td class="date-col">2023-01-06</td>
       <td></td>
     </tr>
   
@@ -282,8 +281,8 @@
       <td>breadfruit_burial</td>
       <td><a href="https://github.com/matteron/logseq-ac-keijiban" target="_blank">matteron/logseq-ac-keijiban</a></td>
       <td>main</td>
-      <td>2023-11-09</td>
-      <td>2023-11-09</td>
+      <td class="date-col">2023-11-09</td>
+      <td class="date-col">2023-11-09</td>
       <td></td>
     </tr>
   
@@ -294,8 +293,8 @@
       <td>George Guimarães</td>
       <td><a href="https://github.com/georgeguimaraes/logseq-plugin-add-PARA-properties" target="_blank">georgeguimaraes/logseq-plugin-add-PARA-properties</a></td>
       <td>main</td>
-      <td>2023-08-29</td>
-      <td>2023-08-29</td>
+      <td class="date-col">2023-08-29</td>
+      <td class="date-col">2023-08-29</td>
       <td></td>
     </tr>
   
@@ -306,8 +305,8 @@
       <td>haydenull</td>
       <td><a href="https://github.com/haydenull/logseq-plugin-agenda" target="_blank">haydenull/logseq-plugin-agenda</a></td>
       <td>main</td>
-      <td>2022-03-06</td>
-      <td>2022-03-15</td>
+      <td class="date-col">2022-03-06</td>
+      <td class="date-col">2022-03-15</td>
       <td></td>
     </tr>
   
@@ -318,8 +317,8 @@
       <td>unickcheng</td>
       <td><a href="https://github.com/UNICKCHENG/logseq-ai-assistant" target="_blank">UNICKCHENG/logseq-ai-assistant</a></td>
       <td>main</td>
-      <td>2023-05-31</td>
-      <td>2023-06-01</td>
+      <td class="date-col">2023-05-31</td>
+      <td class="date-col">2023-06-01</td>
       <td>Missing icon name, Missing icon URL</td>
     </tr>
   
@@ -330,8 +329,8 @@
       <td>b-yp</td>
       <td><a href="https://github.com/b-yp/logseq-ai-auto-tags" target="_blank">b-yp/logseq-ai-auto-tags</a></td>
       <td>dev</td>
-      <td>2023-11-01</td>
-      <td>2023-11-01</td>
+      <td class="date-col">2023-11-01</td>
+      <td class="date-col">2023-11-01</td>
       <td></td>
     </tr>
   
@@ -342,8 +341,8 @@
       <td>Daniel Zholkovsky</td>
       <td><a href="https://github.com/dailydaniel/logseq-plugin-ai-query" target="_blank">dailydaniel/logseq-plugin-ai-query</a></td>
       <td>main</td>
-      <td>2024-08-30</td>
-      <td>2024-08-30</td>
+      <td class="date-col">2024-08-30</td>
+      <td class="date-col">2024-08-30</td>
       <td></td>
     </tr>
   
@@ -354,8 +353,8 @@
       <td>Chii_Magnus</td>
       <td><a href="https://github.com/chiimagnus/logseq-AIsearch" target="_blank">chiimagnus/logseq-AIsearch</a></td>
       <td>master</td>
-      <td>2024-10-23</td>
-      <td>2025-02-19</td>
+      <td class="date-col">2024-10-23</td>
+      <td class="date-col">2025-02-19</td>
       <td>Missing icon URL</td>
     </tr>
   
@@ -366,8 +365,8 @@
       <td>Turiiya</td>
       <td><a href="https://github.com/ttytm/logseq-allday-theme" target="_blank">ttytm/logseq-allday-theme</a></td>
       <td>main</td>
-      <td>2021-12-15</td>
-      <td>2023-08-09</td>
+      <td class="date-col">2021-12-15</td>
+      <td class="date-col">2023-08-09</td>
       <td></td>
     </tr>
   
@@ -378,8 +377,8 @@
       <td>debanjandhar12</td>
       <td><a href="https://github.com/debanjandhar12/logseq-anki-sync" target="_blank">debanjandhar12/logseq-anki-sync</a></td>
       <td>main</td>
-      <td>2021-12-12</td>
-      <td>2024-02-23</td>
+      <td class="date-col">2021-12-12</td>
+      <td class="date-col">2024-02-23</td>
       <td></td>
     </tr>
   
@@ -390,8 +389,8 @@
       <td>sethyuan</td>
       <td>sethyuan/logseq-plugin-another-embed</td>
       <td></td>
-      <td>2022-08-02</td>
-      <td>2023-05-29</td>
+      <td class="date-col">2022-08-02</td>
+      <td class="date-col">2023-05-29</td>
       <td>Missing repo URL</td>
     </tr>
   
@@ -402,8 +401,8 @@
       <td>@andyburris</td>
       <td><a href="https://github.com/andyburris/logseq-arc-theme" target="_blank">andyburris/logseq-arc-theme</a></td>
       <td>main</td>
-      <td>2022-09-28</td>
-      <td>2022-09-28</td>
+      <td class="date-col">2022-09-28</td>
+      <td class="date-col">2022-09-28</td>
       <td></td>
     </tr>
   
@@ -414,8 +413,8 @@
       <td>Pat Migliaccio</td>
       <td><a href="https://github.com/patmigliaccio/logseq-archive-webpage" target="_blank">patmigliaccio/logseq-archive-webpage</a></td>
       <td>main</td>
-      <td>2023-11-10</td>
-      <td>2023-11-11</td>
+      <td class="date-col">2023-11-10</td>
+      <td class="date-col">2023-11-11</td>
       <td></td>
     </tr>
   
@@ -426,8 +425,8 @@
       <td>hi-jin</td>
       <td><a href="https://github.com/hi-jin/logseq-ask-pdf" target="_blank">hi-jin/logseq-ask-pdf</a></td>
       <td>main</td>
-      <td>2024-08-05</td>
-      <td>2024-08-13</td>
+      <td class="date-col">2024-08-05</td>
+      <td class="date-col">2024-08-13</td>
       <td></td>
     </tr>
   
@@ -438,8 +437,8 @@
       <td>xyhp915</td>
       <td><a href="https://github.com/xyhp915/logseq-assets-plus" target="_blank">xyhp915/logseq-assets-plus</a></td>
       <td>main</td>
-      <td>2023-10-17</td>
-      <td>2023-10-17</td>
+      <td class="date-col">2023-10-17</td>
+      <td class="date-col">2023-10-17</td>
       <td></td>
     </tr>
   
@@ -450,8 +449,8 @@
       <td>Seth Fair</td>
       <td><a href="https://github.com/sethfair/logseq-atlas-theme" target="_blank">sethfair/logseq-atlas-theme</a></td>
       <td>main</td>
-      <td>2021-11-02</td>
-      <td>2021-11-19</td>
+      <td class="date-col">2021-11-02</td>
+      <td class="date-col">2021-11-19</td>
       <td></td>
     </tr>
   
@@ -462,8 +461,8 @@
       <td>Mat4m0</td>
       <td><a href="https://github.com/Mat4m0/logseq-atmos-theme" target="_blank">Mat4m0/logseq-atmos-theme</a></td>
       <td>main</td>
-      <td>2022-09-19</td>
-      <td>2022-10-11</td>
+      <td class="date-col">2022-09-19</td>
+      <td class="date-col">2022-10-11</td>
       <td></td>
     </tr>
   
@@ -474,8 +473,8 @@
       <td>b-yp</td>
       <td><a href="https://github.com/b-yp/logseq-audio-memo" target="_blank">b-yp/logseq-audio-memo</a></td>
       <td>dev</td>
-      <td>2023-06-19</td>
-      <td>2023-06-21</td>
+      <td class="date-col">2023-06-19</td>
+      <td class="date-col">2023-06-21</td>
       <td></td>
     </tr>
   
@@ -486,8 +485,8 @@
       <td>JWangL5</td>
       <td><a href="https://github.com/JWangL5/logseq-autoclass-plugin" target="_blank">JWangL5/logseq-autoclass-plugin</a></td>
       <td>master</td>
-      <td>2025-01-09</td>
-      <td>2025-01-09</td>
+      <td class="date-col">2025-01-09</td>
+      <td class="date-col">2025-01-09</td>
       <td></td>
     </tr>
   
@@ -498,8 +497,8 @@
       <td>braladin</td>
       <td><a href="https://github.com/braladin/logseq-autolink-autotag" target="_blank">braladin/logseq-autolink-autotag</a></td>
       <td>main</td>
-      <td>2025-04-19</td>
-      <td>2025-04-24</td>
+      <td class="date-col">2025-04-19</td>
+      <td class="date-col">2025-04-24</td>
       <td></td>
     </tr>
   
@@ -510,8 +509,8 @@
       <td></td>
       <td></td>
       <td></td>
-      <td>2025-02-23</td>
-      <td>2025-02-24</td>
+      <td class="date-col">2025-02-23</td>
+      <td class="date-col">2025-02-24</td>
       <td>Missing manifest</td>
     </tr>
   
@@ -522,8 +521,8 @@
       <td>Aryan Sawhney</td>
       <td><a href="https://github.com/sawhney17/logseq-automatic-linker" target="_blank">sawhney17/logseq-automatic-linker</a></td>
       <td>main</td>
-      <td>2022-05-04</td>
-      <td>2022-05-05</td>
+      <td class="date-col">2022-05-04</td>
+      <td class="date-col">2022-05-05</td>
       <td></td>
     </tr>
   
@@ -534,8 +533,8 @@
       <td>yoyurec</td>
       <td><a href="https://github.com/yoyurec/logseq-awesome-content" target="_blank">yoyurec/logseq-awesome-content</a></td>
       <td>main</td>
-      <td>2023-03-06</td>
-      <td>2023-03-06</td>
+      <td class="date-col">2023-03-06</td>
+      <td class="date-col">2023-03-06</td>
       <td></td>
     </tr>
   
@@ -546,8 +545,8 @@
       <td>yoyurec</td>
       <td><a href="https://github.com/yoyurec/logseq-awesome-links" target="_blank">yoyurec/logseq-awesome-links</a></td>
       <td>main</td>
-      <td>2022-09-22</td>
-      <td>2023-03-13</td>
+      <td class="date-col">2022-09-22</td>
+      <td class="date-col">2023-03-13</td>
       <td></td>
     </tr>
   
@@ -558,8 +557,8 @@
       <td>yoyurec</td>
       <td><a href="https://github.com/yoyurec/logseq-awesome-props" target="_blank">yoyurec/logseq-awesome-props</a></td>
       <td>main</td>
-      <td>2023-02-15</td>
-      <td>2023-02-15</td>
+      <td class="date-col">2023-02-15</td>
+      <td class="date-col">2023-02-15</td>
       <td></td>
     </tr>
   
@@ -570,8 +569,8 @@
       <td>yoyurec</td>
       <td><a href="https://github.com/yoyurec/logseq-awesome-styler" target="_blank">yoyurec/logseq-awesome-styler</a></td>
       <td>main</td>
-      <td>2022-10-02</td>
-      <td>2022-10-21</td>
+      <td class="date-col">2022-10-02</td>
+      <td class="date-col">2022-10-21</td>
       <td></td>
     </tr>
   
@@ -582,8 +581,8 @@
       <td>yoyurec</td>
       <td><a href="https://github.com/yoyurec/logseq-awesome-ui" target="_blank">yoyurec/logseq-awesome-ui</a></td>
       <td>main</td>
-      <td>2022-09-30</td>
-      <td>2023-03-13</td>
+      <td class="date-col">2022-09-30</td>
+      <td class="date-col">2023-03-13</td>
       <td></td>
     </tr>
   
@@ -594,8 +593,8 @@
       <td>Aryan Sawhney & Yurii Piskun</td>
       <td><a href="https://github.com/yoyurec/logseq-banners-plugin" target="_blank">yoyurec/logseq-banners-plugin</a></td>
       <td>main</td>
-      <td>2022-06-27</td>
-      <td>2022-07-16</td>
+      <td class="date-col">2022-06-27</td>
+      <td class="date-col">2022-07-16</td>
       <td></td>
     </tr>
   
@@ -606,8 +605,8 @@
       <td>sethyuan</td>
       <td>sethyuan/logseq-plugin-batch-op</td>
       <td></td>
-      <td>2022-06-24</td>
-      <td>2023-05-29</td>
+      <td class="date-col">2022-06-24</td>
+      <td class="date-col">2023-05-29</td>
       <td>Missing repo URL</td>
     </tr>
   
@@ -618,8 +617,8 @@
       <td>Sh00Fly</td>
       <td><a href="https://github.com/Sh00Fly/logseq-bear-cub-theme" target="_blank">Sh00Fly/logseq-bear-cub-theme</a></td>
       <td>main</td>
-      <td>2023-06-20</td>
-      <td>2023-06-20</td>
+      <td class="date-col">2023-06-20</td>
+      <td class="date-col">2023-06-20</td>
       <td></td>
     </tr>
   
@@ -630,8 +629,8 @@
       <td>Alexander Rink</td>
       <td><a href="https://github.com/rcvd/logseq-bear-theme" target="_blank">rcvd/logseq-bear-theme</a></td>
       <td>main</td>
-      <td>2021-11-22</td>
-      <td>2022-01-04</td>
+      <td class="date-col">2021-11-22</td>
+      <td class="date-col">2022-01-04</td>
       <td></td>
     </tr>
   
@@ -642,8 +641,8 @@
       <td>AlonX2</td>
       <td><a href="https://github.com/AlonX2/BetterWorkflow" target="_blank">AlonX2/BetterWorkflow</a></td>
       <td>master</td>
-      <td>2025-01-17</td>
-      <td>2025-01-19</td>
+      <td class="date-col">2025-01-17</td>
+      <td class="date-col">2025-01-19</td>
       <td></td>
     </tr>
   
@@ -654,8 +653,8 @@
       <td>Mostafa Ahangarha</td>
       <td><a href="https://github.com/dobidi/logseq-bidi" target="_blank">dobidi/logseq-bidi</a></td>
       <td>main</td>
-      <td>2023-08-23</td>
-      <td>2023-08-29</td>
+      <td class="date-col">2023-08-23</td>
+      <td class="date-col">2023-08-29</td>
       <td></td>
     </tr>
   
@@ -666,8 +665,8 @@
       <td>Aryan Sawhney</td>
       <td><a href="https://github.com/sawhney17/logseq-bionic-speedreader" target="_blank">sawhney17/logseq-bionic-speedreader</a></td>
       <td>main</td>
-      <td>2022-05-29</td>
-      <td>2022-05-29</td>
+      <td class="date-col">2022-05-29</td>
+      <td class="date-col">2022-05-29</td>
       <td></td>
     </tr>
   
@@ -678,8 +677,8 @@
       <td>vipzhicheng</td>
       <td><a href="https://github.com/vipzhicheng/logseq-plugin-block-calendar" target="_blank">vipzhicheng/logseq-plugin-block-calendar</a></td>
       <td>master</td>
-      <td>2022-07-14</td>
-      <td>2022-07-19</td>
+      <td class="date-col">2022-07-14</td>
+      <td class="date-col">2022-07-19</td>
       <td></td>
     </tr>
   
@@ -690,8 +689,8 @@
       <td>Inchan Song</td>
       <td><a href="https://github.com/inchanS/logseq-block-extractor" target="_blank">inchanS/logseq-block-extractor</a></td>
       <td>main</td>
-      <td>2025-06-05</td>
-      <td>2025-06-06</td>
+      <td class="date-col">2025-06-05</td>
+      <td class="date-col">2025-06-06</td>
       <td></td>
     </tr>
   
@@ -702,8 +701,8 @@
       <td>jay.chinee@outlook.com</td>
       <td><a href="https://github.com/jaychinee/logseq-block-tabs" target="_blank">jaychinee/logseq-block-tabs</a></td>
       <td>main</td>
-      <td>2025-08-02</td>
-      <td>2025-08-04</td>
+      <td class="date-col">2025-08-02</td>
+      <td class="date-col">2025-08-04</td>
       <td></td>
     </tr>
   
@@ -714,8 +713,8 @@
       <td>hyrijk</td>
       <td><a href="https://github.com/hyrijk/logseq-plugin-block-to-page" target="_blank">hyrijk/logseq-plugin-block-to-page</a></td>
       <td>master</td>
-      <td>2021-09-29</td>
-      <td>2021-09-29</td>
+      <td class="date-col">2021-09-29</td>
+      <td class="date-col">2021-09-29</td>
       <td></td>
     </tr>
   
@@ -726,8 +725,8 @@
       <td>KerfuffleV2</td>
       <td><a href="https://github.com/KerfuffleV2/logseq-plugin-blocknav" target="_blank">kerfufflev2/logseq-plugin-blocknav</a></td>
       <td>main</td>
-      <td>2022-05-30</td>
-      <td>2022-05-30</td>
+      <td class="date-col">2022-05-30</td>
+      <td class="date-col">2022-05-30</td>
       <td>Missing icon name, Missing icon URL</td>
     </tr>
   
@@ -738,8 +737,8 @@
       <td>Sansui233</td>
       <td><a href="https://github.com/Sansui233/logseq-bonofix-theme" target="_blank">sansui233/logseq-bonofix-theme</a></td>
       <td>master</td>
-      <td>2021-09-07</td>
-      <td>2021-09-07</td>
+      <td class="date-col">2021-09-07</td>
+      <td class="date-col">2021-09-07</td>
       <td></td>
     </tr>
   
@@ -750,8 +749,8 @@
       <td>LuloDev</td>
       <td><a href="https://github.com/LuloDev/logseq-book-fetch" target="_blank">LuloDev/logseq-book-fetch</a></td>
       <td>main</td>
-      <td>2024-03-08</td>
-      <td>2024-03-10</td>
+      <td class="date-col">2024-03-08</td>
+      <td class="date-col">2024-03-10</td>
       <td></td>
     </tr>
   
@@ -762,8 +761,8 @@
       <td>tejonaco</td>
       <td><a href="https://github.com/tejonaco/logseq-brc" target="_blank">tejonaco/logseq-brc</a></td>
       <td>master</td>
-      <td>2024-05-01</td>
-      <td>2024-05-01</td>
+      <td class="date-col">2024-05-01</td>
+      <td class="date-col">2024-05-01</td>
       <td></td>
     </tr>
   
@@ -774,8 +773,8 @@
       <td>haydenull</td>
       <td><a href="https://github.com/haydenull/logseq-plugin-browser" target="_blank">haydenull/logseq-plugin-browser</a></td>
       <td>main</td>
-      <td>2022-01-17</td>
-      <td>2022-01-17</td>
+      <td class="date-col">2022-01-17</td>
+      <td class="date-col">2022-01-17</td>
       <td></td>
     </tr>
   
@@ -786,8 +785,8 @@
       <td>PiotrSss & stdword</td>
       <td><a href="https://github.com/stdword/logseq-bujo-theme" target="_blank">stdword/logseq-bujo-theme</a></td>
       <td>main</td>
-      <td>2022-11-12</td>
-      <td>2024-01-13</td>
+      <td class="date-col">2022-11-12</td>
+      <td class="date-col">2024-01-13</td>
       <td></td>
     </tr>
   
@@ -798,8 +797,8 @@
       <td>pengx17</td>
       <td><a href="https://github.com/pengx17/logseq-plugin-bullet-threading" target="_blank">pengx17/logseq-plugin-bullet-threading</a></td>
       <td>master</td>
-      <td>2021-12-30</td>
-      <td>2021-12-30</td>
+      <td class="date-col">2021-12-30</td>
+      <td class="date-col">2021-12-30</td>
       <td></td>
     </tr>
   
@@ -810,8 +809,8 @@
       <td>Aryan Sawhney</td>
       <td><a href="https://github.com/sawhney17/logseq-calendars-plugin" target="_blank">sawhney17/logseq-calendars-plugin</a></td>
       <td>main</td>
-      <td>2022-01-28</td>
-      <td>2022-01-28</td>
+      <td class="date-col">2022-01-28</td>
+      <td class="date-col">2022-01-28</td>
       <td></td>
     </tr>
   
@@ -822,8 +821,8 @@
       <td>duydl</td>
       <td><a href="https://github.com/duydl/logseq-calibre-plugin" target="_blank">duydl/logseq-calibre-annotation</a></td>
       <td>main</td>
-      <td>2023-10-01</td>
-      <td>2023-10-01</td>
+      <td class="date-col">2023-10-01</td>
+      <td class="date-col">2023-10-01</td>
       <td></td>
     </tr>
   
@@ -834,8 +833,8 @@
       <td>duydl</td>
       <td><a href="https://github.com/duydl/logseq-calibre-metadata" target="_blank">duydl/logseq-calibre-metadata</a></td>
       <td>main</td>
-      <td>2023-10-01</td>
-      <td>2023-10-02</td>
+      <td class="date-col">2023-10-01</td>
+      <td class="date-col">2023-10-02</td>
       <td></td>
     </tr>
   
@@ -846,8 +845,8 @@
       <td>hkgnp</td>
       <td><a href="https://github.com/benjypng/logseq-calview-plugin" target="_blank">hkgnp/logseq-calview-plugin</a></td>
       <td>main</td>
-      <td>2022-02-20</td>
-      <td>2022-02-20</td>
+      <td class="date-col">2022-02-20</td>
+      <td class="date-col">2022-02-20</td>
       <td></td>
     </tr>
   
@@ -858,8 +857,8 @@
       <td>Hidekazu Kubota</td>
       <td><a href="https://github.com/sosuisen/logseq-cardbox" target="_blank">sosuisen/logseq-cardbox</a></td>
       <td>main</td>
-      <td>2023-11-16</td>
-      <td>2023-11-16</td>
+      <td class="date-col">2023-11-16</td>
+      <td class="date-col">2023-11-16</td>
       <td></td>
     </tr>
   
@@ -870,8 +869,8 @@
       <td>Aryan Sawhney</td>
       <td><a href="https://github.com/sawhney17/logseq-case-converter" target="_blank">sawhney17/logseq-case-converter</a></td>
       <td>main</td>
-      <td>2022-02-14</td>
-      <td>2022-03-23</td>
+      <td class="date-col">2022-02-14</td>
+      <td class="date-col">2022-03-23</td>
       <td></td>
     </tr>
   
@@ -882,8 +881,8 @@
       <td>Soumik (griimick)</td>
       <td><a href="https://github.com/catppuccin/logseq" target="_blank">catppuccin/logseq</a></td>
       <td>main</td>
-      <td>2023-01-29</td>
-      <td>2023-01-29</td>
+      <td class="date-col">2023-01-29</td>
+      <td class="date-col">2023-01-29</td>
       <td></td>
     </tr>
   
@@ -894,8 +893,8 @@
       <td>sethyuan</td>
       <td>sethyuan/logseq-plugin-charspacing</td>
       <td></td>
-      <td>2021-12-14</td>
-      <td>2023-05-29</td>
+      <td class="date-col">2021-12-14</td>
+      <td class="date-col">2023-05-29</td>
       <td>Missing repo URL</td>
     </tr>
   
@@ -906,8 +905,8 @@
       <td>hkgnp</td>
       <td><a href="https://github.com/benjypng/logseq-chartrender-plugin" target="_blank">hkgnp/logseq-chartrender-plugin</a></td>
       <td>main</td>
-      <td>2021-12-31</td>
-      <td>2022-02-06</td>
+      <td class="date-col">2021-12-31</td>
+      <td class="date-col">2022-02-06</td>
       <td></td>
     </tr>
   
@@ -918,8 +917,8 @@
       <td>debanjandhar12</td>
       <td><a href="https://github.com/debanjandhar12/logseq-chatgpt-plugin" target="_blank">debanjandhar12/logseq-chatgpt-plugin</a></td>
       <td>main</td>
-      <td>2023-03-23</td>
-      <td>2023-03-23</td>
+      <td class="date-col">2023-03-23</td>
+      <td class="date-col">2023-03-23</td>
       <td></td>
     </tr>
   
@@ -930,8 +929,8 @@
       <td>r8</td>
       <td><a href="https://github.com/r8/logseq-chess" target="_blank">r8/logseq-chess</a></td>
       <td>main</td>
-      <td>2023-07-10</td>
-      <td>2023-08-05</td>
+      <td class="date-col">2023-07-10</td>
+      <td class="date-col">2023-08-05</td>
       <td></td>
     </tr>
   
@@ -942,8 +941,8 @@
       <td>b-yp</td>
       <td><a href="https://github.com/b-yp/logseq-chinese-idiom-dictionary" target="_blank">b-yp/logseq-chinese-idiom-dictionary</a></td>
       <td>dev</td>
-      <td>2023-07-04</td>
-      <td>2023-07-05</td>
+      <td class="date-col">2023-07-04</td>
+      <td class="date-col">2023-07-05</td>
       <td></td>
     </tr>
   
@@ -954,8 +953,8 @@
       <td>Chang-I Ng</td>
       <td><a href="https://github.com/piobmx/logseq-chinese-tools" target="_blank">piobmx/logseq-chinese-tools</a></td>
       <td>master</td>
-      <td>2022-08-07</td>
-      <td>2022-08-07</td>
+      <td class="date-col">2022-08-07</td>
+      <td class="date-col">2022-08-07</td>
       <td></td>
     </tr>
   
@@ -966,8 +965,8 @@
       <td>Aryan Sawhney</td>
       <td><a href="https://github.com/sawhney17/logseq-citation-manager" target="_blank">sawhney17/logseq-citation-manager</a></td>
       <td>master</td>
-      <td>2022-07-09</td>
-      <td>2022-07-09</td>
+      <td class="date-col">2022-07-09</td>
+      <td class="date-col">2022-07-09</td>
       <td></td>
     </tr>
   
@@ -978,8 +977,8 @@
       <td>Mario T. Lanza</td>
       <td><a href="https://github.com/mlanza/logseq-classy" target="_blank">mlanza/logseq-classy</a></td>
       <td>main</td>
-      <td>2022-05-12</td>
-      <td>2022-05-12</td>
+      <td class="date-col">2022-05-12</td>
+      <td class="date-col">2022-05-12</td>
       <td></td>
     </tr>
   
@@ -990,8 +989,8 @@
       <td>hkgnp</td>
       <td><a href="https://github.com/benjypng/logseq-clock-plugin" target="_blank">hkgnp/logseq-clock-plugin</a></td>
       <td>main</td>
-      <td>2022-11-30</td>
-      <td>2022-11-30</td>
+      <td class="date-col">2022-11-30</td>
+      <td class="date-col">2022-11-30</td>
       <td></td>
     </tr>
   
@@ -1002,8 +1001,8 @@
       <td>PerfectPan</td>
       <td><a href="https://github.com/PerfectPan/logseq-plugin-code-formatter" target="_blank">PerfectPan/logseq-plugin-code-formatter</a></td>
       <td>master</td>
-      <td>2022-11-13</td>
-      <td>2022-11-13</td>
+      <td class="date-col">2022-11-13</td>
+      <td class="date-col">2022-11-13</td>
       <td>Missing icon name, Missing icon URL</td>
     </tr>
   
@@ -1014,8 +1013,8 @@
       <td>clemtibs</td>
       <td><a href="https://github.com/clemtibs/logseq-color-markup" target="_blank">clemtibs/logseq-color-markup</a></td>
       <td>main</td>
-      <td>2025-02-04</td>
-      <td>2025-02-04</td>
+      <td class="date-col">2025-02-04</td>
+      <td class="date-col">2025-02-04</td>
       <td></td>
     </tr>
   
@@ -1026,8 +1025,8 @@
       <td>YU000jp</td>
       <td><a href="https://github.com/YU000jp/Logseq-column-Layout" target="_blank">YU000jp/Logseq-column-Layout</a></td>
       <td>main</td>
-      <td>2022-09-13</td>
-      <td>2023-11-12</td>
+      <td class="date-col">2022-09-13</td>
+      <td class="date-col">2023-11-12</td>
       <td></td>
     </tr>
   
@@ -1038,8 +1037,8 @@
       <td>vipzhicheng</td>
       <td><a href="https://github.com/vipzhicheng/logseq-plugin-comment-block" target="_blank">vipzhicheng/logseq-plugin-comment-block</a></td>
       <td>master</td>
-      <td>2021-12-03</td>
-      <td>2022-04-08</td>
+      <td class="date-col">2021-12-03</td>
+      <td class="date-col">2022-04-08</td>
       <td></td>
     </tr>
   
@@ -1050,8 +1049,8 @@
       <td>Martin Minarik</td>
       <td><a href="https://github.com/martindev9999/logseq-composer" target="_blank">martindev9999/logseq-composer</a></td>
       <td>main</td>
-      <td>2025-04-11</td>
-      <td>2025-04-11</td>
+      <td class="date-col">2025-04-11</td>
+      <td class="date-col">2025-04-11</td>
       <td></td>
     </tr>
   
@@ -1062,8 +1061,8 @@
       <td>jarodise</td>
       <td><a href="https://github.com/jarodise/logseq-copilot" target="_blank">jarodise/logseq-copilot</a></td>
       <td>main</td>
-      <td>2024-12-08</td>
-      <td>2024-12-11</td>
+      <td class="date-col">2024-12-08</td>
+      <td class="date-col">2024-12-11</td>
       <td></td>
     </tr>
   
@@ -1074,8 +1073,8 @@
       <td>vyleung</td>
       <td><a href="https://github.com/vyleung/logseq-copy-code-plugin" target="_blank">vyleung/logseq-copy-code-plugin</a></td>
       <td>main</td>
-      <td>2022-05-08</td>
-      <td>2022-05-13</td>
+      <td class="date-col">2022-05-08</td>
+      <td class="date-col">2022-05-13</td>
       <td></td>
     </tr>
   
@@ -1086,8 +1085,8 @@
       <td>RubenSmn</td>
       <td><a href="https://github.com/RubenSmn/logseq-copy-url" target="_blank">RubenSmn/logseq-copy-url</a></td>
       <td>main</td>
-      <td>2023-11-28</td>
-      <td>2023-11-29</td>
+      <td class="date-col">2023-11-28</td>
+      <td class="date-col">2023-11-29</td>
       <td></td>
     </tr>
   
@@ -1098,8 +1097,8 @@
       <td>Alexander Rink</td>
       <td><a href="https://github.com/rcvd/logseq-craft-theme" target="_blank">rcvd/logseq-craft-theme</a></td>
       <td>main</td>
-      <td>2022-02-07</td>
-      <td>2022-02-07</td>
+      <td class="date-col">2022-02-07</td>
+      <td class="date-col">2022-02-07</td>
       <td></td>
     </tr>
   
@@ -1110,8 +1109,8 @@
       <td>tejonaco</td>
       <td><a href="https://github.com/tejonaco/logseq-crypto" target="_blank">tejonaco/logseq-crypto</a></td>
       <td>master</td>
-      <td>2024-05-10</td>
-      <td>2024-05-12</td>
+      <td class="date-col">2024-05-10</td>
+      <td class="date-col">2024-05-12</td>
       <td></td>
     </tr>
   
@@ -1122,8 +1121,8 @@
       <td>Daniel Webber</td>
       <td><a href="https://github.com/mendax1234/logseq-cusgit-theme" target="_blank">mendax1234/logseq-cusgit-theme</a></td>
       <td>main</td>
-      <td>2022-05-26</td>
-      <td>2022-05-27</td>
+      <td class="date-col">2022-05-26</td>
+      <td class="date-col">2022-05-27</td>
       <td></td>
     </tr>
   
@@ -1134,8 +1133,8 @@
       <td>Aryan Sawhney</td>
       <td><a href="https://github.com/sawhney17/logseq-custom-workflow-plugin" target="_blank">sawhney17/logseq-custom-workflow-plugin</a></td>
       <td>master</td>
-      <td>2022-03-14</td>
-      <td>2022-03-14</td>
+      <td class="date-col">2022-03-14</td>
+      <td class="date-col">2022-03-14</td>
       <td></td>
     </tr>
   
@@ -1146,8 +1145,8 @@
       <td>Alex Qwxlea</td>
       <td><a href="https://github.com/QWxleA/logseq-cuvee" target="_blank">QWxleA/logseq-cuvee</a></td>
       <td>main</td>
-      <td>2022-04-21</td>
-      <td>2022-04-21</td>
+      <td class="date-col">2022-04-21</td>
+      <td class="date-col">2022-04-21</td>
       <td></td>
     </tr>
   
@@ -1158,8 +1157,8 @@
       <td>b-yp</td>
       <td><a href="https://github.com/b-yp/logseq-d2" target="_blank">b-yp/logseq-d2</a></td>
       <td>master</td>
-      <td>2023-02-26</td>
-      <td>2023-06-21</td>
+      <td class="date-col">2023-02-26</td>
+      <td class="date-col">2023-06-21</td>
       <td></td>
     </tr>
   
@@ -1170,8 +1169,8 @@
       <td>LeonWong0609</td>
       <td><a href="https://github.com/l3ony2k/D42ker-Logseq" target="_blank">l3ony2k/D42ker-Logseq</a></td>
       <td>main</td>
-      <td>2021-10-12</td>
-      <td>2023-03-29</td>
+      <td class="date-col">2021-10-12</td>
+      <td class="date-col">2023-03-29</td>
       <td></td>
     </tr>
   
@@ -1182,8 +1181,8 @@
       <td>Cologler</td>
       <td><a href="https://github.com/Cologler/logseq-date-between-typescript" target="_blank">Cologler/logseq-date-between-typescript</a></td>
       <td>main</td>
-      <td>2023-02-02</td>
-      <td>2023-02-02</td>
+      <td class="date-col">2023-02-02</td>
+      <td class="date-col">2023-02-02</td>
       <td>Missing icon name, Missing icon URL</td>
     </tr>
   
@@ -1194,8 +1193,8 @@
       <td>hkgnp</td>
       <td><a href="https://github.com/benjypng/logseq-datenlp-plugin" target="_blank">hkgnp/logseq-datenlp-plugin</a></td>
       <td>main</td>
-      <td>2022-01-17</td>
-      <td>2022-02-06</td>
+      <td class="date-col">2022-01-17</td>
+      <td class="date-col">2022-02-06</td>
       <td></td>
     </tr>
   
@@ -1206,8 +1205,8 @@
       <td>Aryan Sawhney</td>
       <td><a href="https://github.com/sawhney17/logseq-datetag-plugin" target="_blank">sawhney17/logseq-datetag-plugin</a></td>
       <td>main</td>
-      <td>2022-02-06</td>
-      <td>2022-03-23</td>
+      <td class="date-col">2022-02-06</td>
+      <td class="date-col">2022-03-23</td>
       <td></td>
     </tr>
   
@@ -1218,8 +1217,8 @@
       <td>sethyuan</td>
       <td>sethyuan/logseq-plugin-days</td>
       <td></td>
-      <td>2022-10-31</td>
-      <td>2023-05-29</td>
+      <td class="date-col">2022-10-31</td>
+      <td class="date-col">2023-05-29</td>
       <td>Missing repo URL</td>
     </tr>
   
@@ -1230,8 +1229,8 @@
       <td>xxchan</td>
       <td><a href="https://github.com/xxchan/logseq-deadline-countdown" target="_blank">xxchan/logseq-deadline-countdown</a></td>
       <td>main</td>
-      <td>2022-02-03</td>
-      <td>2022-04-03</td>
+      <td class="date-col">2022-02-03</td>
+      <td class="date-col">2022-04-03</td>
       <td>Missing icon name, Missing icon URL</td>
     </tr>
   
@@ -1242,8 +1241,8 @@
       <td>pengx17</td>
       <td><a href="https://github.com/pengx17/logseq-dev-theme" target="_blank">pengx17/logseq-dev-theme</a></td>
       <td>main</td>
-      <td>2021-09-03</td>
-      <td>2021-09-03</td>
+      <td class="date-col">2021-09-03</td>
+      <td class="date-col">2021-09-03</td>
       <td></td>
     </tr>
   
@@ -1254,8 +1253,8 @@
       <td>unickcheng</td>
       <td><a href="https://github.com/UNICKCHENG/logseq-developer-theme" target="_blank">UNICKCHENG/logseq-developer-theme</a></td>
       <td>main</td>
-      <td>2022-12-10</td>
-      <td>2022-12-13</td>
+      <td class="date-col">2022-12-10</td>
+      <td class="date-col">2022-12-13</td>
       <td>Missing icon name, Missing icon URL</td>
     </tr>
   
@@ -1266,8 +1265,8 @@
       <td>npgrosser</td>
       <td><a href="https://github.com/npgrosser/logseq-diagrams-as-code" target="_blank">npgrosser/logseq-diagrams-as-code</a></td>
       <td>master</td>
-      <td>2022-02-21</td>
-      <td>2022-12-28</td>
+      <td class="date-col">2022-02-21</td>
+      <td class="date-col">2022-12-28</td>
       <td></td>
     </tr>
   
@@ -1278,8 +1277,8 @@
       <td>dale502</td>
       <td><a href="https://github.com/dale502/logseq-discord-like-dark-theme" target="_blank">dale502/logseq-discord-like-dark-theme</a></td>
       <td>main</td>
-      <td>2021-09-26</td>
-      <td>2021-09-26</td>
+      <td class="date-col">2021-09-26</td>
+      <td class="date-col">2021-09-26</td>
       <td>Missing icon name, Missing icon URL</td>
     </tr>
   
@@ -1290,8 +1289,8 @@
       <td>Stephen Solka</td>
       <td><a href="https://github.com/trashhalo/logseq-dictionary" target="_blank">trashhalo/logseq-dictionary</a></td>
       <td>main</td>
-      <td>2022-09-03</td>
-      <td>2022-09-03</td>
+      <td class="date-col">2022-09-03</td>
+      <td class="date-col">2022-09-03</td>
       <td></td>
     </tr>
   
@@ -1302,8 +1301,8 @@
       <td>Aryan Sawhney</td>
       <td><a href="https://github.com/sawhney17/logseq-discourse-graphs" target="_blank">sawhney17/logseq-discourse-graphs</a></td>
       <td>master</td>
-      <td>2023-12-21</td>
-      <td>2023-12-21</td>
+      <td class="date-col">2023-12-21</td>
+      <td class="date-col">2023-12-21</td>
       <td></td>
     </tr>
   
@@ -1314,8 +1313,8 @@
       <td>Allan Chain</td>
       <td><a href="https://github.com/AllanChain/logseq-display-math" target="_blank">AllanChain/logseq-display-math</a></td>
       <td>main</td>
-      <td>2023-06-10</td>
-      <td>2023-08-23</td>
+      <td class="date-col">2023-06-10</td>
+      <td class="date-col">2023-08-23</td>
       <td></td>
     </tr>
   
@@ -1326,8 +1325,8 @@
       <td>sethyuan</td>
       <td>sethyuan/logseq-plugin-doc</td>
       <td></td>
-      <td>2021-12-24</td>
-      <td>2023-05-29</td>
+      <td class="date-col">2021-12-24</td>
+      <td class="date-col">2023-05-29</td>
       <td>Missing repo URL</td>
     </tr>
   
@@ -1338,8 +1337,8 @@
       <td>Menno Finlay-Smits</td>
       <td><a href="https://github.com/mjs/logseq-done-time" target="_blank">mjs/logseq-done-time</a></td>
       <td>main</td>
-      <td>2024-03-13</td>
-      <td>2024-03-13</td>
+      <td class="date-col">2024-03-13</td>
+      <td class="date-col">2024-03-13</td>
       <td></td>
     </tr>
   
@@ -1350,8 +1349,8 @@
       <td>slybouhafs</td>
       <td><a href="https://github.com/dracula/logseq" target="_blank">dracula/logseq</a></td>
       <td>master</td>
-      <td>2021-09-22</td>
-      <td>2021-09-22</td>
+      <td class="date-col">2021-09-22</td>
+      <td class="date-col">2021-09-22</td>
       <td></td>
     </tr>
   
@@ -1362,8 +1361,8 @@
       <td>Jimmie Lee</td>
       <td><a href="https://github.com/lee88688/logseq-drawio-plugin" target="_blank">lee88688/logseq-drawio-plugin</a></td>
       <td>master</td>
-      <td>2023-05-21</td>
-      <td>2023-06-20</td>
+      <td class="date-col">2023-05-21</td>
+      <td class="date-col">2023-06-20</td>
       <td></td>
     </tr>
   
@@ -1374,8 +1373,8 @@
       <td>sethyuan</td>
       <td>sethyuan/logseq-plugin-drawit</td>
       <td></td>
-      <td>2023-05-22</td>
-      <td>2023-05-29</td>
+      <td class="date-col">2023-05-22</td>
+      <td class="date-col">2023-05-29</td>
       <td>Missing repo URL</td>
     </tr>
   
@@ -1386,8 +1385,8 @@
       <td>guzhongren</td>
       <td><a href="https://github.com/guzhongren/logseq-echarts" target="_blank">guzhongren/logseq-echarts</a></td>
       <td>main</td>
-      <td>2022-08-27</td>
-      <td>2023-05-05</td>
+      <td class="date-col">2022-08-27</td>
+      <td class="date-col">2023-05-05</td>
       <td></td>
     </tr>
   
@@ -1398,8 +1397,8 @@
       <td>candide, DiamondYuan</td>
       <td><a href="https://github.com/candideu/logseq-eink-plus" target="_blank">candideu/logseq-eink-plus</a></td>
       <td>main</td>
-      <td>2023-04-29</td>
-      <td>2023-05-22</td>
+      <td class="date-col">2023-04-29</td>
+      <td class="date-col">2023-05-22</td>
       <td></td>
     </tr>
   
@@ -1410,8 +1409,8 @@
       <td>DiamondYuan</td>
       <td><a href="https://github.com/DiamondYuan/logseq-eink-theme" target="_blank">DiamondYuan/logseq-eink-theme</a></td>
       <td>main</td>
-      <td>2021-09-23</td>
-      <td>2021-09-26</td>
+      <td class="date-col">2021-09-23</td>
+      <td class="date-col">2021-09-26</td>
       <td>Missing icon name, Missing icon URL</td>
     </tr>
   
@@ -1422,8 +1421,8 @@
       <td>PixelTux</td>
       <td><a href="https://github.com/elysium-tms/logseq-elysium" target="_blank">elysium-tms/logseq-elysium</a></td>
       <td>main</td>
-      <td>2024-10-20</td>
-      <td>2024-10-20</td>
+      <td class="date-col">2024-10-20</td>
+      <td class="date-col">2024-10-20</td>
       <td></td>
     </tr>
   
@@ -1434,8 +1433,8 @@
       <td>walsvid</td>
       <td><a href="https://github.com/walsvid/logseq-emoji-picker-fork" target="_blank">walsvid/logseq-emoji-picker-fork</a></td>
       <td>main</td>
-      <td>2022-07-06</td>
-      <td>2022-07-15</td>
+      <td class="date-col">2022-07-06</td>
+      <td class="date-col">2022-07-15</td>
       <td></td>
     </tr>
   
@@ -1446,8 +1445,8 @@
       <td>David Davó</td>
       <td><a href="https://github.com/daviddavo/logseq-emoji-shortcodes" target="_blank">daviddavo/logseq-emoji-shortcodes</a></td>
       <td>main</td>
-      <td>2024-04-05</td>
-      <td>2024-04-06</td>
+      <td class="date-col">2024-04-05</td>
+      <td class="date-col">2024-04-06</td>
       <td></td>
     </tr>
   
@@ -1458,8 +1457,8 @@
       <td>Kevin Houlihan</td>
       <td><a href="https://github.com/khoulihan/logseq-everforest-theme" target="_blank">khoulihan/logseq-everforest-theme</a></td>
       <td>main</td>
-      <td>2024-01-27</td>
-      <td>2024-01-27</td>
+      <td class="date-col">2024-01-27</td>
+      <td class="date-col">2024-01-27</td>
       <td></td>
     </tr>
   
@@ -1470,8 +1469,8 @@
       <td>haydenull</td>
       <td><a href="https://github.com/haydenull/logseq-plugin-excalidraw" target="_blank">haydenull/logseq-plugin-excalidraw</a></td>
       <td>main</td>
-      <td>2023-04-26</td>
-      <td>2023-04-26</td>
+      <td class="date-col">2023-04-26</td>
+      <td class="date-col">2023-04-26</td>
       <td></td>
     </tr>
   
@@ -1482,8 +1481,8 @@
       <td>avelino</td>
       <td><a href="https://github.com/avelino/logseq-export-block" target="_blank">avelino/logseq-export-block</a></td>
       <td>main</td>
-      <td>2025-03-29</td>
-      <td>2025-03-29</td>
+      <td class="date-col">2025-03-29</td>
+      <td class="date-col">2025-03-29</td>
       <td></td>
     </tr>
   
@@ -1494,8 +1493,8 @@
       <td>xyhp915</td>
       <td><a href="https://github.com/xyhp915/logseq-extensions-plus" target="_blank">xyhp915/logseq-extensions-plus</a></td>
       <td>main</td>
-      <td>2022-12-03</td>
-      <td>2022-12-03</td>
+      <td class="date-col">2022-12-03</td>
+      <td class="date-col">2022-12-03</td>
       <td></td>
     </tr>
   
@@ -1506,8 +1505,8 @@
       <td>Sidharth Panwar</td>
       <td><a href="https://github.com/sidharth-panwar/logseq-extract-plugin" target="_blank">sidharth-panwar/logseq-extract-plugin</a></td>
       <td>main</td>
-      <td>2021-10-04</td>
-      <td>2021-10-04</td>
+      <td class="date-col">2021-10-04</td>
+      <td class="date-col">2021-10-04</td>
       <td></td>
     </tr>
   
@@ -1518,8 +1517,8 @@
       <td>xyhp915</td>
       <td><a href="https://github.com/xyhp915/logseq-fenced-code-plus" target="_blank">xyhp915/logseq-fenced-code-plus</a></td>
       <td>main</td>
-      <td>2022-05-03</td>
-      <td>2022-05-03</td>
+      <td class="date-col">2022-05-03</td>
+      <td class="date-col">2022-05-03</td>
       <td></td>
     </tr>
   
@@ -1530,8 +1529,8 @@
       <td>CNLHC</td>
       <td><a href="https://github.com/CNLHC/logseq-figma" target="_blank">CNLHC/logseq-figma</a></td>
       <td>main</td>
-      <td>2023-10-24</td>
-      <td>2023-10-25</td>
+      <td class="date-col">2023-10-24</td>
+      <td class="date-col">2023-10-25</td>
       <td></td>
     </tr>
   
@@ -1542,8 +1541,8 @@
       <td>haydenull</td>
       <td><a href="https://github.com/haydenull/logseq-plugin-file-manager" target="_blank">haydenull/logseq-plugin-file-manager</a></td>
       <td>main</td>
-      <td>2022-04-20</td>
-      <td>2022-04-20</td>
+      <td class="date-col">2022-04-20</td>
+      <td class="date-col">2022-04-20</td>
       <td></td>
     </tr>
   
@@ -1554,8 +1553,8 @@
       <td>Chii_Magnus</td>
       <td><a href="https://github.com/chiimagnus/File-Path-to-Embed-Converter" target="_blank">chiimagnus/File-Path-to-Embed-Converter</a></td>
       <td>try</td>
-      <td>2025-02-22</td>
-      <td>2025-02-24</td>
+      <td class="date-col">2025-02-22</td>
+      <td class="date-col">2025-02-24</td>
       <td></td>
     </tr>
   
@@ -1566,8 +1565,8 @@
       <td>duiliuliu</td>
       <td><a href="https://github.com/duiliuliu/logseq-plugin-files-manager" target="_blank">duiliuliu/logseq-plugin-files-manager</a></td>
       <td>main</td>
-      <td>2024-09-19</td>
-      <td>2024-09-20</td>
+      <td class="date-col">2024-09-19</td>
+      <td class="date-col">2024-09-20</td>
       <td></td>
     </tr>
   
@@ -1578,8 +1577,8 @@
       <td>benjypng</td>
       <td><a href="https://github.com/benjypng/logseq-filterpage-plugin" target="_blank">benjypng/logseq-filterpage-plugin</a></td>
       <td>main</td>
-      <td>2024-08-31</td>
-      <td>2024-08-31</td>
+      <td class="date-col">2024-08-31</td>
+      <td class="date-col">2024-08-31</td>
       <td></td>
     </tr>
   
@@ -1590,8 +1589,8 @@
       <td>Aryan Sawhney</td>
       <td><a href="https://github.com/sawhney17/logseq-find-replace" target="_blank">sawhney17/logseq-find-replace</a></td>
       <td>master</td>
-      <td>2022-03-20</td>
-      <td>2022-03-21</td>
+      <td class="date-col">2022-03-20</td>
+      <td class="date-col">2022-03-21</td>
       <td></td>
     </tr>
   
@@ -1602,8 +1601,8 @@
       <td>Avelino</td>
       <td><a href="https://github.com/avelino/flexoki-logseq" target="_blank">avelino/flexoki-logseq</a></td>
       <td>main</td>
-      <td>2025-05-28</td>
-      <td>2025-05-28</td>
+      <td class="date-col">2025-05-28</td>
+      <td class="date-col">2025-05-28</td>
       <td></td>
     </tr>
   
@@ -1614,8 +1613,8 @@
       <td>Seyee and StanleyWind</td>
       <td><a href="https://github.com/seyeeL/logseq-flomo-plugin" target="_blank">SeyeeL/logseq-flomo-plugin</a></td>
       <td>main</td>
-      <td>2022-05-06</td>
-      <td>2022-05-08</td>
+      <td class="date-col">2022-05-06</td>
+      <td class="date-col">2022-05-08</td>
       <td></td>
     </tr>
   
@@ -1626,8 +1625,8 @@
       <td>nmartin84 and henices</td>
       <td><a href="https://github.com/henices/logseq-flow-nord" target="_blank">henices/logseq-flow-nord</a></td>
       <td>main</td>
-      <td>2023-05-25</td>
-      <td>2024-04-11</td>
+      <td class="date-col">2023-05-25</td>
+      <td class="date-col">2024-04-11</td>
       <td></td>
     </tr>
   
@@ -1638,8 +1637,8 @@
       <td>Seth Fair</td>
       <td><a href="https://github.com/sethfair/logseq-focus-mode" target="_blank">sethfair/logseq-focus-mode</a></td>
       <td>main</td>
-      <td>2021-11-18</td>
-      <td>2021-11-21</td>
+      <td class="date-col">2021-11-18</td>
+      <td class="date-col">2021-11-21</td>
       <td></td>
     </tr>
   
@@ -1650,8 +1649,8 @@
       <td>gremi-jr</td>
       <td><a href="https://github.com/gremi-jr/logseq-footnote-plugin" target="_blank">gremi-jr/logseq-footnote-plugin</a></td>
       <td>main</td>
-      <td>2023-06-16</td>
-      <td>2023-06-16</td>
+      <td class="date-col">2023-06-16</td>
+      <td class="date-col">2023-06-16</td>
       <td>Missing icon name, Missing icon URL</td>
     </tr>
   
@@ -1662,8 +1661,8 @@
       <td>Olmo Baldoni</td>
       <td><a href="https://github.com/olmobaldoni/logseq-formula-ocr-plugin" target="_blank">olmobaldoni/logseq-formula-ocr-plugin</a></td>
       <td>main</td>
-      <td>2023-11-17</td>
-      <td>2023-11-19</td>
+      <td class="date-col">2023-11-17</td>
+      <td class="date-col">2023-11-19</td>
       <td></td>
     </tr>
   
@@ -1674,8 +1673,8 @@
       <td>David Davó</td>
       <td><a href="https://github.com/daviddavo/logseq-furigana" target="_blank">daviddavo/logseq-furigana</a></td>
       <td>master</td>
-      <td>2023-04-29</td>
-      <td>2024-04-01</td>
+      <td class="date-col">2023-04-29</td>
+      <td class="date-col">2024-04-01</td>
       <td></td>
     </tr>
   
@@ -1686,8 +1685,8 @@
       <td>CorrectRoadH</td>
       <td><a href="https://github.com/CorrectRoadH/logseq-gallery" target="_blank">CorrectRoadH/logseq-gallery</a></td>
       <td>master</td>
-      <td>2024-02-04</td>
-      <td>2024-02-05</td>
+      <td class="date-col">2024-02-04</td>
+      <td class="date-col">2024-02-05</td>
       <td></td>
     </tr>
   
@@ -1698,8 +1697,8 @@
       <td>abcvav</td>
       <td><a href="https://github.com/abcvav/logseq-get-link-title" target="_blank">abcvav/logseq-get-link-title</a></td>
       <td>main</td>
-      <td>2023-11-20</td>
-      <td>2023-12-19</td>
+      <td class="date-col">2023-11-20</td>
+      <td class="date-col">2023-12-19</td>
       <td></td>
     </tr>
   
@@ -1710,8 +1709,8 @@
       <td>Brian Sunter</td>
       <td><a href="https://github.com/briansunter/logseq-get-youtube-captions" target="_blank">briansunter/logseq-get-youtube-captions</a></td>
       <td>master</td>
-      <td>2022-06-14</td>
-      <td>2022-06-14</td>
+      <td class="date-col">2022-06-14</td>
+      <td class="date-col">2022-06-14</td>
       <td></td>
     </tr>
   
@@ -1722,8 +1721,8 @@
       <td>Glooory</td>
       <td><a href="https://github.com/Glooory/logseq-git-diff-since" target="_blank">Glooory/logseq-git-diff-since</a></td>
       <td>main</td>
-      <td>2023-07-22</td>
-      <td>2023-07-22</td>
+      <td class="date-col">2023-07-22</td>
+      <td class="date-col">2023-07-22</td>
       <td></td>
     </tr>
   
@@ -1734,8 +1733,8 @@
       <td>haydenull</td>
       <td><a href="https://github.com/haydenull/logseq-plugin-git" target="_blank">haydenull/logseq-plugin-git</a></td>
       <td>main</td>
-      <td>2022-05-05</td>
-      <td>2022-05-05</td>
+      <td class="date-col">2022-05-05</td>
+      <td class="date-col">2022-05-05</td>
       <td></td>
     </tr>
   
@@ -1746,8 +1745,8 @@
       <td>happylolonly</td>
       <td><a href="https://github.com/happylolonly/logseq-github-plugin" target="_blank">happylolonly/logseq-github-plugin</a></td>
       <td>main</td>
-      <td>2025-05-10</td>
-      <td>2025-05-10</td>
+      <td class="date-col">2025-05-10</td>
+      <td class="date-col">2025-05-10</td>
       <td></td>
     </tr>
   
@@ -1758,8 +1757,8 @@
       <td>Aryan Sawhney</td>
       <td><a href="https://github.com/sawhney17/logseq-github-plugin" target="_blank">sawhney17/logseq-github-plugin</a></td>
       <td>main</td>
-      <td>2022-03-27</td>
-      <td>2022-03-28</td>
+      <td class="date-col">2022-03-27</td>
+      <td class="date-col">2022-03-28</td>
       <td></td>
     </tr>
   
@@ -1770,8 +1769,8 @@
       <td>g1eny0ung</td>
       <td><a href="https://github.com/g1eny0ung/logseq-github-theme" target="_blank">g1eny0ung/logseq-github-theme</a></td>
       <td>main</td>
-      <td>2022-03-12</td>
-      <td>2022-03-12</td>
+      <td class="date-col">2022-03-12</td>
+      <td class="date-col">2022-03-12</td>
       <td></td>
     </tr>
   
@@ -1782,8 +1781,8 @@
       <td>vipzhicheng</td>
       <td><a href="https://github.com/vipzhicheng/logseq-plugin-global-custom-css" target="_blank">vipzhicheng/logseq-plugin-global-custom-css</a></td>
       <td>master</td>
-      <td>2022-06-17</td>
-      <td>2022-06-17</td>
+      <td class="date-col">2022-06-17</td>
+      <td class="date-col">2022-06-17</td>
       <td></td>
     </tr>
   
@@ -1794,8 +1793,8 @@
       <td>Aryan Sawhney</td>
       <td><a href="https://github.com/sawhney17/logseq-go-now" target="_blank">sawhney17/logseq-go-now</a></td>
       <td>main</td>
-      <td>2022-06-09</td>
-      <td>2022-07-05</td>
+      <td class="date-col">2022-06-09</td>
+      <td class="date-col">2022-07-05</td>
       <td></td>
     </tr>
   
@@ -1806,8 +1805,8 @@
       <td>hlc1209</td>
       <td><a href="https://github.com/hlc1209/logseq-go-to-bottom" target="_blank">hlc1209/logseq-go-to-bottom</a></td>
       <td>main</td>
-      <td>2025-03-06</td>
-      <td>2025-03-06</td>
+      <td class="date-col">2025-03-06</td>
+      <td class="date-col">2025-03-06</td>
       <td></td>
     </tr>
   
@@ -1818,8 +1817,8 @@
       <td>vipzhicheng</td>
       <td><a href="https://github.com/vipzhicheng/logseq-plugin-google-fonts" target="_blank">vipzhicheng/logseq-plugin-google-fonts</a></td>
       <td>master</td>
-      <td>2022-07-04</td>
-      <td>2022-07-19</td>
+      <td class="date-col">2022-07-04</td>
+      <td class="date-col">2022-07-19</td>
       <td></td>
     </tr>
   
@@ -1830,8 +1829,8 @@
       <td>weynhamz</td>
       <td><a href="https://github.com/weynhamz/logseq-google-tasks" target="_blank">weynhamz/logseq-google-tasks</a></td>
       <td>main</td>
-      <td>2024-05-06</td>
-      <td>2024-05-06</td>
+      <td class="date-col">2024-05-06</td>
+      <td class="date-col">2024-05-06</td>
       <td>Missing icon name, Missing icon URL</td>
     </tr>
   
@@ -1842,8 +1841,8 @@
       <td>xflash96</td>
       <td><a href="https://github.com/xflash96/logseq-grammarly" target="_blank">xflash96/logseq-grammarly</a></td>
       <td>main</td>
-      <td>2023-01-01</td>
-      <td>2023-01-02</td>
+      <td class="date-col">2023-01-01</td>
+      <td class="date-col">2023-01-02</td>
       <td></td>
     </tr>
   
@@ -1854,8 +1853,8 @@
       <td>Stephen Solka</td>
       <td><a href="https://github.com/trashhalo/logseq-graph-analysis" target="_blank">trashhalo/logseq-graph-analysis</a></td>
       <td>main</td>
-      <td>2022-06-27</td>
-      <td>2023-11-04</td>
+      <td class="date-col">2022-06-27</td>
+      <td class="date-col">2023-11-04</td>
       <td></td>
     </tr>
   
@@ -1866,8 +1865,8 @@
       <td>blueteafrog</td>
       <td><a href="https://github.com/d5technews/logseq-gunmetal-theme" target="_blank">blueteafrog/logseq-gunmetal-theme</a></td>
       <td>main</td>
-      <td>2022-01-17</td>
-      <td>2022-01-17</td>
+      <td class="date-col">2022-01-17</td>
+      <td class="date-col">2022-01-17</td>
       <td></td>
     </tr>
   
@@ -1878,8 +1877,8 @@
       <td>c6p</td>
       <td><a href="https://github.com/c6p/logseq-habit-tracker" target="_blank">c6p/logseq-habit-tracker</a></td>
       <td>main</td>
-      <td>2021-09-14</td>
-      <td>2021-09-14</td>
+      <td class="date-col">2021-09-14</td>
+      <td class="date-col">2021-09-14</td>
       <td>Missing icon name, Missing icon URL</td>
     </tr>
   
@@ -1890,8 +1889,8 @@
       <td>caffbit</td>
       <td><a href="https://github.com/caffbit/logseq-plugin-habitica" target="_blank">caffbit/logseq-plugin-habitica</a></td>
       <td>master</td>
-      <td>2025-06-17</td>
-      <td>2025-06-18</td>
+      <td class="date-col">2025-06-17</td>
+      <td class="date-col">2025-06-18</td>
       <td></td>
     </tr>
   
@@ -1902,8 +1901,8 @@
       <td>HamsterBase</td>
       <td><a href="https://github.com/hamsterbase/logseq-hamsterbase" target="_blank">hamsterbase/logseq-hamsterbase</a></td>
       <td>main</td>
-      <td>2023-02-06</td>
-      <td>2023-02-06</td>
+      <td class="date-col">2023-02-06</td>
+      <td class="date-col">2023-02-06</td>
       <td></td>
     </tr>
   
@@ -1914,8 +1913,8 @@
       <td>pengx17</td>
       <td><a href="https://github.com/pengx17/logseq-plugin-heatmap" target="_blank">pengx17/logseq-plugin-heatmap</a></td>
       <td>master</td>
-      <td>2021-09-08</td>
-      <td>2021-09-10</td>
+      <td class="date-col">2021-09-08</td>
+      <td class="date-col">2021-09-10</td>
       <td></td>
     </tr>
   
@@ -1926,8 +1925,8 @@
       <td>vyleung</td>
       <td><a href="https://github.com/vyleung/logseq-helium-plugin" target="_blank">vyleung/logseq-helium-plugin</a></td>
       <td>main</td>
-      <td>2022-04-24</td>
-      <td>2022-04-24</td>
+      <td class="date-col">2022-04-24</td>
+      <td class="date-col">2022-04-24</td>
       <td></td>
     </tr>
   
@@ -1938,8 +1937,8 @@
       <td>ahonn</td>
       <td><a href="https://github.com/ahonn/logseq-plugin-hide-everything" target="_blank">ahonn/logseq-plugin-hide-everything</a></td>
       <td>master</td>
-      <td>2023-06-09</td>
-      <td>2023-06-09</td>
+      <td class="date-col">2023-06-09</td>
+      <td class="date-col">2023-06-09</td>
       <td></td>
     </tr>
   
@@ -1950,8 +1949,8 @@
       <td>sethyuan</td>
       <td>sethyuan/logseq-plugin-hierarchy-jump</td>
       <td></td>
-      <td>2023-08-28</td>
-      <td>2023-08-28</td>
+      <td class="date-col">2023-08-28</td>
+      <td class="date-col">2023-08-28</td>
       <td>Missing repo URL</td>
     </tr>
   
@@ -1962,8 +1961,8 @@
       <td>c6p</td>
       <td><a href="https://github.com/c6p/logseq-hypothesis" target="_blank">c6p/logseq-hypothesis</a></td>
       <td>main</td>
-      <td>2021-09-14</td>
-      <td>2021-09-14</td>
+      <td class="date-col">2021-09-14</td>
+      <td class="date-col">2021-09-14</td>
       <td></td>
     </tr>
   
@@ -1974,8 +1973,8 @@
       <td>Yutao Dou</td>
       <td><a href="https://github.com/yutaodou/logseq-image-auto-resizer" target="_blank">yutaodou/logseq-image-auto-resizer</a></td>
       <td>main</td>
-      <td>2023-07-15</td>
-      <td>2023-07-15</td>
+      <td class="date-col">2023-07-15</td>
+      <td class="date-col">2023-07-15</td>
       <td></td>
     </tr>
   
@@ -1986,8 +1985,8 @@
       <td>b-yp</td>
       <td><a href="https://github.com/b-yp/logseq-image-editor" target="_blank">b-yp/logseq-image-editor</a></td>
       <td>dev</td>
-      <td>2023-08-02</td>
-      <td>2023-08-02</td>
+      <td class="date-col">2023-08-02</td>
+      <td class="date-col">2023-08-02</td>
       <td></td>
     </tr>
   
@@ -1998,8 +1997,8 @@
       <td>0604hx/集成显卡</td>
       <td><a href="https://github.com/0604hx/logseq-plugin-image-tiny" target="_blank">0604hx/logseq-plugin-image-tiny</a></td>
       <td>main</td>
-      <td>2025-07-06</td>
-      <td>2025-07-06</td>
+      <td class="date-col">2025-07-06</td>
+      <td class="date-col">2025-07-06</td>
       <td></td>
     </tr>
   
@@ -2010,8 +2009,8 @@
       <td>jjaychen</td>
       <td><a href="https://github.com/jjaychen1e/logseq-plugin-image-uploader" target="_blank">JJAYCHEN1e/logseq-plugin-image-uploader</a></td>
       <td>master</td>
-      <td>2022-01-05</td>
-      <td>2022-08-10</td>
+      <td class="date-col">2022-01-05</td>
+      <td class="date-col">2022-08-10</td>
       <td></td>
     </tr>
   
@@ -2022,8 +2021,8 @@
       <td>hserranome</td>
       <td><a href="https://github.com/hserranome/logseq-imgur-upload" target="_blank">hserranome/logseq-imgur-upload</a></td>
       <td>master</td>
-      <td>2021-11-15</td>
-      <td>2021-11-15</td>
+      <td class="date-col">2021-11-15</td>
+      <td class="date-col">2021-11-15</td>
       <td></td>
     </tr>
   
@@ -2034,8 +2033,8 @@
       <td>Denys Korolkov</td>
       <td><a href="https://github.com/denyskorolkov/logseq-immersion-theme" target="_blank">denyskorolkov/logseq-immersion-theme</a></td>
       <td>master</td>
-      <td>2022-05-09</td>
-      <td>2022-05-09</td>
+      <td class="date-col">2022-05-09</td>
+      <td class="date-col">2022-05-09</td>
       <td></td>
     </tr>
   
@@ -2046,8 +2045,8 @@
       <td>shady2k</td>
       <td><a href="https://github.com/shady2k/logseq-inbox-telegram-plugin" target="_blank">shady2k/logseq-inbox-telegram-plugin</a></td>
       <td>master</td>
-      <td>2022-01-21</td>
-      <td>2022-01-21</td>
+      <td class="date-col">2022-01-21</td>
+      <td class="date-col">2022-01-21</td>
       <td></td>
     </tr>
   
@@ -2058,8 +2057,8 @@
       <td>b-yp</td>
       <td><a href="https://github.com/b-yp/logseq-insert-movie-properties" target="_blank">b-yp/logseq-insert-movie-properties</a></td>
       <td>dev</td>
-      <td>2023-06-29</td>
-      <td>2023-06-29</td>
+      <td class="date-col">2023-06-29</td>
+      <td class="date-col">2023-06-29</td>
       <td></td>
     </tr>
   
@@ -2070,8 +2069,8 @@
       <td>Wonyoung Jang</td>
       <td><a href="https://github.com/wonyoung-jang/logseq-insert-random-pages" target="_blank">wonyoung-jang/logseq-insert-random-pages</a></td>
       <td>main</td>
-      <td>2025-03-17</td>
-      <td>2025-03-17</td>
+      <td class="date-col">2025-03-17</td>
+      <td class="date-col">2025-03-17</td>
       <td></td>
     </tr>
   
@@ -2082,8 +2081,8 @@
       <td>Fahd Hussein</td>
       <td><a href="https://github.com/eefahd/logseq-integrate-any-api" target="_blank">eefahd/logseq-integrate-any-api</a></td>
       <td>main</td>
-      <td>2024-09-08</td>
-      <td>2024-09-08</td>
+      <td class="date-col">2024-09-08</td>
+      <td class="date-col">2024-09-08</td>
       <td></td>
     </tr>
   
@@ -2094,8 +2093,8 @@
       <td>Alex Qwxlea</td>
       <td><a href="https://github.com/Mikilio/logseq-interstitial-heading-plugin" target="_blank">Mikilio/logseq-interstitial-heading-plugin</a></td>
       <td>main</td>
-      <td>2022-04-02</td>
-      <td>2025-01-27</td>
+      <td class="date-col">2022-04-02</td>
+      <td class="date-col">2025-01-27</td>
       <td></td>
     </tr>
   
@@ -2106,8 +2105,8 @@
       <td>KerfuffleV2</td>
       <td><a href="https://github.com/KerfuffleV2/logseq-plugin-interval-hints" target="_blank">kerfufflev2/logseq-plugin-interval-hints</a></td>
       <td>main</td>
-      <td>2022-06-03</td>
-      <td>2022-06-04</td>
+      <td class="date-col">2022-06-03</td>
+      <td class="date-col">2022-06-04</td>
       <td>Missing icon name, Missing icon URL</td>
     </tr>
   
@@ -2118,8 +2117,8 @@
       <td>Mostafa Ahangarha</td>
       <td><a href="https://github.com/ahangarha/logseq-jalali" target="_blank">ahangarha/logseq-jalali</a></td>
       <td>main</td>
-      <td>2024-06-09</td>
-      <td>2024-06-09</td>
+      <td class="date-col">2024-06-09</td>
+      <td class="date-col">2024-06-09</td>
       <td></td>
     </tr>
   
@@ -2130,8 +2129,8 @@
       <td>adyscorpius</td>
       <td><a href="https://github.com/adyscorpius/logseq-jira" target="_blank">adyscorpius/logseq-jira</a></td>
       <td>master</td>
-      <td>2022-11-14</td>
-      <td>2022-11-14</td>
+      <td class="date-col">2022-11-14</td>
+      <td class="date-col">2022-11-14</td>
       <td></td>
     </tr>
   
@@ -2142,8 +2141,8 @@
       <td>alecdibble</td>
       <td><a href="https://github.com/alecdibble/logseq-journal-auto-copier" target="_blank">alecdibble/logseq-journal-auto-copier</a></td>
       <td>main</td>
-      <td>2022-12-06</td>
-      <td>2022-12-06</td>
+      <td class="date-col">2022-12-06</td>
+      <td class="date-col">2022-12-06</td>
       <td></td>
     </tr>
   
@@ -2154,8 +2153,8 @@
       <td>xyhp915</td>
       <td><a href="https://github.com/xyhp915/logseq-journals-calendar" target="_blank">xyhp915/logseq-journals-calendar</a></td>
       <td>main</td>
-      <td>2021-09-06</td>
-      <td>2022-01-04</td>
+      <td class="date-col">2021-09-06</td>
+      <td class="date-col">2022-01-04</td>
       <td></td>
     </tr>
   
@@ -2166,8 +2165,8 @@
       <td>isosphere</td>
       <td><a href="https://github.com/isosphere/logseq-journals-nextprev" target="_blank">isosphere/logseq-journals-nextprev</a></td>
       <td>main</td>
-      <td>2024-01-03</td>
-      <td>2024-01-03</td>
+      <td class="date-col">2024-01-03</td>
+      <td class="date-col">2024-01-03</td>
       <td></td>
     </tr>
   
@@ -2178,8 +2177,8 @@
       <td>sethyuan</td>
       <td>sethyuan/logseq-plugin-kanban-board</td>
       <td></td>
-      <td>2023-03-12</td>
-      <td>2023-05-29</td>
+      <td class="date-col">2023-03-12</td>
+      <td class="date-col">2023-05-29</td>
       <td>Missing repo URL</td>
     </tr>
   
@@ -2190,8 +2189,8 @@
       <td>hkgnp</td>
       <td><a href="https://github.com/benjypng/logseq-kanban-plugin" target="_blank">hkgnp/logseq-kanban-plugin</a></td>
       <td>main</td>
-      <td>2021-12-10</td>
-      <td>2024-07-09</td>
+      <td class="date-col">2021-12-10</td>
+      <td class="date-col">2024-07-09</td>
       <td></td>
     </tr>
   
@@ -2202,8 +2201,8 @@
       <td>hkgnp</td>
       <td><a href="https://github.com/benjypng/logseq-keywordfrequency-plugin" target="_blank">hkgnp/logseq-keywordfrequency-plugin</a></td>
       <td>master</td>
-      <td>2022-01-05</td>
-      <td>2022-02-06</td>
+      <td class="date-col">2022-01-05</td>
+      <td class="date-col">2022-02-06</td>
       <td></td>
     </tr>
   
@@ -2214,8 +2213,8 @@
       <td>nicdun</td>
       <td><a href="https://github.com/nicdun/logseq-kindle-import" target="_blank">nicdun/logseq-kindle-import</a></td>
       <td>main</td>
-      <td>2023-01-19</td>
-      <td>2023-01-19</td>
+      <td class="date-col">2023-01-19</td>
+      <td class="date-col">2023-01-19</td>
       <td></td>
     </tr>
   
@@ -2226,8 +2225,8 @@
       <td>isosphere</td>
       <td><a href="https://github.com/isosphere/logseq-koreader-sync" target="_blank">isosphere/logseq-koreader-sync</a></td>
       <td>main</td>
-      <td>2024-02-12</td>
-      <td>2024-02-12</td>
+      <td class="date-col">2024-02-12</td>
+      <td class="date-col">2024-02-12</td>
       <td></td>
     </tr>
   
@@ -2238,8 +2237,8 @@
       <td>pengx17</td>
       <td><a href="https://github.com/pengx17/logseq-laurel-theme" target="_blank">pengx17/logseq-laurel-theme</a></td>
       <td>master</td>
-      <td>2021-09-26</td>
-      <td>2021-09-26</td>
+      <td class="date-col">2021-09-26</td>
+      <td class="date-col">2021-09-26</td>
       <td></td>
     </tr>
   
@@ -2250,8 +2249,8 @@
       <td>Marcel Visser</td>
       <td><a href="https://github.com/dot-asterisk-nl/logseq-lilypond" target="_blank">dot-asterisk-nl/logseq-lilypond</a></td>
       <td>main</td>
-      <td>2023-03-01</td>
-      <td>2023-03-01</td>
+      <td class="date-col">2023-03-01</td>
+      <td class="date-col">2023-03-01</td>
       <td></td>
     </tr>
   
@@ -2262,8 +2261,8 @@
       <td>pengx17</td>
       <td><a href="https://github.com/pengx17/logseq-plugin-link-preview" target="_blank">pengx17/logseq-plugin-link-preview</a></td>
       <td>master</td>
-      <td>2021-09-08</td>
-      <td>2021-11-29</td>
+      <td class="date-col">2021-09-08</td>
+      <td class="date-col">2021-11-29</td>
       <td>Missing icon name, Missing icon URL</td>
     </tr>
   
@@ -2274,8 +2273,8 @@
       <td>b-yp</td>
       <td><a href="https://github.com/b-yp/logseq-link-to-local" target="_blank">b-yp/logseq-link-to-local</a></td>
       <td>dev</td>
-      <td>2023-06-16</td>
-      <td>2023-06-21</td>
+      <td class="date-col">2023-06-16</td>
+      <td class="date-col">2023-06-21</td>
       <td></td>
     </tr>
   
@@ -2286,8 +2285,8 @@
       <td>usoon</td>
       <td><a href="https://github.com/usoonees/logseq-plugin-link-unlink" target="_blank">usoonees/logseq-plugin-link-unlink</a></td>
       <td>master</td>
-      <td>2022-10-30</td>
-      <td>2022-11-01</td>
+      <td class="date-col">2022-10-30</td>
+      <td class="date-col">2022-11-01</td>
       <td></td>
     </tr>
   
@@ -2298,8 +2297,8 @@
       <td>sethyuan</td>
       <td>sethyuan/logseq-plugin-linker</td>
       <td></td>
-      <td>2023-10-27</td>
-      <td>2023-10-27</td>
+      <td class="date-col">2023-10-27</td>
+      <td class="date-col">2023-10-27</td>
       <td>Missing repo URL</td>
     </tr>
   
@@ -2310,8 +2309,8 @@
       <td>Layxe</td>
       <td><a href="https://github.com/Layxe/Logseq-Linkwarden" target="_blank">Layxe/Logseq-Linkwarden</a></td>
       <td>main</td>
-      <td>2025-02-17</td>
-      <td>2025-04-29</td>
+      <td class="date-col">2025-02-17</td>
+      <td class="date-col">2025-04-29</td>
       <td></td>
     </tr>
   
@@ -2322,8 +2321,8 @@
       <td>Allan Chain</td>
       <td><a href="https://github.com/AllanChain/logseq-live-math" target="_blank">AllanChain/logseq-live-math</a></td>
       <td>main</td>
-      <td>2023-08-22</td>
-      <td>2023-08-23</td>
+      <td class="date-col">2023-08-22</td>
+      <td class="date-col">2023-08-23</td>
       <td></td>
     </tr>
   
@@ -2334,8 +2333,8 @@
       <td>LelouchHe</td>
       <td><a href="https://github.com/LelouchHe/logseq-local-telegram-bot" target="_blank">LelouchHe/logseq-local-telegram-bot</a></td>
       <td>master</td>
-      <td>2023-02-13</td>
-      <td>2023-02-13</td>
+      <td class="date-col">2023-02-13</td>
+      <td class="date-col">2023-02-13</td>
       <td></td>
     </tr>
   
@@ -2346,8 +2345,8 @@
       <td>hkgnp</td>
       <td><a href="https://github.com/benjypng/logseq-localassets-plugin" target="_blank">hkgnp/logseq-localassets-plugin</a></td>
       <td>main</td>
-      <td>2022-01-01</td>
-      <td>2023-03-30</td>
+      <td class="date-col">2022-01-01</td>
+      <td class="date-col">2023-03-30</td>
       <td></td>
     </tr>
   
@@ -2358,8 +2357,8 @@
       <td>vipzhicheng</td>
       <td><a href="https://github.com/vipzhicheng/logseq-plugin-lock-screen" target="_blank">vipzhicheng/logseq-plugin-lock-screen</a></td>
       <td>master</td>
-      <td>2022-01-27</td>
-      <td>2022-04-08</td>
+      <td class="date-col">2022-01-27</td>
+      <td class="date-col">2022-04-08</td>
       <td></td>
     </tr>
   
@@ -2370,8 +2369,8 @@
       <td>vipzhicheng</td>
       <td><a href="https://github.com/vipzhicheng/logseq-plugin-lock" target="_blank">vipzhicheng/logseq-plugin-lock</a></td>
       <td>master</td>
-      <td>2021-11-17</td>
-      <td>2022-04-08</td>
+      <td class="date-col">2021-11-17</td>
+      <td class="date-col">2022-04-08</td>
       <td></td>
     </tr>
   
@@ -2382,8 +2381,8 @@
       <td>SSamDav</td>
       <td><a href="https://github.com/SSamDav/logseq-logarxivmate-plugin" target="_blank">SSamDav/logseq-logarxivmate-plugin</a></td>
       <td>main</td>
-      <td>2024-05-27</td>
-      <td>2024-05-30</td>
+      <td class="date-col">2024-05-27</td>
+      <td class="date-col">2024-05-30</td>
       <td></td>
     </tr>
   
@@ -2394,8 +2393,8 @@
       <td>sethyuan</td>
       <td><a href="https://github.com/sethyuan/logseq-long-form" target="_blank">sethyuan/logseq-long-form</a></td>
       <td>master</td>
-      <td>2023-12-12</td>
-      <td>2023-12-12</td>
+      <td class="date-col">2023-12-12</td>
+      <td class="date-col">2023-12-12</td>
       <td></td>
     </tr>
   
@@ -2406,8 +2405,8 @@
       <td>sethyuan</td>
       <td>sethyuan/logseq-plugin-luckysheet</td>
       <td></td>
-      <td>2022-03-12</td>
-      <td>2023-05-29</td>
+      <td class="date-col">2022-03-12</td>
+      <td class="date-col">2023-05-29</td>
       <td>Missing repo URL</td>
     </tr>
   
@@ -2418,8 +2417,8 @@
       <td>@gavmn</td>
       <td><a href="https://github.com/gavinmn/logseq-luma" target="_blank">gavinmn/logseq-luma</a></td>
       <td>main</td>
-      <td>2022-07-28</td>
-      <td>2022-07-28</td>
+      <td class="date-col">2022-07-28</td>
+      <td class="date-col">2022-07-28</td>
       <td></td>
     </tr>
   
@@ -2430,8 +2429,8 @@
       <td>kay-ki</td>
       <td><a href="https://github.com/kay-ki/logseq-lumalee" target="_blank">kay-ki/Lumalee-Logseq-Theme</a></td>
       <td>main</td>
-      <td>2024-09-21</td>
-      <td>2025-05-16</td>
+      <td class="date-col">2024-09-21</td>
+      <td class="date-col">2025-05-16</td>
       <td></td>
     </tr>
   
@@ -2442,8 +2441,8 @@
       <td>enchantmenttable</td>
       <td><a href="https://github.com/enchantmenttable/logseq-macosbooks-copy-without-citation" target="_blank">enchantmenttable/logseq-macosbooks-copy-without-citation</a></td>
       <td>main</td>
-      <td>2022-11-23</td>
-      <td>2022-11-23</td>
+      <td class="date-col">2022-11-23</td>
+      <td class="date-col">2022-11-23</td>
       <td></td>
     </tr>
   
@@ -2454,8 +2453,8 @@
       <td>b-yp</td>
       <td><a href="https://github.com/b-yp/logseq-magic-todo" target="_blank">b-yp/logseq-magic-todo</a></td>
       <td>dev</td>
-      <td>2024-08-05</td>
-      <td>2024-08-05</td>
+      <td class="date-col">2024-08-05</td>
+      <td class="date-col">2024-08-05</td>
       <td></td>
     </tr>
   
@@ -2466,8 +2465,8 @@
       <td>vipzhicheng</td>
       <td><a href="https://github.com/vipzhicheng/logseq-plugin-mark-map" target="_blank">vipzhicheng/logseq-plugin-mark-map</a></td>
       <td>master</td>
-      <td>2021-09-03</td>
-      <td>2022-04-08</td>
+      <td class="date-col">2021-09-03</td>
+      <td class="date-col">2022-04-08</td>
       <td></td>
     </tr>
   
@@ -2478,8 +2477,8 @@
       <td>haydenull</td>
       <td><a href="https://github.com/haydenull/logseq-plugin-markdown-table" target="_blank">haydenull/logseq-plugin-markdown-table</a></td>
       <td>main</td>
-      <td>2021-10-22</td>
-      <td>2022-01-17</td>
+      <td class="date-col">2021-10-22</td>
+      <td class="date-col">2022-01-17</td>
       <td></td>
     </tr>
   
@@ -2490,8 +2489,8 @@
       <td>Dieterbe</td>
       <td><a href="https://github.com/Dieterbe/logseq-plugin-marks" target="_blank">Dieterbe/logseq-plugin-marks</a></td>
       <td>main</td>
-      <td>2022-10-10</td>
-      <td>2022-10-10</td>
+      <td class="date-col">2022-10-10</td>
+      <td class="date-col">2022-10-10</td>
       <td></td>
     </tr>
   
@@ -2502,8 +2501,8 @@
       <td>sethyuan</td>
       <td>sethyuan/logseq-plugin-math-editor</td>
       <td></td>
-      <td>2023-12-19</td>
-      <td>2023-12-19</td>
+      <td class="date-col">2023-12-19</td>
+      <td class="date-col">2023-12-19</td>
       <td>Missing repo URL</td>
     </tr>
   
@@ -2514,8 +2513,8 @@
       <td>KonTy</td>
       <td><a href="https://github.com/KonTy/logseq-matrix-amoled" target="_blank">KonTy/logseq-matrix-amoled</a></td>
       <td>main</td>
-      <td>2024-06-03</td>
-      <td>2024-06-03</td>
+      <td class="date-col">2024-06-03</td>
+      <td class="date-col">2024-06-03</td>
       <td></td>
     </tr>
   
@@ -2526,8 +2525,8 @@
       <td>Matter</td>
       <td><a href="https://github.com/getmatterapp/logseq-matter" target="_blank">getmatterapp/logseq-matter</a></td>
       <td>master</td>
-      <td>2022-10-28</td>
-      <td>2022-10-28</td>
+      <td class="date-col">2022-10-28</td>
+      <td class="date-col">2022-10-28</td>
       <td></td>
     </tr>
   
@@ -2538,8 +2537,8 @@
       <td>stefanbuck</td>
       <td><a href="https://github.com/stefanbuck/logseq-media-controls" target="_blank">stefanbuck/logseq-media-controls</a></td>
       <td>main</td>
-      <td>2022-04-22</td>
-      <td>2022-04-22</td>
+      <td class="date-col">2022-04-22</td>
+      <td class="date-col">2022-04-22</td>
       <td></td>
     </tr>
   
@@ -2550,8 +2549,8 @@
       <td>sethyuan</td>
       <td>sethyuan/logseq-plugin-media-ts</td>
       <td></td>
-      <td>2022-03-02</td>
-      <td>2023-05-29</td>
+      <td class="date-col">2022-03-02</td>
+      <td class="date-col">2023-05-29</td>
       <td>Missing repo URL</td>
     </tr>
   
@@ -2562,8 +2561,8 @@
       <td>CorrectRoadH</td>
       <td><a href="https://github.com/CorrectRoadH/logseq-metadata" target="_blank">CorrectRoadH/logseq-metadata</a></td>
       <td>master</td>
-      <td>2024-08-30</td>
-      <td>2024-09-05</td>
+      <td class="date-col">2024-08-30</td>
+      <td class="date-col">2024-09-05</td>
       <td></td>
     </tr>
   
@@ -2574,8 +2573,8 @@
       <td>EINDEX</td>
       <td><a href="https://github.com/EINDEX/logseq-memos-sync" target="_blank">EINDEX/logseq-memos-sync</a></td>
       <td>main</td>
-      <td>2022-12-01</td>
-      <td>2022-12-01</td>
+      <td class="date-col">2022-12-01</td>
+      <td class="date-col">2022-12-01</td>
       <td></td>
     </tr>
   
@@ -2586,8 +2585,8 @@
       <td>George Guimarães</td>
       <td><a href="https://github.com/georgeguimaraes/logseq-plugin-merge-nested-blocks-into-one" target="_blank">georgeguimaraes/logseq-plugin-merge-nested-blocks-into-one</a></td>
       <td>main</td>
-      <td>2022-09-08</td>
-      <td>2023-10-31</td>
+      <td class="date-col">2022-09-08</td>
+      <td class="date-col">2023-10-31</td>
       <td></td>
     </tr>
   
@@ -2598,8 +2597,8 @@
       <td>hkgnp</td>
       <td><a href="https://github.com/benjypng/logseq-mergepages-plugin" target="_blank">hkgnp/logseq-mergepages-plugin</a></td>
       <td>master</td>
-      <td>2021-12-19</td>
-      <td>2022-02-06</td>
+      <td class="date-col">2021-12-19</td>
+      <td class="date-col">2022-02-06</td>
       <td></td>
     </tr>
   
@@ -2610,8 +2609,8 @@
       <td>benjypng</td>
       <td><a href="https://github.com/benjypng/logseq-mermaid-plugin" target="_blank">benjypng/logseq-mermaid-plugin</a></td>
       <td>main</td>
-      <td>2022-02-13</td>
-      <td>2024-08-05</td>
+      <td class="date-col">2022-02-13</td>
+      <td class="date-col">2024-08-05</td>
       <td></td>
     </tr>
   
@@ -2622,8 +2621,8 @@
       <td>John McCann</td>
       <td><a href="https://github.com/dangermccann/logseq-metrics" target="_blank">dangermccann/logseq-metrics</a></td>
       <td>master</td>
-      <td>2022-11-13</td>
-      <td>2022-11-14</td>
+      <td class="date-col">2022-11-13</td>
+      <td class="date-col">2022-11-14</td>
       <td></td>
     </tr>
   
@@ -2634,8 +2633,8 @@
       <td>Jimmie Lee</td>
       <td><a href="https://github.com/lee88688/logseq-mhtml-view-plugin" target="_blank">lee88688/logseq-mhtml-view-plugin</a></td>
       <td>master</td>
-      <td>2023-09-07</td>
-      <td>2023-09-07</td>
+      <td class="date-col">2023-09-07</td>
+      <td class="date-col">2023-09-07</td>
       <td></td>
     </tr>
   
@@ -2646,8 +2645,8 @@
       <td>playerofgames</td>
       <td><a href="https://github.com/playerofgames/logseq-mia-theme" target="_blank">playerofgames/logseq-mia-theme</a></td>
       <td>master</td>
-      <td>2022-03-21</td>
-      <td>2022-03-21</td>
+      <td class="date-col">2022-03-21</td>
+      <td class="date-col">2022-03-21</td>
       <td></td>
     </tr>
   
@@ -2658,8 +2657,8 @@
       <td>haydenull</td>
       <td><a href="https://github.com/haydenull/logseq-plugin-milestone" target="_blank">haydenull/logseq-plugin-milestone</a></td>
       <td>main</td>
-      <td>2022-01-17</td>
-      <td>2022-01-17</td>
+      <td class="date-col">2022-01-17</td>
+      <td class="date-col">2022-01-17</td>
       <td></td>
     </tr>
   
@@ -2670,8 +2669,8 @@
       <td>duiliuliu</td>
       <td><a href="https://github.com/duiliuliu/logseq-plugin-milestone-1" target="_blank">duiliuliu/logseq-plugin-milestone-1</a></td>
       <td>main</td>
-      <td>2024-10-11</td>
-      <td>2024-10-11</td>
+      <td class="date-col">2024-10-11</td>
+      <td class="date-col">2024-10-11</td>
       <td></td>
     </tr>
   
@@ -2682,8 +2681,8 @@
       <td>b-yp</td>
       <td><a href="https://github.com/b-yp/logseq-mind-map" target="_blank">b-yp/logseq-mind-map</a></td>
       <td>dev</td>
-      <td>2024-10-11</td>
-      <td>2024-10-11</td>
+      <td class="date-col">2024-10-11</td>
+      <td class="date-col">2024-10-11</td>
       <td></td>
     </tr>
   
@@ -2694,8 +2693,8 @@
       <td>ZhuXiaolingPig <serena2000@qq.com></td>
       <td><a href="https://github.com/ZhuXiaolingPig/logseq-mind-mapping-plus" target="_blank">ZhuXiaolingPig/logseq-mind-mapping-plus</a></td>
       <td>main</td>
-      <td>2025-01-17</td>
-      <td>2025-01-17</td>
+      <td class="date-col">2025-01-17</td>
+      <td class="date-col">2025-01-17</td>
       <td></td>
     </tr>
   
@@ -2706,8 +2705,8 @@
       <td>blueteafrog</td>
       <td><a href="https://github.com/d5technews/logseq-mocha-theme" target="_blank">blueteafrog/logseq-mocha-theme</a></td>
       <td>main</td>
-      <td>2022-01-01</td>
-      <td>2022-01-10</td>
+      <td class="date-col">2022-01-01</td>
+      <td class="date-col">2022-01-10</td>
       <td></td>
     </tr>
   
@@ -2718,8 +2717,8 @@
       <td>Benjamin Weinstein-Raun</td>
       <td><a href="https://github.com/benwr/logseq-mochi-sync" target="_blank">benwr/logseq-mochi-sync</a></td>
       <td>main</td>
-      <td>2025-03-03</td>
-      <td>2025-03-03</td>
+      <td class="date-col">2025-03-03</td>
+      <td class="date-col">2025-03-03</td>
       <td></td>
     </tr>
   
@@ -2730,8 +2729,8 @@
       <td>Toby Law</td>
       <td><a href="https://github.com/tzcl/logseq-monokai" target="_blank">tzcl/logseq-monokai</a></td>
       <td>main</td>
-      <td>2023-02-11</td>
-      <td>2023-02-11</td>
+      <td class="date-col">2023-02-11</td>
+      <td class="date-col">2023-02-11</td>
       <td></td>
     </tr>
   
@@ -2742,8 +2741,8 @@
       <td>vipzhicheng</td>
       <td><a href="https://github.com/vipzhicheng/logseq-plugin-move-block" target="_blank">vipzhicheng/logseq-plugin-move-block</a></td>
       <td>main</td>
-      <td>2022-04-08</td>
-      <td>2022-04-12</td>
+      <td class="date-col">2022-04-08</td>
+      <td class="date-col">2022-04-12</td>
       <td></td>
     </tr>
   
@@ -2754,8 +2753,8 @@
       <td>Ilya Kirillov</td>
       <td><a href="https://github.com/darthorimar/logseq-movies-plugin" target="_blank">darthorimar/logseq-movies-plugin</a></td>
       <td>master</td>
-      <td>2022-07-30</td>
-      <td>2022-07-31</td>
+      <td class="date-col">2022-07-30</td>
+      <td class="date-col">2022-07-31</td>
       <td>Missing icon name, Missing icon URL, Missing README</td>
     </tr>
   
@@ -2766,8 +2765,8 @@
       <td>benjaffe</td>
       <td><a href="https://github.com/phoebejaffe/logseq-music-notation" target="_blank">benjaffe/logseq-music-notation</a></td>
       <td>main</td>
-      <td>2022-02-21</td>
-      <td>2022-02-21</td>
+      <td class="date-col">2022-02-21</td>
+      <td class="date-col">2022-02-21</td>
       <td></td>
     </tr>
   
@@ -2778,8 +2777,8 @@
       <td>Ben Force</td>
       <td><a href="https://github.com/theBenForce/logseq-plugin-my-highlights" target="_blank">theBenForce/logseq-plugin-my-highlights</a></td>
       <td>main</td>
-      <td>2022-03-01</td>
-      <td>2023-03-27</td>
+      <td class="date-col">2022-03-01</td>
+      <td class="date-col">2023-03-27</td>
       <td></td>
     </tr>
   
@@ -2790,8 +2789,8 @@
       <td>solariz</td>
       <td><a href="https://github.com/solariz/logseq-neon-theme" target="_blank">solariz/logseq-neon-theme</a></td>
       <td>main</td>
-      <td>2022-04-21</td>
-      <td>2022-12-31</td>
+      <td class="date-col">2022-04-21</td>
+      <td class="date-col">2022-12-31</td>
       <td></td>
     </tr>
   
@@ -2802,8 +2801,8 @@
       <td>KoalaSat</td>
       <td><a href="https://github.com/KoalaSat/logseq-nostr-sync" target="_blank">KoalaSat/logseq-nostr-sync</a></td>
       <td>main</td>
-      <td>2023-11-19</td>
-      <td>2023-11-19</td>
+      <td class="date-col">2023-11-19</td>
+      <td class="date-col">2023-11-19</td>
       <td></td>
     </tr>
   
@@ -2814,8 +2813,8 @@
       <td>b-yp</td>
       <td><a href="https://github.com/b-yp/logseq-notion-sync" target="_blank">b-yp/logseq-notion-sync</a></td>
       <td>master</td>
-      <td>2023-05-20</td>
-      <td>2023-06-21</td>
+      <td class="date-col">2023-05-20</td>
+      <td class="date-col">2023-06-21</td>
       <td></td>
     </tr>
   
@@ -2826,8 +2825,8 @@
       <td>xxchan</td>
       <td><a href="https://github.com/xxchan/logseq-ocr" target="_blank">xxchan/logseq-ocr</a></td>
       <td>main</td>
-      <td>2023-04-30</td>
-      <td>2023-05-01</td>
+      <td class="date-col">2023-04-30</td>
+      <td class="date-col">2023-05-01</td>
       <td>Missing icon name, Missing icon URL</td>
     </tr>
   
@@ -2838,8 +2837,8 @@
       <td>sethyuan</td>
       <td>sethyuan/logseq-plugin-ol</td>
       <td></td>
-      <td>2022-03-08</td>
-      <td>2023-05-29</td>
+      <td class="date-col">2022-03-08</td>
+      <td class="date-col">2023-05-29</td>
       <td>Missing repo URL</td>
     </tr>
   
@@ -2850,8 +2849,8 @@
       <td>imrickysu</td>
       <td><a href="https://github.com/imrickysu/logseq-plugin-on-this-day" target="_blank">imrickysu/logseq-plugin-on-this-day</a></td>
       <td>main</td>
-      <td>2023-01-27</td>
-      <td>2023-01-27</td>
+      <td class="date-col">2023-01-27</td>
+      <td class="date-col">2023-01-27</td>
       <td></td>
     </tr>
   
@@ -2862,8 +2861,8 @@
       <td>femto-code</td>
       <td><a href="https://github.com/femto-code/logseq-one-theme" target="_blank">femto-code/logseq-one-theme</a></td>
       <td>main</td>
-      <td>2023-12-19</td>
-      <td>2023-12-19</td>
+      <td class="date-col">2023-12-19</td>
+      <td class="date-col">2023-12-19</td>
       <td></td>
     </tr>
   
@@ -2874,8 +2873,8 @@
       <td>rebornix</td>
       <td><a href="https://github.com/rebornix/logseq-open-in-code" target="_blank">rebornix/logseq-open-in-code</a></td>
       <td>main</td>
-      <td>2022-04-28</td>
-      <td>2022-04-29</td>
+      <td class="date-col">2022-04-28</td>
+      <td class="date-col">2022-04-29</td>
       <td></td>
     </tr>
   
@@ -2886,8 +2885,8 @@
       <td>ksqsf</td>
       <td><a href="https://github.com/ksqsf/logseq-open-in-emacs" target="_blank">ksqsf/logseq-open-in-emacs</a></td>
       <td>main</td>
-      <td>2022-12-17</td>
-      <td>2022-12-19</td>
+      <td class="date-col">2022-12-17</td>
+      <td class="date-col">2022-12-19</td>
       <td></td>
     </tr>
   
@@ -2898,8 +2897,8 @@
       <td>haydenull</td>
       <td><a href="https://github.com/haydenull/logseq-plugin-open-in-external-app" target="_blank">haydenull/logseq-plugin-open-in-external-app</a></td>
       <td>main</td>
-      <td>2022-03-08</td>
-      <td>2022-03-08</td>
+      <td class="date-col">2022-03-08</td>
+      <td class="date-col">2022-03-08</td>
       <td></td>
     </tr>
   
@@ -2910,8 +2909,8 @@
       <td>rebornix, e-zz</td>
       <td><a href="https://github.com/ThinkSalat/logseq-open-in-code" target="_blank">ThinkSalat/logseq-open-in-code</a></td>
       <td>main</td>
-      <td>2023-07-08</td>
-      <td>2023-07-08</td>
+      <td class="date-col">2023-07-08</td>
+      <td class="date-col">2023-07-08</td>
       <td></td>
     </tr>
   
@@ -2922,8 +2921,8 @@
       <td>phonetonote</td>
       <td><a href="https://github.com/phonetonote/tft-interop" target="_blank">phonetonote/tft-interop</a></td>
       <td>main</td>
-      <td>2022-05-03</td>
-      <td>2022-05-03</td>
+      <td class="date-col">2022-05-03</td>
+      <td class="date-col">2022-05-03</td>
       <td></td>
     </tr>
   
@@ -2934,8 +2933,8 @@
       <td>hkgnp</td>
       <td><a href="https://github.com/benjypng/logseq-osmmaps-plugin" target="_blank">hkgnp/logseq-osmmaps-plugin</a></td>
       <td>main</td>
-      <td>2022-01-17</td>
-      <td>2022-02-06</td>
+      <td class="date-col">2022-01-17</td>
+      <td class="date-col">2022-02-06</td>
       <td></td>
     </tr>
   
@@ -2946,8 +2945,8 @@
       <td>blueteafrog</td>
       <td><a href="https://github.com/d5technews/logseq-oxfordblue-theme" target="_blank">blueteafrog/logseq-oxfordblue-theme</a></td>
       <td>main</td>
-      <td>2021-12-27</td>
-      <td>2022-01-10</td>
+      <td class="date-col">2021-12-27</td>
+      <td class="date-col">2022-01-10</td>
       <td></td>
     </tr>
   
@@ -2958,8 +2957,8 @@
       <td>hisea</td>
       <td><a href="https://github.com/hisea/logseq-ozean-theme" target="_blank">hisea/logseq-ozean-theme</a></td>
       <td>main</td>
-      <td>2022-05-28</td>
-      <td>2022-05-28</td>
+      <td class="date-col">2022-05-28</td>
+      <td class="date-col">2022-05-28</td>
       <td></td>
     </tr>
   
@@ -2970,8 +2969,8 @@
       <td>b-yp</td>
       <td><a href="https://github.com/b-yp/logseq-page-breadcrumb" target="_blank">b-yp/logseq-page-breadcrumb</a></td>
       <td>dev</td>
-      <td>2024-08-26</td>
-      <td>2024-08-26</td>
+      <td class="date-col">2024-08-26</td>
+      <td class="date-col">2024-08-26</td>
       <td></td>
     </tr>
   
@@ -2982,8 +2981,8 @@
       <td>YU000jp</td>
       <td><a href="https://github.com/YU000jp/logseq-page-tags-and-hierarchy" target="_blank">YU000jp/logseq-page-tags-and-hierarchy</a></td>
       <td>main</td>
-      <td>2022-10-10</td>
-      <td>2023-11-12</td>
+      <td class="date-col">2022-10-10</td>
+      <td class="date-col">2023-11-12</td>
       <td></td>
     </tr>
   
@@ -2994,8 +2993,8 @@
       <td>benjypng</td>
       <td><a href="https://github.com/benjypng/logseq-pandoc-plugin" target="_blank">benjypng/logseq-pandoc-plugin</a></td>
       <td>main</td>
-      <td>2024-08-24</td>
-      <td>2024-08-24</td>
+      <td class="date-col">2024-08-24</td>
+      <td class="date-col">2024-08-24</td>
       <td></td>
     </tr>
   
@@ -3006,8 +3005,8 @@
       <td>b-yp</td>
       <td><a href="https://github.com/b-yp/logseq-pangu" target="_blank">b-yp/logseq-pangu</a></td>
       <td>dev</td>
-      <td>2023-11-05</td>
-      <td>2023-11-05</td>
+      <td class="date-col">2023-11-05</td>
+      <td class="date-col">2023-11-05</td>
       <td></td>
     </tr>
   
@@ -3018,8 +3017,8 @@
       <td>kirso</td>
       <td><a href="https://github.com/kirso/logseq-panic-theme" target="_blank">kirso/logseq-panic-theme</a></td>
       <td>main</td>
-      <td>2021-12-18</td>
-      <td>2022-10-11</td>
+      <td class="date-col">2021-12-18</td>
+      <td class="date-col">2022-10-11</td>
       <td></td>
     </tr>
   
@@ -3030,8 +3029,8 @@
       <td>wirtzdan</td>
       <td><a href="https://github.com/wirtzdan/logseq-paper-theme" target="_blank">wirtzdan/logseq-paper-theme</a></td>
       <td>master</td>
-      <td>2021-10-23</td>
-      <td>2022-04-27</td>
+      <td class="date-col">2021-10-23</td>
+      <td class="date-col">2022-04-27</td>
       <td></td>
     </tr>
   
@@ -3042,8 +3041,8 @@
       <td>hkgnp</td>
       <td><a href="https://github.com/benjypng/logseq-parsecsv-plugin" target="_blank">hkgnp/logseq-parsecsv-plugin</a></td>
       <td>main</td>
-      <td>2022-03-04</td>
-      <td>2022-03-04</td>
+      <td class="date-col">2022-03-04</td>
+      <td class="date-col">2022-03-04</td>
       <td></td>
     </tr>
   
@@ -3054,8 +3053,8 @@
       <td>usoon</td>
       <td><a href="https://github.com/usoonees/logseq-plugin-paste-more" target="_blank">usoonees/logseq-plugin-paste-more</a></td>
       <td>main</td>
-      <td>2022-05-07</td>
-      <td>2022-05-07</td>
+      <td class="date-col">2022-05-07</td>
+      <td class="date-col">2022-05-07</td>
       <td></td>
     </tr>
   
@@ -3066,8 +3065,8 @@
       <td>Aryan Sawhney</td>
       <td><a href="https://github.com/sawhney17/logseq-pdf-export" target="_blank">sawhney17/logseq-pdf-export</a></td>
       <td>master</td>
-      <td>2022-03-23</td>
-      <td>2022-04-07</td>
+      <td class="date-col">2022-03-23</td>
+      <td class="date-col">2022-04-07</td>
       <td></td>
     </tr>
   
@@ -3078,8 +3077,8 @@
       <td>e-zz</td>
       <td><a href="https://github.com/e-zz/logseq-pdf-extract" target="_blank">e-zz/logseq-pdf-extract</a></td>
       <td>main</td>
-      <td>2023-12-18</td>
-      <td>2023-12-19</td>
+      <td class="date-col">2023-12-18</td>
+      <td class="date-col">2023-12-19</td>
       <td></td>
     </tr>
   
@@ -3090,8 +3089,8 @@
       <td>OverflowCat</td>
       <td><a href="https://github.com/OverflowCat/logseq-pdf-nav" target="_blank">OverflowCat/logseq-pdf-nav</a></td>
       <td>master</td>
-      <td>2023-01-17</td>
-      <td>2023-01-17</td>
+      <td class="date-col">2023-01-17</td>
+      <td class="date-col">2023-01-17</td>
       <td></td>
     </tr>
   
@@ -3102,8 +3101,8 @@
       <td>superychen</td>
       <td><a href="https://github.com/supery-chen/logseq-plugin-pdf-print" target="_blank">supery-chen/logseq-plugin-pdf-print</a></td>
       <td>main</td>
-      <td>2022-05-07</td>
-      <td>2022-05-07</td>
+      <td class="date-col">2022-05-07</td>
+      <td class="date-col">2022-05-07</td>
       <td></td>
     </tr>
   
@@ -3114,8 +3113,8 @@
       <td>vipzhicheng</td>
       <td><a href="https://github.com/vipzhicheng/logseq-plugin-pen" target="_blank">vipzhicheng/logseq-plugin-pen</a></td>
       <td>master</td>
-      <td>2022-09-27</td>
-      <td>2022-09-27</td>
+      <td class="date-col">2022-09-27</td>
+      <td class="date-col">2022-09-27</td>
       <td></td>
     </tr>
   
@@ -3126,8 +3125,8 @@
       <td>phonetonote</td>
       <td><a href="https://github.com/phonetonote/phonetonote-logseq" target="_blank">phonetonote/phonetonote-logseq</a></td>
       <td>master</td>
-      <td>2021-12-22</td>
-      <td>2022-06-02</td>
+      <td class="date-col">2021-12-22</td>
+      <td class="date-col">2022-06-02</td>
       <td></td>
     </tr>
   
@@ -3138,8 +3137,8 @@
       <td>avoonix</td>
       <td><a href="https://github.com/avoonix/logseq-pink-as-fox-theme" target="_blank">avoonix/logseq-pink-as-fox-theme</a></td>
       <td>master</td>
-      <td>2022-02-16</td>
-      <td>2022-02-16</td>
+      <td class="date-col">2022-02-16</td>
+      <td class="date-col">2022-02-16</td>
       <td></td>
     </tr>
   
@@ -3150,8 +3149,8 @@
       <td>b-yp</td>
       <td><a href="https://github.com/b-yp/logseq-pinyin-match-tags" target="_blank">b-yp/logseq-pinyin-match-tags</a></td>
       <td>dev</td>
-      <td>2023-06-25</td>
-      <td>2023-06-25</td>
+      <td class="date-col">2023-06-25</td>
+      <td class="date-col">2023-06-25</td>
       <td></td>
     </tr>
   
@@ -3162,8 +3161,8 @@
       <td>cofcool</td>
       <td><a href="https://github.com/cofcool/logseq-plantuml-plugin" target="_blank">cofcool/logseq-plantuml-plugin</a></td>
       <td>master</td>
-      <td>2022-05-13</td>
-      <td>2022-05-13</td>
+      <td class="date-col">2022-05-13</td>
+      <td class="date-col">2022-05-13</td>
       <td></td>
     </tr>
   
@@ -3174,8 +3173,8 @@
       <td>ahonn</td>
       <td><a href="https://github.com/ahonn/logseq-plugin-ai-assistant" target="_blank">ahonn/logseq-plugin-ai-assistant</a></td>
       <td>master</td>
-      <td>2023-03-22</td>
-      <td>2023-03-22</td>
+      <td class="date-col">2023-03-22</td>
+      <td class="date-col">2023-03-22</td>
       <td></td>
     </tr>
   
@@ -3186,8 +3185,8 @@
       <td>songOT</td>
       <td><a href="https://github.com/bsongOT/logseq-plugin-areas" target="_blank">bsongOT/logseq-plugin-areas</a></td>
       <td>main</td>
-      <td>2022-09-25</td>
-      <td>2022-09-25</td>
+      <td class="date-col">2022-09-25</td>
+      <td class="date-col">2022-09-25</td>
       <td></td>
     </tr>
   
@@ -3198,8 +3197,8 @@
       <td>galihlprakoso</td>
       <td><a href="https://github.com/galihlprakoso/logseq-plugin-assistseq-ai-assistant" target="_blank">galihlprakoso/logseq-plugin-assistseq-ai-assistant</a></td>
       <td>master</td>
-      <td>2024-08-20</td>
-      <td>2024-08-20</td>
+      <td class="date-col">2024-08-20</td>
+      <td class="date-col">2024-08-20</td>
       <td></td>
     </tr>
   
@@ -3210,8 +3209,8 @@
       <td>Gandalf-the-Blue & Demistify</td>
       <td><a href="https://github.com/Gandalf-the-Blue/logseq-plugin-audiobookshelf-import" target="_blank">Gandalf-the-Blue/logseq-plugin-audiobookshelf-import</a></td>
       <td>main</td>
-      <td>2023-01-14</td>
-      <td>2024-10-24</td>
+      <td class="date-col">2023-01-14</td>
+      <td class="date-col">2024-10-24</td>
       <td></td>
     </tr>
   
@@ -3222,8 +3221,8 @@
       <td>Nick Knight</td>
       <td><a href="https://github.com/tinpotnick/logseq-audiosnippet-plugin" target="_blank">tinpotnick/logseq-audiosnippet-plugin</a></td>
       <td>main</td>
-      <td>2025-03-18</td>
-      <td>2025-03-18</td>
+      <td class="date-col">2025-03-18</td>
+      <td class="date-col">2025-03-18</td>
       <td></td>
     </tr>
   
@@ -3234,8 +3233,8 @@
       <td>0x7b1</td>
       <td><a href="https://github.com/0x7b1/logseq-plugin-automatic-url-title" target="_blank">0x7b1/logseq-plugin-automatic-url-title</a></td>
       <td>main</td>
-      <td>2022-07-10</td>
-      <td>2022-07-11</td>
+      <td class="date-col">2022-07-10</td>
+      <td class="date-col">2022-07-11</td>
       <td></td>
     </tr>
   
@@ -3246,8 +3245,8 @@
       <td>Peter C</td>
       <td><a href="https://github.com/haha1903/logseq-plugin-azure-openai" target="_blank">haha1903/logseq-plugin-azure-openai</a></td>
       <td>master</td>
-      <td>2025-05-29</td>
-      <td>2025-06-01</td>
+      <td class="date-col">2025-05-29</td>
+      <td class="date-col">2025-06-01</td>
       <td></td>
     </tr>
   
@@ -3258,8 +3257,8 @@
       <td>David Šarman</td>
       <td><a href="https://github.com/dsarman/logseq-plugin-better-tasks" target="_blank">dsarman/logseq-plugin-better-tasks</a></td>
       <td>master</td>
-      <td>2023-07-02</td>
-      <td>2023-07-02</td>
+      <td class="date-col">2023-07-02</td>
+      <td class="date-col">2023-07-02</td>
       <td></td>
     </tr>
   
@@ -3270,8 +3269,8 @@
       <td>YU000jp</td>
       <td><a href="https://github.com/YU000jp/logseq-plugin-blank-line" target="_blank">YU000jp/logseq-plugin-blank-line</a></td>
       <td>main</td>
-      <td>2023-08-05</td>
-      <td>2024-02-10</td>
+      <td class="date-col">2023-08-05</td>
+      <td class="date-col">2024-02-10</td>
       <td></td>
     </tr>
   
@@ -3282,8 +3281,8 @@
       <td>JuniverseCoder</td>
       <td><a href="https://github.com/JuniverseCoder/logseq-plugin-block-transformer" target="_blank">JuniverseCoder/logseq-plugin-block-transformer</a></td>
       <td>main</td>
-      <td>2023-09-23</td>
-      <td>2023-09-23</td>
+      <td class="date-col">2023-09-23</td>
+      <td class="date-col">2023-09-23</td>
       <td></td>
     </tr>
   
@@ -3294,8 +3293,8 @@
       <td>YU000jp</td>
       <td><a href="https://github.com/YU000jp/logseq-plugin-bullet-point-custom-icon" target="_blank">YU000jp/logseq-plugin-bullet-point-custom-icon</a></td>
       <td>main</td>
-      <td>2023-10-14</td>
-      <td>2023-10-14</td>
+      <td class="date-col">2023-10-14</td>
+      <td class="date-col">2023-10-14</td>
       <td></td>
     </tr>
   
@@ -3306,8 +3305,8 @@
       <td>YU000jp</td>
       <td><a href="https://github.com/YU000jp/logseq-plugin-bullet-point-style" target="_blank">YU000jp/logseq-plugin-bullet-point-style</a></td>
       <td>main</td>
-      <td>2023-06-25</td>
-      <td>2023-06-25</td>
+      <td class="date-col">2023-06-25</td>
+      <td class="date-col">2023-06-25</td>
       <td></td>
     </tr>
   
@@ -3318,8 +3317,8 @@
       <td>Patrick DeVries</td>
       <td><a href="https://github.com/PatrickDeVries/logseq-plugin-colored-threads" target="_blank">PatrickDeVries/logseq-plugin-colored-threads</a></td>
       <td>main</td>
-      <td>2023-11-15</td>
-      <td>2023-11-15</td>
+      <td class="date-col">2023-11-15</td>
+      <td class="date-col">2023-11-15</td>
       <td></td>
     </tr>
   
@@ -3330,8 +3329,8 @@
       <td>YU000jp</td>
       <td><a href="https://github.com/YU000jp/logseq-plugin-confirmation-done-task" target="_blank">YU000jp/logseq-plugin-confirmation-done-task</a></td>
       <td>main</td>
-      <td>2023-06-10</td>
-      <td>2023-11-12</td>
+      <td class="date-col">2023-06-10</td>
+      <td class="date-col">2023-11-12</td>
       <td></td>
     </tr>
   
@@ -3342,8 +3341,8 @@
       <td>YU000jp</td>
       <td><a href="https://github.com/YU000jp/logseq-plugin-confirmation-hyperlink" target="_blank">YU000jp/logseq-plugin-confirmation-hyperlink</a></td>
       <td>main</td>
-      <td>2023-06-10</td>
-      <td>2023-11-12</td>
+      <td class="date-col">2023-06-10</td>
+      <td class="date-col">2023-11-12</td>
       <td></td>
     </tr>
   
@@ -3354,8 +3353,8 @@
       <td>Abhin Chhabra</td>
       <td><a href="https://github.com/chhabrakadabra/logseq-plugin-copilot" target="_blank">chhabrakadabra/logseq-plugin-copilot</a></td>
       <td>main</td>
-      <td>2025-01-10</td>
-      <td>2025-01-21</td>
+      <td class="date-col">2025-01-10</td>
+      <td class="date-col">2025-01-21</td>
       <td></td>
     </tr>
   
@@ -3366,8 +3365,8 @@
       <td>gso</td>
       <td><a href="https://github.com/gso/logseq-plugin-copy-page-properties" target="_blank">gso/logseq-plugin-copy-page-properties</a></td>
       <td>main</td>
-      <td>2023-11-09</td>
-      <td>2023-11-11</td>
+      <td class="date-col">2023-11-09</td>
+      <td class="date-col">2023-11-11</td>
       <td>Missing icon name, Missing icon URL</td>
     </tr>
   
@@ -3378,8 +3377,8 @@
       <td>ehudhala</td>
       <td><a href="https://github.com/ehudhala/logseq-plugin-daily-todo" target="_blank">ehudhala/logseq-plugin-daily-todo</a></td>
       <td>master</td>
-      <td>2022-11-30</td>
-      <td>2022-11-30</td>
+      <td class="date-col">2022-11-30</td>
+      <td class="date-col">2022-11-30</td>
       <td></td>
     </tr>
   
@@ -3390,8 +3389,8 @@
       <td>YU000jp</td>
       <td><a href="https://github.com/YU000jp/logseq-plugin-default-template" target="_blank">YU000jp/logseq-plugin-default-template</a></td>
       <td>main</td>
-      <td>2024-06-22</td>
-      <td>2024-07-12</td>
+      <td class="date-col">2024-06-22</td>
+      <td class="date-col">2024-07-12</td>
       <td></td>
     </tr>
   
@@ -3402,8 +3401,8 @@
       <td>axelav</td>
       <td><a href="https://github.com/axelav/logseq-plugin-discogs" target="_blank">axelav/logseq-plugin-discogs</a></td>
       <td>main</td>
-      <td>2022-11-23</td>
-      <td>2022-11-24</td>
+      <td class="date-col">2022-11-23</td>
+      <td class="date-col">2022-11-24</td>
       <td></td>
     </tr>
   
@@ -3414,8 +3413,8 @@
       <td>YU000jp</td>
       <td><a href="https://github.com/YU000jp/logseq-plugin-draft-notes" target="_blank">YU000jp/logseq-plugin-draft-notes</a></td>
       <td>main</td>
-      <td>2025-01-01</td>
-      <td>2025-01-01</td>
+      <td class="date-col">2025-01-01</td>
+      <td class="date-col">2025-01-01</td>
       <td></td>
     </tr>
   
@@ -3426,8 +3425,8 @@
       <td>oshikiri</td>
       <td><a href="https://github.com/oshikiri/logseq-plugin-embed-vegalite" target="_blank">oshikiri/logseq-plugin-embed-vegalite</a></td>
       <td>main</td>
-      <td>2024-12-11</td>
-      <td>2024-12-11</td>
+      <td class="date-col">2024-12-11</td>
+      <td class="date-col">2024-12-11</td>
       <td></td>
     </tr>
   
@@ -3438,8 +3437,8 @@
       <td>freder</td>
       <td><a href="https://github.com/freder/logseq-plugin-extra-editing-commands" target="_blank">freder/logseq-plugin-extra-editing-commands</a></td>
       <td>master</td>
-      <td>2023-04-26</td>
-      <td>2023-04-26</td>
+      <td class="date-col">2023-04-26</td>
+      <td class="date-col">2023-04-26</td>
       <td></td>
     </tr>
   
@@ -3450,8 +3449,8 @@
       <td>meain</td>
       <td><a href="https://github.com/meain/logseq-plugin-favorite-jump" target="_blank">meain/logseq-plugin-favorite-jump</a></td>
       <td>master</td>
-      <td>2023-06-29</td>
-      <td>2023-07-03</td>
+      <td class="date-col">2023-06-29</td>
+      <td class="date-col">2023-07-03</td>
       <td></td>
     </tr>
   
@@ -3462,8 +3461,8 @@
       <td>minimarimo3</td>
       <td><a href="https://github.com/minimarimo3/logseq-plugin-for-misskey" target="_blank">minimarimo3/logseq-plugin-for-misskey</a></td>
       <td>main</td>
-      <td>2024-01-17</td>
-      <td>2024-02-09</td>
+      <td class="date-col">2024-01-17</td>
+      <td class="date-col">2024-02-09</td>
       <td></td>
     </tr>
   
@@ -3474,8 +3473,8 @@
       <td>Mark J Smith</td>
       <td><a href="https://github.com/mandpd/logseq-plugin-github-get" target="_blank">mandpd/logseq-plugin-github-get</a></td>
       <td>main</td>
-      <td>2022-04-03</td>
-      <td>2022-04-03</td>
+      <td class="date-col">2022-04-03</td>
+      <td class="date-col">2022-04-03</td>
       <td></td>
     </tr>
   
@@ -3486,8 +3485,8 @@
       <td>YU000jp</td>
       <td><a href="https://github.com/YU000jp/logseq-plugin-google-books" target="_blank">YU000jp/logseq-plugin-google-books</a></td>
       <td>master</td>
-      <td>2024-06-02</td>
-      <td>2024-06-02</td>
+      <td class="date-col">2024-06-02</td>
+      <td class="date-col">2024-06-02</td>
       <td></td>
     </tr>
   
@@ -3498,8 +3497,8 @@
       <td>Brian Sunter</td>
       <td><a href="https://github.com/briansunter/logseq-plugin-gpt3-openai" target="_blank">briansunter/logseq-plugin-gpt3-openai</a></td>
       <td>master</td>
-      <td>2022-06-05</td>
-      <td>2022-06-06</td>
+      <td class="date-col">2022-06-05</td>
+      <td class="date-col">2022-06-06</td>
       <td></td>
     </tr>
   
@@ -3510,8 +3509,8 @@
       <td>Joshua Hagofsky</td>
       <td><a href="https://github.com/theoreticallyjosh/logseq-plugin-harper" target="_blank">theoreticallyjosh/logseq-plugin-harper</a></td>
       <td>main</td>
-      <td>2025-05-06</td>
-      <td>2025-05-07</td>
+      <td class="date-col">2025-05-06</td>
+      <td class="date-col">2025-05-07</td>
       <td></td>
     </tr>
   
@@ -3522,8 +3521,8 @@
       <td>vipzhicheng</td>
       <td><a href="https://github.com/vipzhicheng/logseq-plugin-heading-level-shortcuts" target="_blank">vipzhicheng/logseq-plugin-heading-level-shortcuts</a></td>
       <td>master</td>
-      <td>2021-12-20</td>
-      <td>2022-04-08</td>
+      <td class="date-col">2021-12-20</td>
+      <td class="date-col">2022-04-08</td>
       <td></td>
     </tr>
   
@@ -3534,8 +3533,8 @@
       <td>YU000jp</td>
       <td><a href="https://github.com/YU000jp/logseq-plugin-hierarchy-tool" target="_blank">YU000jp/logseq-plugin-hierarchy-tool</a></td>
       <td>main</td>
-      <td>2024-08-11</td>
-      <td>2024-08-11</td>
+      <td class="date-col">2024-08-11</td>
+      <td class="date-col">2024-08-11</td>
       <td></td>
     </tr>
   
@@ -3546,8 +3545,8 @@
       <td>cali (renato caliari)</td>
       <td><a href="https://github.com/renatocaliari/logseq-plugin-highlights-extractor" target="_blank">renatocaliari/logseq-plugin-highlights-extractor</a></td>
       <td>main</td>
-      <td>2022-05-11</td>
-      <td>2022-05-11</td>
+      <td class="date-col">2022-05-11</td>
+      <td class="date-col">2022-05-11</td>
       <td></td>
     </tr>
   
@@ -3558,8 +3557,8 @@
       <td>freder</td>
       <td><a href="https://github.com/freder/logseq-plugin-jump-to-block" target="_blank">freder/logseq-plugin-jump-to-block</a></td>
       <td>master</td>
-      <td>2023-03-22</td>
-      <td>2023-03-25</td>
+      <td class="date-col">2023-03-22</td>
+      <td class="date-col">2023-03-25</td>
       <td></td>
     </tr>
   
@@ -3570,8 +3569,8 @@
       <td>Alucard</td>
       <td><a href="https://github.com/AlucPro/logseq-plugin-leetcode" target="_blank">alucpro/logseq-plugin-leetcode</a></td>
       <td>main</td>
-      <td>2022-12-25</td>
-      <td>2022-12-25</td>
+      <td class="date-col">2022-12-25</td>
+      <td class="date-col">2022-12-25</td>
       <td></td>
     </tr>
   
@@ -3582,8 +3581,8 @@
       <td>YU000jp</td>
       <td><a href="https://github.com/YU000jp/logseq-plugin-left-sidebar-enhance" target="_blank">YU000jp/logseq-plugin-left-sidebar-enhance</a></td>
       <td>main</td>
-      <td>2023-10-01</td>
-      <td>2023-10-01</td>
+      <td class="date-col">2023-10-01</td>
+      <td class="date-col">2023-10-01</td>
       <td></td>
     </tr>
   
@@ -3594,8 +3593,8 @@
       <td>YU000jp</td>
       <td><a href="https://github.com/YU000jp/logseq-plugin-flex-date-format" target="_blank">YU000jp/logseq-plugin-flex-date-format</a></td>
       <td>main</td>
-      <td>2023-08-22</td>
-      <td>2023-11-12</td>
+      <td class="date-col">2023-08-22</td>
+      <td class="date-col">2023-11-12</td>
       <td></td>
     </tr>
   
@@ -3606,8 +3605,8 @@
       <td>YU000jp</td>
       <td><a href="https://github.com/YU000jp/logseq-plugin-legacy-date-format" target="_blank">YU000jp/logseq-plugin-legacy-date-format</a></td>
       <td>main</td>
-      <td>2023-08-19</td>
-      <td>2023-11-12</td>
+      <td class="date-col">2023-08-19</td>
+      <td class="date-col">2023-11-12</td>
       <td></td>
     </tr>
   
@@ -3618,8 +3617,8 @@
       <td>YU000jp</td>
       <td><a href="https://github.com/YU000jp/logseq-plugin-logging-search" target="_blank">YU000jp/logseq-plugin-logging-search</a></td>
       <td>main</td>
-      <td>2025-01-01</td>
-      <td>2025-01-01</td>
+      <td class="date-col">2025-01-01</td>
+      <td class="date-col">2025-01-01</td>
       <td></td>
     </tr>
   
@@ -3630,8 +3629,8 @@
       <td>Charles Bao</td>
       <td><a href="https://github.com/mathedu4all/mmarked-logseq-extension" target="_blank">mathedu4all/mmarked-logseq-extension</a></td>
       <td>main</td>
-      <td>2024-11-11</td>
-      <td>2024-11-11</td>
+      <td class="date-col">2024-11-11</td>
+      <td class="date-col">2024-11-11</td>
       <td></td>
     </tr>
   
@@ -3642,8 +3641,8 @@
       <td>YU000jp</td>
       <td><a href="https://github.com/YU000jp/logseq-plugin-multi-random-note" target="_blank">YU000jp/logseq-plugin-multi-random-note</a></td>
       <td>main</td>
-      <td>2024-12-22</td>
-      <td>2024-12-22</td>
+      <td class="date-col">2024-12-22</td>
+      <td class="date-col">2024-12-22</td>
       <td></td>
     </tr>
   
@@ -3654,8 +3653,8 @@
       <td>YU000jp</td>
       <td><a href="https://github.com/YU000jp/logseq-plugin-multiple-assets" target="_blank">YU000jp/logseq-plugin-multiple-assets</a></td>
       <td>main</td>
-      <td>2023-06-27</td>
-      <td>2023-06-27</td>
+      <td class="date-col">2023-06-27</td>
+      <td class="date-col">2023-06-27</td>
       <td></td>
     </tr>
   
@@ -3666,8 +3665,8 @@
       <td>meain</td>
       <td><a href="https://github.com/meain/logseq-plugin-noisy" target="_blank">meain/logseq-plugin-noisy</a></td>
       <td>master</td>
-      <td>2023-09-15</td>
-      <td>2023-09-18</td>
+      <td class="date-col">2023-09-15</td>
+      <td class="date-col">2023-09-18</td>
       <td></td>
     </tr>
   
@@ -3678,8 +3677,8 @@
       <td>zhengyu-yang</td>
       <td><a href="https://github.com/zhengyu-yang/logseq-plugin-omnifocus" target="_blank">zhengyu-yang/logseq-plugin-omnifocus</a></td>
       <td>main</td>
-      <td>2023-03-07</td>
-      <td>2023-03-07</td>
+      <td class="date-col">2023-03-07</td>
+      <td class="date-col">2023-03-07</td>
       <td></td>
     </tr>
   
@@ -3690,8 +3689,8 @@
       <td>freder</td>
       <td><a href="https://github.com/freder/logseq-plugin-open-page-in-logseq" target="_blank">freder/logseq-plugin-open-page-in-logseq</a></td>
       <td>master</td>
-      <td>2023-05-05</td>
-      <td>2023-05-05</td>
+      <td class="date-col">2023-05-05</td>
+      <td class="date-col">2023-05-05</td>
       <td></td>
     </tr>
   
@@ -3702,8 +3701,8 @@
       <td>mkluge</td>
       <td><a href="https://github.com/mkluge/logseq-openproject" target="_blank">mkluge/logseq-openproject</a></td>
       <td>main</td>
-      <td>2023-08-23</td>
-      <td>2023-08-29</td>
+      <td class="date-col">2023-08-23</td>
+      <td class="date-col">2023-08-29</td>
       <td></td>
     </tr>
   
@@ -3714,8 +3713,8 @@
       <td>William Huang</td>
       <td><a href="https://github.com/william-apps/logseq-plugin-page-export" target="_blank">william-apps/logseq-plugin-page-export</a></td>
       <td>master</td>
-      <td>2022-05-15</td>
-      <td>2022-05-17</td>
+      <td class="date-col">2022-05-15</td>
+      <td class="date-col">2022-05-17</td>
       <td></td>
     </tr>
   
@@ -3726,8 +3725,8 @@
       <td>YU000jp</td>
       <td><a href="https://github.com/YU000jp/logseq-plugin-panel-coloring" target="_blank">YU000jp/logseq-plugin-panel-coloring</a></td>
       <td>main</td>
-      <td>2022-12-06</td>
-      <td>2023-06-10</td>
+      <td class="date-col">2022-12-06</td>
+      <td class="date-col">2023-06-10</td>
       <td></td>
     </tr>
   
@@ -3738,8 +3737,8 @@
       <td>miki0w0</td>
       <td><a href="https://github.com/0w0miki/logseq-plugin-query-chart" target="_blank">0w0miki/logseq-plugin-query-chart</a></td>
       <td>master</td>
-      <td>2022-11-13</td>
-      <td>2022-11-13</td>
+      <td class="date-col">2022-11-13</td>
+      <td class="date-col">2022-11-13</td>
       <td>Missing icon name, Missing icon URL</td>
     </tr>
   
@@ -3750,8 +3749,8 @@
       <td>cali (renato caliari)</td>
       <td><a href="https://github.com/renatocaliari/logseq-plugin-quick-references" target="_blank">renatocaliari/logseq-plugin-quick-references</a></td>
       <td>main</td>
-      <td>2022-05-02</td>
-      <td>2022-05-03</td>
+      <td class="date-col">2022-05-02</td>
+      <td class="date-col">2022-05-03</td>
       <td></td>
     </tr>
   
@@ -3762,8 +3761,8 @@
       <td>YU000jp</td>
       <td><a href="https://github.com/YU000jp/logseq-plugin-quickly-para-method" target="_blank">YU000jp/logseq-plugin-quickly-para-method</a></td>
       <td>main</td>
-      <td>2023-06-09</td>
-      <td>2023-11-12</td>
+      <td class="date-col">2023-06-09</td>
+      <td class="date-col">2023-11-12</td>
       <td></td>
     </tr>
   
@@ -3774,8 +3773,8 @@
       <td>YU000jp</td>
       <td><a href="https://github.com/YU000jp/logseq-plugin-rakuten-books" target="_blank">YU000jp/logseq-plugin-rakuten-books</a></td>
       <td>master</td>
-      <td>2023-03-26</td>
-      <td>2023-03-26</td>
+      <td class="date-col">2023-03-26</td>
+      <td class="date-col">2023-03-26</td>
       <td></td>
     </tr>
   
@@ -3786,8 +3785,8 @@
       <td>meain</td>
       <td><a href="https://github.com/meain/logseq-plugin-refile" target="_blank">meain/logseq-plugin-refile</a></td>
       <td>master</td>
-      <td>2023-05-31</td>
-      <td>2023-05-31</td>
+      <td class="date-col">2023-05-31</td>
+      <td class="date-col">2023-05-31</td>
       <td></td>
     </tr>
   
@@ -3798,8 +3797,8 @@
       <td>meain</td>
       <td><a href="https://github.com/meain/logseq-plugin-runjs" target="_blank">meain/logseq-plugin-runjs</a></td>
       <td>master</td>
-      <td>2023-10-14</td>
-      <td>2023-10-15</td>
+      <td class="date-col">2023-10-14</td>
+      <td class="date-col">2023-10-15</td>
       <td></td>
     </tr>
   
@@ -3810,8 +3809,8 @@
       <td>YU000jp</td>
       <td><a href="https://github.com/YU000jp/logseq-plugin-short-namespaces" target="_blank">YU000jp/logseq-plugin-short-namespaces</a></td>
       <td>main</td>
-      <td>2023-06-09</td>
-      <td>2023-11-12</td>
+      <td class="date-col">2023-06-09</td>
+      <td class="date-col">2023-11-12</td>
       <td></td>
     </tr>
   
@@ -3822,8 +3821,8 @@
       <td>YU000jp</td>
       <td><a href="https://github.com/YU000jp/logseq-plugin-show-page-date" target="_blank">YU000jp/logseq-plugin-show-page-date</a></td>
       <td>main</td>
-      <td>2023-11-05</td>
-      <td>2023-11-05</td>
+      <td class="date-col">2023-11-05</td>
+      <td class="date-col">2023-11-05</td>
       <td></td>
     </tr>
   
@@ -3834,8 +3833,8 @@
       <td>YU000jp</td>
       <td><a href="https://github.com/YU000jp/logseq-plugin-show-weekday-and-week-number" target="_blank">YU000jp/logseq-plugin-show-weekday-and-week-number</a></td>
       <td>main</td>
-      <td>2023-05-25</td>
-      <td>2023-11-12</td>
+      <td class="date-col">2023-05-25</td>
+      <td class="date-col">2023-11-12</td>
       <td></td>
     </tr>
   
@@ -3846,8 +3845,8 @@
       <td>YU000jp</td>
       <td><a href="https://github.com/YU000jp/logseq-plugin-side-block" target="_blank">YU000jp/logseq-plugin-side-block</a></td>
       <td>main</td>
-      <td>2023-10-13</td>
-      <td>2024-07-27</td>
+      <td class="date-col">2023-10-13</td>
+      <td class="date-col">2024-07-27</td>
       <td></td>
     </tr>
   
@@ -3858,8 +3857,8 @@
       <td>YU000jp</td>
       <td><a href="https://github.com/YU000jp/logseq-plugin-single-journal" target="_blank">YU000jp/logseq-plugin-single-journal</a></td>
       <td>main</td>
-      <td>2024-01-03</td>
-      <td>2024-04-28</td>
+      <td class="date-col">2024-01-03</td>
+      <td class="date-col">2024-04-28</td>
       <td></td>
     </tr>
   
@@ -3870,8 +3869,8 @@
       <td>Dmitrii Dushkin (https://github.com/DimitryDushkin)</td>
       <td><a href="https://github.com/DimitryDushkin/logseq-plugin-task-check-date" target="_blank">DimitryDushkin/logseq-plugin-task-check-date</a></td>
       <td>main</td>
-      <td>2022-10-20</td>
-      <td>2022-10-20</td>
+      <td class="date-col">2022-10-20</td>
+      <td class="date-col">2022-10-20</td>
       <td></td>
     </tr>
   
@@ -3882,8 +3881,8 @@
       <td>YU000jp</td>
       <td><a href="https://github.com/YU000jp/logseq-plugin-task-suggest" target="_blank">YU000jp/logseq-plugin-task-suggest</a></td>
       <td>master</td>
-      <td>2025-05-25</td>
-      <td>2025-05-25</td>
+      <td class="date-col">2025-05-25</td>
+      <td class="date-col">2025-05-25</td>
       <td></td>
     </tr>
   
@@ -3894,8 +3893,8 @@
       <td>YU000jp</td>
       <td><a href="https://github.com/YU000jp/logseq-plugin-template-block-from-toolbar" target="_blank">YU000jp/logseq-plugin-template-block-from-toolbar</a></td>
       <td>main</td>
-      <td>2024-07-26</td>
-      <td>2024-07-26</td>
+      <td class="date-col">2024-07-26</td>
+      <td class="date-col">2024-07-26</td>
       <td></td>
     </tr>
   
@@ -3906,8 +3905,8 @@
       <td>life is strange (https://github.com/luckykellan)</td>
       <td><a href="https://github.com/luckykellan/logseq-plugin-ticktick" target="_blank">luckykellan/logseq-plugin-ticktick</a></td>
       <td>master</td>
-      <td>2024-04-10</td>
-      <td>2024-04-12</td>
+      <td class="date-col">2024-04-10</td>
+      <td class="date-col">2024-04-12</td>
       <td></td>
     </tr>
   
@@ -3918,8 +3917,8 @@
       <td>YU000jp</td>
       <td><a href="https://github.com/YU000jp/logseq-plugin-toolbar-enhance" target="_blank">YU000jp/logseq-plugin-toolbar-enhance</a></td>
       <td>main</td>
-      <td>2024-08-03</td>
-      <td>2024-08-03</td>
+      <td class="date-col">2024-08-03</td>
+      <td class="date-col">2024-08-03</td>
       <td></td>
     </tr>
   
@@ -3930,8 +3929,8 @@
       <td>Rene (absorb-it)</td>
       <td><a href="https://github.com/absorb-it/logseq-plugin-transfer-journal-todos" target="_blank">absorb-it/logseq-plugin-transfer-journal-todos</a></td>
       <td>main</td>
-      <td>2025-01-23</td>
-      <td>2025-01-26</td>
+      <td class="date-col">2025-01-23</td>
+      <td class="date-col">2025-01-26</td>
       <td></td>
     </tr>
   
@@ -3942,8 +3941,8 @@
       <td>YU000jp</td>
       <td><a href="https://github.com/YU000jp/logseq-plugin-two-hop-link" target="_blank">YU000jp/logseq-plugin-two-hop-link</a></td>
       <td>main</td>
-      <td>2023-09-23</td>
-      <td>2023-09-23</td>
+      <td class="date-col">2023-09-23</td>
+      <td class="date-col">2023-09-23</td>
       <td></td>
     </tr>
   
@@ -3954,8 +3953,8 @@
       <td>Richard Hao</td>
       <td><a href="https://github.com/0xRichardH/logseq-plugin-vocabulary-card" target="_blank">0xRichardH/logseq-plugin-vocabulary-card</a></td>
       <td>main</td>
-      <td>2024-01-03</td>
-      <td>2024-01-03</td>
+      <td class="date-col">2024-01-03</td>
+      <td class="date-col">2024-01-03</td>
       <td>Missing icon name, Missing icon URL</td>
     </tr>
   
@@ -3966,8 +3965,8 @@
       <td>axelav</td>
       <td><a href="https://github.com/axelav/logseq-plugin-weather" target="_blank">axelav/logseq-plugin-weather</a></td>
       <td>main</td>
-      <td>2022-12-25</td>
-      <td>2022-12-25</td>
+      <td class="date-col">2022-12-25</td>
+      <td class="date-col">2022-12-25</td>
       <td></td>
     </tr>
   
@@ -3978,8 +3977,8 @@
       <td>YU000jp</td>
       <td><a href="https://github.com/YU000jp/logseq-plugin-weekdays-and-weekends" target="_blank">YU000jp/logseq-plugin-weekdays-and-weekends</a></td>
       <td>main</td>
-      <td>2023-05-01</td>
-      <td>2023-11-12</td>
+      <td class="date-col">2023-05-01</td>
+      <td class="date-col">2023-11-12</td>
       <td></td>
     </tr>
   
@@ -3990,8 +3989,8 @@
       <td>Wonyoung Jang</td>
       <td><a href="https://github.com/wonyoung-jang/logseq-PolyRhythmic" target="_blank">wonyoung-jang/logseq-PolyRhythmic</a></td>
       <td>main</td>
-      <td>2025-03-21</td>
-      <td>2025-03-21</td>
+      <td class="date-col">2025-03-21</td>
+      <td class="date-col">2025-03-21</td>
       <td></td>
     </tr>
   
@@ -4002,8 +4001,8 @@
       <td>denvey</td>
       <td><a href="https://github.com/denvey/logseq-pomodoro-technique" target="_blank">denvey/logseq-pomodoro-technique</a></td>
       <td>master</td>
-      <td>2022-09-04</td>
-      <td>2022-09-04</td>
+      <td class="date-col">2022-09-04</td>
+      <td class="date-col">2022-09-04</td>
       <td></td>
     </tr>
   
@@ -4014,8 +4013,8 @@
       <td>Aryan Sawhney</td>
       <td><a href="https://github.com/sawhney17/logseq-pomodoro-plugin" target="_blank">sawhney17/logseq-pomodoro-plugin</a></td>
       <td>main</td>
-      <td>2022-03-28</td>
-      <td>2022-03-28</td>
+      <td class="date-col">2022-03-28</td>
+      <td class="date-col">2022-03-28</td>
       <td></td>
     </tr>
   
@@ -4026,8 +4025,8 @@
       <td>hkgnp</td>
       <td><a href="https://github.com/benjypng/logseq-power-plugin" target="_blank">hkgnp/logseq-power-plugin</a></td>
       <td>master</td>
-      <td>2022-05-02</td>
-      <td>2022-05-02</td>
+      <td class="date-col">2022-05-02</td>
+      <td class="date-col">2022-05-02</td>
       <td></td>
     </tr>
   
@@ -4038,8 +4037,8 @@
       <td>hkgnp</td>
       <td><a href="https://github.com/benjypng/logseq-powerblocks-plugin" target="_blank">hkgnp/logseq-powerblocks-plugin</a></td>
       <td>main</td>
-      <td>2023-02-20</td>
-      <td>2023-02-20</td>
+      <td class="date-col">2023-02-20</td>
+      <td class="date-col">2023-02-20</td>
       <td></td>
     </tr>
   
@@ -4050,8 +4049,8 @@
       <td>hkgnp</td>
       <td><a href="https://github.com/benjypng/logseq-powertags-plugin" target="_blank">hkgnp/logseq-powertags-plugin</a></td>
       <td>main</td>
-      <td>2022-12-15</td>
-      <td>2022-12-16</td>
+      <td class="date-col">2022-12-15</td>
+      <td class="date-col">2022-12-16</td>
       <td></td>
     </tr>
   
@@ -4062,8 +4061,8 @@
       <td>hisaknown</td>
       <td><a href="https://github.com/hisaknown/logseq-pretty-html-export" target="_blank">hisaknown/logseq-pretty-html-export</a></td>
       <td>main</td>
-      <td>2024-06-26</td>
-      <td>2024-06-26</td>
+      <td class="date-col">2024-06-26</td>
+      <td class="date-col">2024-06-26</td>
       <td></td>
     </tr>
   
@@ -4074,8 +4073,8 @@
       <td>b-yp</td>
       <td><a href="https://github.com/b-yp/logseq-preview-footnote" target="_blank">b-yp/logseq-preview-footnote</a></td>
       <td>main</td>
-      <td>2023-10-22</td>
-      <td>2023-10-22</td>
+      <td class="date-col">2023-10-22</td>
+      <td class="date-col">2023-10-22</td>
       <td></td>
     </tr>
   
@@ -4086,8 +4085,8 @@
       <td>duydl</td>
       <td><a href="https://github.com/duydl/logseq-privacy-mode" target="_blank">duydl/logseq-privacy-mode</a></td>
       <td>main</td>
-      <td>2023-10-10</td>
-      <td>2023-10-10</td>
+      <td class="date-col">2023-10-10</td>
+      <td class="date-col">2023-10-10</td>
       <td></td>
     </tr>
   
@@ -4098,8 +4097,8 @@
       <td>Aryan Sawhney</td>
       <td><a href="https://github.com/sawhney17/logseq-property-visualizer" target="_blank">sawhney17/logseq-property-visualizer</a></td>
       <td>main</td>
-      <td>2022-01-25</td>
-      <td>2022-01-26</td>
+      <td class="date-col">2022-01-25</td>
+      <td class="date-col">2022-01-26</td>
       <td></td>
     </tr>
   
@@ -4110,8 +4109,8 @@
       <td>hkgnp</td>
       <td><a href="https://github.com/benjypng/logseq-psummarise-plugin" target="_blank">hkgnp/logseq-psummarise-plugin</a></td>
       <td>main</td>
-      <td>2022-04-10</td>
-      <td>2022-04-10</td>
+      <td class="date-col">2022-04-10</td>
+      <td class="date-col">2022-04-10</td>
       <td></td>
     </tr>
   
@@ -4122,8 +4121,8 @@
       <td>Alexander Rink</td>
       <td><a href="https://github.com/rcvd/logseq-quattro-theme" target="_blank">rcvd/logseq-quattro-theme</a></td>
       <td>main</td>
-      <td>2021-12-15</td>
-      <td>2021-12-15</td>
+      <td class="date-col">2021-12-15</td>
+      <td class="date-col">2021-12-15</td>
       <td></td>
     </tr>
   
@@ -4134,8 +4133,8 @@
       <td>adxsoft</td>
       <td><a href="https://github.com/adxsoft/logseq-query-builder-plugin" target="_blank">adxsoft/logseq-query-builder-plugin</a></td>
       <td>main</td>
-      <td>2022-12-31</td>
-      <td>2023-02-18</td>
+      <td class="date-col">2022-12-31</td>
+      <td class="date-col">2023-02-18</td>
       <td></td>
     </tr>
   
@@ -4146,8 +4145,8 @@
       <td>benrhughes</td>
       <td><a href="https://github.com/benrhughes/logseq-query-export" target="_blank">benrhughes/logseq-query-export</a></td>
       <td>main</td>
-      <td>2025-04-08</td>
-      <td>2025-04-08</td>
+      <td class="date-col">2025-04-08</td>
+      <td class="date-col">2025-04-08</td>
       <td></td>
     </tr>
   
@@ -4158,8 +4157,8 @@
       <td>vyleung</td>
       <td><a href="https://github.com/vyleung/logseq-quick-add-plugin" target="_blank">vyleung/logseq-quick-add-plugin</a></td>
       <td>main</td>
-      <td>2022-05-14</td>
-      <td>2022-05-27</td>
+      <td class="date-col">2022-05-14</td>
+      <td class="date-col">2022-05-27</td>
       <td></td>
     </tr>
   
@@ -4170,8 +4169,8 @@
       <td>tankcool</td>
       <td><a href="https://github.com/TankCool/logseq-quick-capture" target="_blank">tankcool/logseq-quick-capture</a></td>
       <td>main</td>
-      <td>2022-07-17</td>
-      <td>2022-07-17</td>
+      <td class="date-col">2022-07-17</td>
+      <td class="date-col">2022-07-17</td>
       <td></td>
     </tr>
   
@@ -4182,8 +4181,8 @@
       <td>Hannes Kuchelmeister</td>
       <td><a href="https://github.com/13hannes11/logseq-quick-date" target="_blank">13hannes11/logseq-quick-date</a></td>
       <td>main</td>
-      <td>2024-08-22</td>
-      <td>2024-08-26</td>
+      <td class="date-col">2024-08-22</td>
+      <td class="date-col">2024-08-26</td>
       <td></td>
     </tr>
   
@@ -4194,8 +4193,8 @@
       <td>hkgnp</td>
       <td><a href="https://github.com/benjypng/logseq-quicktodo-plugin" target="_blank">hkgnp/logseq-quicktodo-plugin</a></td>
       <td>main</td>
-      <td>2022-01-28</td>
-      <td>2022-02-06</td>
+      <td class="date-col">2022-01-28</td>
+      <td class="date-col">2022-02-06</td>
       <td></td>
     </tr>
   
@@ -4206,8 +4205,8 @@
       <td>swk777</td>
       <td><a href="https://github.com/swk777/logseq-rainbow-tags" target="_blank">swk777/logseq-rainbow-tags</a></td>
       <td>main</td>
-      <td>2022-06-20</td>
-      <td>2022-06-20</td>
+      <td class="date-col">2022-06-20</td>
+      <td class="date-col">2022-06-20</td>
       <td></td>
     </tr>
   
@@ -4218,8 +4217,8 @@
       <td>phildenhoff</td>
       <td><a href="https://github.com/phildenhoff/logseq-raindrop" target="_blank">phildenhoff/logseq-raindrop</a></td>
       <td>main</td>
-      <td>2022-05-13</td>
-      <td>2022-08-17</td>
+      <td class="date-col">2022-05-13</td>
+      <td class="date-col">2022-08-17</td>
       <td></td>
     </tr>
   
@@ -4230,8 +4229,8 @@
       <td>vipzhicheng</td>
       <td><a href="https://github.com/vipzhicheng/logseq-plugin-random-block" target="_blank">vipzhicheng/logseq-plugin-random-block</a></td>
       <td>master</td>
-      <td>2022-08-19</td>
-      <td>2022-08-19</td>
+      <td class="date-col">2022-08-19</td>
+      <td class="date-col">2022-08-19</td>
       <td></td>
     </tr>
   
@@ -4242,8 +4241,8 @@
       <td>tankcool</td>
       <td><a href="https://github.com/TankCool/logseq-random-note" target="_blank">tankcool/logseq-random-note</a></td>
       <td>main</td>
-      <td>2021-09-16</td>
-      <td>2022-05-21</td>
+      <td class="date-col">2021-09-16</td>
+      <td class="date-col">2022-05-21</td>
       <td></td>
     </tr>
   
@@ -4254,8 +4253,8 @@
       <td>hkgnp</td>
       <td><a href="https://github.com/benjypng/logseq-randomutils-plugin" target="_blank">hkgnp/logseq-randomutils-plugin</a></td>
       <td>main</td>
-      <td>2023-02-20</td>
-      <td>2023-04-17</td>
+      <td class="date-col">2023-02-20</td>
+      <td class="date-col">2023-04-17</td>
       <td></td>
     </tr>
   
@@ -4266,8 +4265,8 @@
       <td>Readwise</td>
       <td><a href="https://github.com/readwiseio/logseq-readwise-official-plugin" target="_blank">readwiseio/logseq-readwise-official-plugin</a></td>
       <td>master</td>
-      <td>2022-07-04</td>
-      <td>2022-07-05</td>
+      <td class="date-col">2022-07-04</td>
+      <td class="date-col">2022-07-05</td>
       <td></td>
     </tr>
   
@@ -4278,8 +4277,8 @@
       <td>Peter Stuifzand</td>
       <td><a href="https://github.com/pstuifzand/logseq-readwise-reader-export" target="_blank">pstuifzand/logseq-readwise-reader-export</a></td>
       <td>main</td>
-      <td>2022-11-06</td>
-      <td>2022-11-07</td>
+      <td class="date-col">2022-11-06</td>
+      <td class="date-col">2022-11-07</td>
       <td>Missing icon name, Missing icon URL</td>
     </tr>
   
@@ -4290,8 +4289,8 @@
       <td>hkgnp</td>
       <td><a href="https://github.com/benjypng/logseq-recipeimporter-plugin" target="_blank">hkgnp/logseq-recipeimporter-plugin</a></td>
       <td>master</td>
-      <td>2022-03-17</td>
-      <td>2022-03-17</td>
+      <td class="date-col">2022-03-17</td>
+      <td class="date-col">2022-03-17</td>
       <td></td>
     </tr>
   
@@ -4302,8 +4301,8 @@
       <td>hkgnp</td>
       <td><a href="https://github.com/benjypng/logseq-recurrence-plugin" target="_blank">hkgnp/logseq-recurrence-plugin</a></td>
       <td>master</td>
-      <td>2022-02-10</td>
-      <td>2022-02-10</td>
+      <td class="date-col">2022-02-10</td>
+      <td class="date-col">2022-02-10</td>
       <td></td>
     </tr>
   
@@ -4314,8 +4313,8 @@
       <td>benjaffe</td>
       <td><a href="https://github.com/phoebejaffe/logseq-reference-styles" target="_blank">benjaffe/logseq-reference-styles</a></td>
       <td>main</td>
-      <td>2022-03-01</td>
-      <td>2022-03-03</td>
+      <td class="date-col">2022-03-01</td>
+      <td class="date-col">2022-03-03</td>
       <td></td>
     </tr>
   
@@ -4326,8 +4325,8 @@
       <td>natsustan</td>
       <td><a href="https://github.com/natsustan/logseq-reflect-theme" target="_blank">natsustan/logseq-reflect-theme</a></td>
       <td>main</td>
-      <td>2023-03-15</td>
-      <td>2023-03-24</td>
+      <td class="date-col">2023-03-15</td>
+      <td class="date-col">2023-03-24</td>
       <td></td>
     </tr>
   
@@ -4338,8 +4337,8 @@
       <td>AskMeAgain</td>
       <td><a href="https://github.com/AskMeAgain/logseq-regex-linker" target="_blank">AskMeAgain/logseq-regex-linker</a></td>
       <td>main</td>
-      <td>2024-03-03</td>
-      <td>2024-03-04</td>
+      <td class="date-col">2024-03-03</td>
+      <td class="date-col">2024-03-04</td>
       <td></td>
     </tr>
   
@@ -4350,8 +4349,8 @@
       <td>sethyuan</td>
       <td>sethyuan/logseq-plugin-reminder</td>
       <td></td>
-      <td>2022-11-07</td>
-      <td>2023-05-29</td>
+      <td class="date-col">2022-11-07</td>
+      <td class="date-col">2023-05-29</td>
       <td>Missing repo URL</td>
     </tr>
   
@@ -4362,8 +4361,8 @@
       <td>Cologler</td>
       <td><a href="https://github.com/Cologler/logseq-remove-empty-blocks-typescript" target="_blank">Cologler/logseq-remove-empty-blocks-typescript</a></td>
       <td>main</td>
-      <td>2023-07-25</td>
-      <td>2023-07-25</td>
+      <td class="date-col">2023-07-25</td>
+      <td class="date-col">2023-07-25</td>
       <td>Missing icon name, Missing icon URL</td>
     </tr>
   
@@ -4374,8 +4373,8 @@
       <td>Fabian Stanke</td>
       <td><a href="https://github.com/fmos/logseq-rename-page-shortcut" target="_blank">fmos/logseq-rename-page-shortcut</a></td>
       <td>main</td>
-      <td>2024-10-29</td>
-      <td>2024-10-31</td>
+      <td class="date-col">2024-10-29</td>
+      <td class="date-col">2024-10-31</td>
       <td></td>
     </tr>
   
@@ -4386,8 +4385,8 @@
       <td>benjypng</td>
       <td><a href="https://github.com/benjypng/logseq-renamedates-plugin" target="_blank">benjypng/logseq-renamedates-plugin</a></td>
       <td>main</td>
-      <td>2024-07-20</td>
-      <td>2024-07-20</td>
+      <td class="date-col">2024-07-20</td>
+      <td class="date-col">2024-07-20</td>
       <td></td>
     </tr>
   
@@ -4398,8 +4397,8 @@
       <td>benjypng</td>
       <td><a href="https://github.com/benjypng/logseq-richtexteditor-plugin" target="_blank">benjypng/logseq-richtexteditor-plugin</a></td>
       <td>main</td>
-      <td>2024-08-17</td>
-      <td>2024-08-17</td>
+      <td class="date-col">2024-08-17</td>
+      <td class="date-col">2024-08-17</td>
       <td></td>
     </tr>
   
@@ -4410,8 +4409,8 @@
       <td>Evangeline Barruel</td>
       <td><a href="https://github.com/ebarruel/logseq-rose-pine-theme" target="_blank">ebarruel/logseq-rose-pine-theme</a></td>
       <td>main</td>
-      <td>2024-03-29</td>
-      <td>2024-03-29</td>
+      <td class="date-col">2024-03-29</td>
+      <td class="date-col">2024-03-29</td>
       <td></td>
     </tr>
   
@@ -4422,8 +4421,8 @@
       <td>b-yp</td>
       <td><a href="https://github.com/b-yp/logseq-rss-reader" target="_blank">b-yp/logseq-rss-reader</a></td>
       <td>dev</td>
-      <td>2023-07-22</td>
-      <td>2023-07-22</td>
+      <td class="date-col">2023-07-22</td>
+      <td class="date-col">2023-07-22</td>
       <td></td>
     </tr>
   
@@ -4434,8 +4433,8 @@
       <td>Aryan Sawhney</td>
       <td><a href="https://github.com/sawhney17/logseq-rtl-mode-plugin" target="_blank">sawhney17/logseq-rtl-mode-plugin</a></td>
       <td>main</td>
-      <td>2022-03-16</td>
-      <td>2022-03-19</td>
+      <td class="date-col">2022-03-16</td>
+      <td class="date-col">2022-03-19</td>
       <td></td>
     </tr>
   
@@ -4446,8 +4445,8 @@
       <td>Qijun</td>
       <td><a href="https://github.com/bencode/logseq-runit-plugin" target="_blank">bencode/logseq-runit-plugin</a></td>
       <td>main</td>
-      <td>2025-07-03</td>
-      <td>2025-07-03</td>
+      <td class="date-col">2025-07-03</td>
+      <td class="date-col">2025-07-03</td>
       <td></td>
     </tr>
   
@@ -4458,8 +4457,8 @@
       <td>studyduck</td>
       <td><a href="https://github.com/studyduck/logseq-save-scrollbar-position" target="_blank">studyduck/logseq-save-scrollbar-position</a></td>
       <td>main</td>
-      <td>2023-06-30</td>
-      <td>2023-07-03</td>
+      <td class="date-col">2023-06-30</td>
+      <td class="date-col">2023-07-03</td>
       <td></td>
     </tr>
   
@@ -4470,8 +4469,8 @@
       <td>Aryan Sawhney & Alex Qwxlea</td>
       <td><a href="https://github.com/sawhney17/logseq-schrodinger" target="_blank">sawhney17/logseq-schrodinger</a></td>
       <td>main</td>
-      <td>2022-04-16</td>
-      <td>2022-04-25</td>
+      <td class="date-col">2022-04-16</td>
+      <td class="date-col">2022-04-25</td>
       <td></td>
     </tr>
   
@@ -4482,8 +4481,8 @@
       <td>RubenSmn</td>
       <td><a href="https://github.com/RubenSmn/logseq-scroll-past-bottom" target="_blank">RubenSmn/logseq-scroll-past-bottom</a></td>
       <td>main</td>
-      <td>2023-11-04</td>
-      <td>2023-11-04</td>
+      <td class="date-col">2023-11-04</td>
+      <td class="date-col">2023-11-04</td>
       <td></td>
     </tr>
   
@@ -4494,8 +4493,8 @@
       <td>Aryan Sawhney</td>
       <td><a href="https://github.com/sawhney17/logseq-searchable" target="_blank">sawhney17/logseq-searchable</a></td>
       <td>main</td>
-      <td>2022-04-03</td>
-      <td>2022-06-02</td>
+      <td class="date-col">2022-04-03</td>
+      <td class="date-col">2022-06-02</td>
       <td></td>
     </tr>
   
@@ -4506,8 +4505,8 @@
       <td>mschmidtkorth/crendl</td>
       <td><a href="https://github.com/crendl/logseq-sepia-theme" target="_blank">crendl/logseq-sepia-theme</a></td>
       <td>master</td>
-      <td>2021-11-16</td>
-      <td>2021-11-16</td>
+      <td class="date-col">2021-11-16</td>
+      <td class="date-col">2021-11-16</td>
       <td>Missing icon name, Missing icon URL</td>
     </tr>
   
@@ -4518,8 +4517,8 @@
       <td>Mateusz Myalski</td>
       <td><a href="https://github.com/MateuszMyalski/logseq-plugin-shallow-copy" target="_blank">MateuszMyalski/logseq-plugin-shallow-copy</a></td>
       <td>master</td>
-      <td>2023-11-24</td>
-      <td>2023-12-03</td>
+      <td class="date-col">2023-11-24</td>
+      <td class="date-col">2023-12-03</td>
       <td></td>
     </tr>
   
@@ -4530,8 +4529,8 @@
       <td>studyduck</td>
       <td><a href="https://github.com/studyduck/logseq-show-github-star" target="_blank">studyduck/logseq-show-github-star</a></td>
       <td>main</td>
-      <td>2023-08-19</td>
-      <td>2023-08-19</td>
+      <td class="date-col">2023-08-19</td>
+      <td class="date-col">2023-08-19</td>
       <td></td>
     </tr>
   
@@ -4542,8 +4541,8 @@
       <td>vipzhicheng</td>
       <td><a href="https://github.com/vipzhicheng/logseq-plugin-sidebar-preset" target="_blank">vipzhicheng/logseq-plugin-sidebar-preset</a></td>
       <td>master</td>
-      <td>2022-10-10</td>
-      <td>2022-10-10</td>
+      <td class="date-col">2022-10-10</td>
+      <td class="date-col">2022-10-10</td>
       <td></td>
     </tr>
   
@@ -4554,8 +4553,8 @@
       <td>OverflowCat</td>
       <td><a href="https://github.com/OverflowCat/logseq-simpread" target="_blank">OverflowCat/logseq-simpread</a></td>
       <td>master</td>
-      <td>2022-07-17</td>
-      <td>2022-07-19</td>
+      <td class="date-col">2022-07-17</td>
+      <td class="date-col">2022-07-19</td>
       <td>Missing README</td>
     </tr>
   
@@ -4566,8 +4565,8 @@
       <td>Stan Voo</td>
       <td><a href="https://github.com/stan-voo/logseq-slavsko-theme" target="_blank">stan-voo/logseq-slavsko-theme</a></td>
       <td>master</td>
-      <td>2023-11-18</td>
-      <td>2023-11-18</td>
+      <td class="date-col">2023-11-18</td>
+      <td class="date-col">2023-11-18</td>
       <td></td>
     </tr>
   
@@ -4578,8 +4577,8 @@
       <td>vipzhicheng</td>
       <td><a href="https://github.com/vipzhicheng/logseq-plugin-slide-reveal" target="_blank">vipzhicheng/logseq-plugin-slide-reveal</a></td>
       <td>main</td>
-      <td>2024-04-10</td>
-      <td>2024-04-10</td>
+      <td class="date-col">2024-04-10</td>
+      <td class="date-col">2024-04-10</td>
       <td></td>
     </tr>
   
@@ -4590,8 +4589,8 @@
       <td>hkgnp</td>
       <td><a href="https://github.com/benjypng/logseq-sliders-plugin" target="_blank">hkgnp/logseq-sliders-plugin</a></td>
       <td>main</td>
-      <td>2022-03-11</td>
-      <td>2022-03-11</td>
+      <td class="date-col">2022-03-11</td>
+      <td class="date-col">2022-03-11</td>
       <td></td>
     </tr>
   
@@ -4602,8 +4601,8 @@
       <td>sethyuan</td>
       <td>sethyuan/logseq-plugin-smart-typing</td>
       <td></td>
-      <td>2022-12-16</td>
-      <td>2023-05-29</td>
+      <td class="date-col">2022-12-16</td>
+      <td class="date-col">2023-05-29</td>
       <td>Missing repo URL</td>
     </tr>
   
@@ -4614,8 +4613,8 @@
       <td>Aryan Sawhney</td>
       <td><a href="https://github.com/sawhney17/logseq-smartblocks" target="_blank">sawhney17/logseq-smartblocks</a></td>
       <td>main</td>
-      <td>2022-01-25</td>
-      <td>2022-01-26</td>
+      <td class="date-col">2022-01-25</td>
+      <td class="date-col">2022-01-26</td>
       <td></td>
     </tr>
   
@@ -4626,8 +4625,8 @@
       <td>sethyuan</td>
       <td>sethyuan/logseq-plugin-smartsearch</td>
       <td></td>
-      <td>2022-11-11</td>
-      <td>2023-05-29</td>
+      <td class="date-col">2022-11-11</td>
+      <td class="date-col">2023-05-29</td>
       <td>Missing repo URL</td>
     </tr>
   
@@ -4638,8 +4637,8 @@
       <td>Cologler</td>
       <td><a href="https://github.com/Cologler/logseq-sort-blocks-typescript" target="_blank">Cologler/logseq-sort-blocks-typescript</a></td>
       <td>main</td>
-      <td>2023-07-25</td>
-      <td>2023-07-25</td>
+      <td class="date-col">2023-07-25</td>
+      <td class="date-col">2023-07-25</td>
       <td>Missing icon name, Missing icon URL</td>
     </tr>
   
@@ -4650,8 +4649,8 @@
       <td>hyrijk</td>
       <td><a href="https://github.com/hyrijk/logseq-plugin-split-block" target="_blank">hyrijk/logseq-plugin-split-block</a></td>
       <td>master</td>
-      <td>2021-09-17</td>
-      <td>2021-09-17</td>
+      <td class="date-col">2021-09-17</td>
+      <td class="date-col">2021-09-17</td>
       <td>Missing icon name, Missing icon URL</td>
     </tr>
   
@@ -4662,8 +4661,8 @@
       <td>hankhank10</td>
       <td><a href="https://github.com/hankhank10/i-listened-plugin" target="_blank">hankhank10/i-listened-plugin</a></td>
       <td>main</td>
-      <td>2022-11-30</td>
-      <td>2022-12-01</td>
+      <td class="date-col">2022-11-30</td>
+      <td class="date-col">2022-12-01</td>
       <td></td>
     </tr>
   
@@ -4674,8 +4673,8 @@
       <td>yoyurec</td>
       <td><a href="https://github.com/yoyurec/logseq-sticky-headers" target="_blank">yoyurec/logseq-sticky-headers</a></td>
       <td>main</td>
-      <td>2022-09-27</td>
-      <td>2022-09-27</td>
+      <td class="date-col">2022-09-27</td>
+      <td class="date-col">2022-09-27</td>
       <td></td>
     </tr>
   
@@ -4686,8 +4685,8 @@
       <td>Mario T. Lanza</td>
       <td><a href="https://github.com/mlanza/logseq-style-carousel" target="_blank">mlanza/logseq-style-carousel</a></td>
       <td>main</td>
-      <td>2022-02-24</td>
-      <td>2022-03-26</td>
+      <td class="date-col">2022-02-24</td>
+      <td class="date-col">2022-03-26</td>
       <td></td>
     </tr>
   
@@ -4698,8 +4697,8 @@
       <td>Pontus Sundén</td>
       <td><a href="https://github.com/psu/logseq-style-tweaks" target="_blank">psu/logseq-style-tweaks</a></td>
       <td>master</td>
-      <td>2022-09-11</td>
-      <td>2022-09-26</td>
+      <td class="date-col">2022-09-11</td>
+      <td class="date-col">2022-09-26</td>
       <td>Missing icon name, Missing icon URL</td>
     </tr>
   
@@ -4710,8 +4709,8 @@
       <td>avelino</td>
       <td><a href="https://github.com/avelino/logseq-summarize" target="_blank">avelino/logseq-summarize</a></td>
       <td>main</td>
-      <td>2024-01-10</td>
-      <td>2024-01-10</td>
+      <td class="date-col">2024-01-10</td>
+      <td class="date-col">2024-01-10</td>
       <td></td>
     </tr>
   
@@ -4722,8 +4721,8 @@
       <td>Stephen Solka</td>
       <td><a href="https://github.com/trashhalo/logseq-summarizer" target="_blank">trashhalo/logseq-summarizer</a></td>
       <td>main</td>
-      <td>2022-06-04</td>
-      <td>2022-06-04</td>
+      <td class="date-col">2022-06-04</td>
+      <td class="date-col">2022-06-04</td>
       <td></td>
     </tr>
   
@@ -4734,8 +4733,8 @@
       <td>ie9.org</td>
       <td><a href="https://github.com/top/logseq-super-sync" target="_blank">top/logseq-super-sync</a></td>
       <td>main</td>
-      <td>2025-05-18</td>
-      <td>2025-05-21</td>
+      <td class="date-col">2025-05-18</td>
+      <td class="date-col">2025-05-21</td>
       <td></td>
     </tr>
   
@@ -4746,8 +4745,8 @@
       <td>hkgnp</td>
       <td><a href="https://github.com/benjypng/logseq-swapblocks-plugin" target="_blank">hkgnp/logseq-swapblocks-plugin</a></td>
       <td>master</td>
-      <td>2022-01-13</td>
-      <td>2022-02-06</td>
+      <td class="date-col">2022-01-13</td>
+      <td class="date-col">2022-02-06</td>
       <td></td>
     </tr>
   
@@ -4758,8 +4757,8 @@
       <td>sethyuan</td>
       <td>sethyuan/logseq-plugin-tabbed-sidebar</td>
       <td></td>
-      <td>2023-06-25</td>
-      <td>2023-06-25</td>
+      <td class="date-col">2023-06-25</td>
+      <td class="date-col">2023-06-25</td>
       <td>Missing repo URL</td>
     </tr>
   
@@ -4770,8 +4769,8 @@
       <td>yoyurec</td>
       <td><a href="https://github.com/yoyurec/logseq-tabler-picker" target="_blank">yoyurec/logseq-tabler-picker</a></td>
       <td>main</td>
-      <td>2023-03-04</td>
-      <td>2023-03-04</td>
+      <td class="date-col">2023-03-04</td>
+      <td class="date-col">2023-03-04</td>
       <td></td>
     </tr>
   
@@ -4782,8 +4781,8 @@
       <td>hkgnp</td>
       <td><a href="https://github.com/benjypng/logseq-tablerender-plugin" target="_blank">hkgnp/logseq-tablerender-plugin</a></td>
       <td>main</td>
-      <td>2021-12-24</td>
-      <td>2022-02-06</td>
+      <td class="date-col">2021-12-24</td>
+      <td class="date-col">2022-02-06</td>
       <td></td>
     </tr>
   
@@ -4794,8 +4793,8 @@
       <td>pengx17</td>
       <td><a href="https://github.com/pengx17/logseq-plugin-tabs" target="_blank">pengx17/logseq-plugin-tabs</a></td>
       <td>master</td>
-      <td>2021-09-08</td>
-      <td>2021-09-09</td>
+      <td class="date-col">2021-09-08</td>
+      <td class="date-col">2021-09-09</td>
       <td></td>
     </tr>
   
@@ -4806,8 +4805,8 @@
       <td>Gidong Kwon</td>
       <td><a href="https://github.com/gidongkwon/logseq-plugin-tags" target="_blank">gidongkwon/logseq-plugin-tags</a></td>
       <td>main</td>
-      <td>2022-01-02</td>
-      <td>2022-01-02</td>
+      <td class="date-col">2022-01-02</td>
+      <td class="date-col">2022-01-02</td>
       <td></td>
     </tr>
   
@@ -4818,8 +4817,8 @@
       <td>aiiroByte</td>
       <td><a href="https://github.com/aiirobyte/logseq-task-automation" target="_blank">aiirobyte/logseq-task-automation</a></td>
       <td>main</td>
-      <td>2023-01-19</td>
-      <td>2023-01-20</td>
+      <td class="date-col">2023-01-19</td>
+      <td class="date-col">2023-01-20</td>
       <td></td>
     </tr>
   
@@ -4830,8 +4829,8 @@
       <td>mlhiter</td>
       <td><a href="https://github.com/mlhiter/logseq-task-done-time-mini" target="_blank">mlhiter/logseq-task-done-time-mini</a></td>
       <td>master</td>
-      <td>2024-08-01</td>
-      <td>2024-08-02</td>
+      <td class="date-col">2024-08-01</td>
+      <td class="date-col">2024-08-02</td>
       <td></td>
     </tr>
   
@@ -4842,8 +4841,8 @@
       <td>sethyuan</td>
       <td>sethyuan/logseq-plugin-favorite-tree</td>
       <td></td>
-      <td>2023-08-19</td>
-      <td>2023-08-19</td>
+      <td class="date-col">2023-08-19</td>
+      <td class="date-col">2023-08-19</td>
       <td>Missing repo URL</td>
     </tr>
   
@@ -4854,8 +4853,8 @@
       <td>vipzhicheng</td>
       <td><a href="https://github.com/vipzhicheng/logseq-plugin-task-management-shortcuts" target="_blank">vipzhicheng/logseq-plugin-task-management-shortcuts</a></td>
       <td>master</td>
-      <td>2022-01-17</td>
-      <td>2022-04-08</td>
+      <td class="date-col">2022-01-17</td>
+      <td class="date-col">2022-04-08</td>
       <td></td>
     </tr>
   
@@ -4866,8 +4865,8 @@
       <td>sethyuan</td>
       <td>sethyuan/logseq-plugin-task-reminder</td>
       <td></td>
-      <td>2023-08-18</td>
-      <td>2023-08-18</td>
+      <td class="date-col">2023-08-18</td>
+      <td class="date-col">2023-08-18</td>
       <td>Missing repo URL</td>
     </tr>
   
@@ -4878,8 +4877,8 @@
       <td>Tenset</td>
       <td><a href="https://github.com/tenset-security/logseq-tenset-theme" target="_blank">tenset-security/logseq-tenset-theme</a></td>
       <td>main</td>
-      <td>2023-08-04</td>
-      <td>2023-08-04</td>
+      <td class="date-col">2023-08-04</td>
+      <td class="date-col">2023-08-04</td>
       <td></td>
     </tr>
   
@@ -4890,8 +4889,8 @@
       <td>vipzhicheng</td>
       <td><a href="https://github.com/vipzhicheng/logseq-plugin-terminal" target="_blank">vipzhicheng/logseq-plugin-terminal</a></td>
       <td>main</td>
-      <td>2024-06-10</td>
-      <td>2024-06-10</td>
+      <td class="date-col">2024-06-10</td>
+      <td class="date-col">2024-06-10</td>
       <td></td>
     </tr>
   
@@ -4902,8 +4901,8 @@
       <td>joeykhuang</td>
       <td><a href="https://github.com/joeykhuang/logseq-textbook-theme" target="_blank">joeykhuang/logseq-textbook-theme</a></td>
       <td>main</td>
-      <td>2021-12-30</td>
-      <td>2021-12-30</td>
+      <td class="date-col">2021-12-30</td>
+      <td class="date-col">2021-12-30</td>
       <td></td>
     </tr>
   
@@ -4914,8 +4913,8 @@
       <td>b-yp</td>
       <td><a href="https://github.com/b-yp/logseq-that-year-today" target="_blank">b-yp/logseq-that-year-today</a></td>
       <td>dev</td>
-      <td>2024-08-12</td>
-      <td>2024-08-12</td>
+      <td class="date-col">2024-08-12</td>
+      <td class="date-col">2024-08-12</td>
       <td></td>
     </tr>
   
@@ -4926,8 +4925,8 @@
       <td>YU000jp</td>
       <td><a href="https://github.com/YU000jp/logseq-theme-classic-dark-theme-pack" target="_blank">YU000jp/logseq-theme-classic-dark-theme-pack</a></td>
       <td>main</td>
-      <td>2023-07-27</td>
-      <td>2023-11-12</td>
+      <td class="date-col">2023-07-27</td>
+      <td class="date-col">2023-11-12</td>
       <td></td>
     </tr>
   
@@ -4938,8 +4937,8 @@
       <td>vanabel</td>
       <td><a href="https://github.com/vanabel/Logseq-Theorem-Formatter" target="_blank">vanabel/logseq-theorem-formatter</a></td>
       <td>main</td>
-      <td>2025-06-03</td>
-      <td>2025-06-12</td>
+      <td class="date-col">2025-06-03</td>
+      <td class="date-col">2025-06-12</td>
       <td>Missing icon name, Missing icon URL</td>
     </tr>
   
@@ -4950,8 +4949,8 @@
       <td>Alexander Rink</td>
       <td><a href="https://github.com/rcvd/logseq-things-theme" target="_blank">rcvd/logseq-things-theme</a></td>
       <td>main</td>
-      <td>2021-12-19</td>
-      <td>2022-01-04</td>
+      <td class="date-col">2021-12-19</td>
+      <td class="date-col">2022-01-04</td>
       <td></td>
     </tr>
   
@@ -4962,8 +4961,8 @@
       <td>Maximilian Schöll</td>
       <td><a href="https://github.com/mxschll/logseq-ticktick-plugin" target="_blank">mxschll/logseq-ticktick-plugin</a></td>
       <td>master</td>
-      <td>2023-04-10</td>
-      <td>2023-04-10</td>
+      <td class="date-col">2023-04-10</td>
+      <td class="date-col">2023-04-10</td>
       <td></td>
     </tr>
   
@@ -4974,8 +4973,8 @@
       <td>vyleung</td>
       <td><a href="https://github.com/vyleung/logseq-tidy-blocks-plugin" target="_blank">vyleung/logseq-tidy-blocks-plugin</a></td>
       <td>main</td>
-      <td>2022-04-27</td>
-      <td>2022-06-26</td>
+      <td class="date-col">2022-04-27</td>
+      <td class="date-col">2022-06-26</td>
       <td></td>
     </tr>
   
@@ -4986,8 +4985,8 @@
       <td>5hir0kur0</td>
       <td><a href="https://github.com/5hir0kur0/logseq-time-recorder" target="_blank">5hir0kur0/logseq-time-recorder</a></td>
       <td>main</td>
-      <td>2023-12-26</td>
-      <td>2023-12-26</td>
+      <td class="date-col">2023-12-26</td>
+      <td class="date-col">2023-12-26</td>
       <td></td>
     </tr>
   
@@ -4998,8 +4997,8 @@
       <td>kmlprtsng</td>
       <td><a href="https://github.com/kmlprtsng/logseq-time-tracking-updater" target="_blank">kmlprtsng/logseq-time-tracking-updater</a></td>
       <td>main</td>
-      <td>2024-12-15</td>
-      <td>2024-12-16</td>
+      <td class="date-col">2024-12-15</td>
+      <td class="date-col">2024-12-16</td>
       <td>Missing icon URL</td>
     </tr>
   
@@ -5010,8 +5009,8 @@
       <td>uddhavdave</td>
       <td><a href="https://github.com/uddhavdave/logseq-timestamp-converter" target="_blank">uddhavdave/logseq-timestamp-converter</a></td>
       <td>main</td>
-      <td>2025-05-18</td>
-      <td>2025-05-19</td>
+      <td class="date-col">2025-05-18</td>
+      <td class="date-col">2025-05-19</td>
       <td></td>
     </tr>
   
@@ -5022,8 +5021,8 @@
       <td>vipzhicheng</td>
       <td><a href="https://github.com/vipzhicheng/logseq-plugin-title-bar" target="_blank">vipzhicheng/logseq-plugin-title-bar</a></td>
       <td>master</td>
-      <td>2024-01-22</td>
-      <td>2024-04-10</td>
+      <td class="date-col">2024-01-22</td>
+      <td class="date-col">2024-04-10</td>
       <td></td>
     </tr>
   
@@ -5034,8 +5033,8 @@
       <td>papersnake</td>
       <td><a href="https://github.com/prnake/logseq-to-flomo" target="_blank">prnake/logseq-to-flomo</a></td>
       <td>master</td>
-      <td>2023-02-07</td>
-      <td>2023-02-07</td>
+      <td class="date-col">2023-02-07</td>
+      <td class="date-col">2023-02-07</td>
       <td></td>
     </tr>
   
@@ -5046,8 +5045,8 @@
       <td>benjypng</td>
       <td><a href="https://github.com/benjypng/logseq-toc-plugin" target="_blank">benjypng/logseq-toc-plugin</a></td>
       <td>main</td>
-      <td>2021-12-16</td>
-      <td>2024-07-13</td>
+      <td class="date-col">2021-12-16</td>
+      <td class="date-col">2024-07-13</td>
       <td></td>
     </tr>
   
@@ -5058,8 +5057,8 @@
       <td>sethyuan</td>
       <td>sethyuan/logseq-plugin-tocgen</td>
       <td></td>
-      <td>2021-12-21</td>
-      <td>2023-05-29</td>
+      <td class="date-col">2021-12-21</td>
+      <td class="date-col">2023-05-29</td>
       <td>Missing repo URL</td>
     </tr>
   
@@ -5070,8 +5069,8 @@
       <td>benjypng</td>
       <td><a href="https://github.com/benjypng/logseq-todayevents-plugin" target="_blank">benjypng/logseq-todayevents-plugin</a></td>
       <td>main</td>
-      <td>2024-07-20</td>
-      <td>2024-07-20</td>
+      <td class="date-col">2024-07-20</td>
+      <td class="date-col">2024-07-20</td>
       <td></td>
     </tr>
   
@@ -5082,8 +5081,8 @@
       <td>Aryan Sawhney</td>
       <td><a href="https://github.com/sawhney17/logseq-todo-exploder" target="_blank">sawhney17/logseq-todo-exploder</a></td>
       <td>main</td>
-      <td>2022-04-28</td>
-      <td>2022-04-29</td>
+      <td class="date-col">2022-04-28</td>
+      <td class="date-col">2022-04-29</td>
       <td></td>
     </tr>
   
@@ -5094,8 +5093,8 @@
       <td>pengx17</td>
       <td><a href="https://github.com/pengx17/logseq-plugin-todo-master" target="_blank">pengx17/logseq-plugin-todo-master</a></td>
       <td>master</td>
-      <td>2021-09-08</td>
-      <td>2021-12-02</td>
+      <td class="date-col">2021-09-08</td>
+      <td class="date-col">2021-12-02</td>
       <td></td>
     </tr>
   
@@ -5106,8 +5105,8 @@
       <td>ahonn</td>
       <td><a href="https://github.com/ahonn/logseq-plugin-todo" target="_blank">ahonn/logseq-plugin-todo</a></td>
       <td>master</td>
-      <td>2022-04-26</td>
-      <td>2023-01-12</td>
+      <td class="date-col">2022-04-26</td>
+      <td class="date-col">2023-01-12</td>
       <td></td>
     </tr>
   
@@ -5118,8 +5117,8 @@
       <td>hkgnp</td>
       <td><a href="https://github.com/benjypng/logseq-todoist-plugin" target="_blank">hkgnp/logseq-todoist-plugin</a></td>
       <td>main</td>
-      <td>2021-10-31</td>
-      <td>2021-10-31</td>
+      <td class="date-col">2021-10-31</td>
+      <td class="date-col">2021-10-31</td>
       <td></td>
     </tr>
   
@@ -5130,8 +5129,8 @@
       <td>tankcool</td>
       <td><a href="https://github.com/TankCool/logseq-toolbox" target="_blank">tankcool/logseq-toolbox</a></td>
       <td>main</td>
-      <td>2021-09-25</td>
-      <td>2021-09-25</td>
+      <td class="date-col">2021-09-25</td>
+      <td class="date-col">2021-09-25</td>
       <td></td>
     </tr>
   
@@ -5142,8 +5141,8 @@
       <td>hkgnp</td>
       <td><a href="https://github.com/benjypng/logseq-trackhabits2-plugin" target="_blank">hkgnp/logseq-trackhabits2-plugin</a></td>
       <td>main</td>
-      <td>2022-01-07</td>
-      <td>2022-02-06</td>
+      <td class="date-col">2022-01-07</td>
+      <td class="date-col">2022-02-06</td>
       <td></td>
     </tr>
   
@@ -5154,8 +5153,8 @@
       <td>Marijn Bent</td>
       <td><a href="https://github.com/marijnbent/logseq-transcriber" target="_blank">marijnbent/logseq-transcriber</a></td>
       <td>main</td>
-      <td>2025-05-20</td>
-      <td>2025-05-21</td>
+      <td class="date-col">2025-05-20</td>
+      <td class="date-col">2025-05-21</td>
       <td></td>
     </tr>
   
@@ -5166,8 +5165,8 @@
       <td>jarodise</td>
       <td><a href="https://github.com/jarodise/logseq-trello-plugin" target="_blank">jarodise/logseq-trello-plugin</a></td>
       <td>main</td>
-      <td>2024-12-04</td>
-      <td>2024-12-04</td>
+      <td class="date-col">2024-12-04</td>
+      <td class="date-col">2024-12-04</td>
       <td></td>
     </tr>
   
@@ -5178,8 +5177,8 @@
       <td>Aryan Sawhney</td>
       <td><a href="https://github.com/sawhney17/logseq-twitter-extractor" target="_blank">sawhney17/logseq-twitter-extractor</a></td>
       <td>main</td>
-      <td>2022-03-27</td>
-      <td>2022-03-28</td>
+      <td class="date-col">2022-03-27</td>
+      <td class="date-col">2022-03-28</td>
       <td></td>
     </tr>
   
@@ -5190,8 +5189,8 @@
       <td>hkgnp</td>
       <td><a href="https://github.com/benjypng/logseq-tweet-plugin" target="_blank">hkgnp/logseq-tweet-plugin</a></td>
       <td>master</td>
-      <td>2022-01-26</td>
-      <td>2022-02-06</td>
+      <td class="date-col">2022-01-26</td>
+      <td class="date-col">2022-02-06</td>
       <td></td>
     </tr>
   
@@ -5202,8 +5201,8 @@
       <td>b-yp</td>
       <td><a href="https://github.com/b-yp/logseq-typewriter-mode" target="_blank">b-yp/logseq-typewriter-mode</a></td>
       <td>dev</td>
-      <td>2023-07-02</td>
-      <td>2023-10-27</td>
+      <td class="date-col">2023-07-02</td>
+      <td class="date-col">2023-10-27</td>
       <td></td>
     </tr>
   
@@ -5214,8 +5213,8 @@
       <td>Glorious Inheritor</td>
       <td><a href="https://github.com/dinushkaherath/logseq-typewriter-plugin" target="_blank">dinushkaherath/logseq-typewriter-plugin</a></td>
       <td>main</td>
-      <td>2023-09-06</td>
-      <td>2023-09-07</td>
+      <td class="date-col">2023-09-06</td>
+      <td class="date-col">2023-09-07</td>
       <td></td>
     </tr>
   
@@ -5226,8 +5225,8 @@
       <td>hkgnp</td>
       <td><a href="https://github.com/benjypng/logseq-readwise-plugin" target="_blank">hkgnp/logseq-readwise-plugin</a></td>
       <td>master</td>
-      <td>2021-12-09</td>
-      <td>2021-12-09</td>
+      <td class="date-col">2021-12-09</td>
+      <td class="date-col">2021-12-09</td>
       <td></td>
     </tr>
   
@@ -5238,8 +5237,8 @@
       <td>clearlysid</td>
       <td><a href="https://github.com/clearlysid/logseq-unsplash" target="_blank">clearlysid/logseq-unsplash</a></td>
       <td>main</td>
-      <td>2021-11-09</td>
-      <td>2021-11-12</td>
+      <td class="date-col">2021-11-09</td>
+      <td class="date-col">2021-11-12</td>
       <td></td>
     </tr>
   
@@ -5250,8 +5249,8 @@
       <td>mlhiter</td>
       <td><a href="https://github.com/mlhiter/logseq-update-property-mini" target="_blank">mlhiter/logseq-update-property-mini</a></td>
       <td>main</td>
-      <td>2025-03-13</td>
-      <td>2025-03-13</td>
+      <td class="date-col">2025-03-13</td>
+      <td class="date-col">2025-03-13</td>
       <td></td>
     </tr>
   
@@ -5262,8 +5261,8 @@
       <td>rlhk</td>
       <td><a href="https://github.com/rlhk/logseq-url-plus" target="_blank">rlhk/logseq-url-plus</a></td>
       <td>main</td>
-      <td>2022-11-04</td>
-      <td>2023-03-07</td>
+      <td class="date-col">2022-11-04</td>
+      <td class="date-col">2023-03-07</td>
       <td></td>
     </tr>
   
@@ -5274,8 +5273,8 @@
       <td>imjn</td>
       <td><a href="https://github.com/imjn/logseq-url-title-tagger" target="_blank">imjn/logseq-url-title-tagger</a></td>
       <td>main</td>
-      <td>2024-02-27</td>
-      <td>2024-02-28</td>
+      <td class="date-col">2024-02-27</td>
+      <td class="date-col">2024-02-28</td>
       <td></td>
     </tr>
   
@@ -5286,8 +5285,8 @@
       <td>rudifa</td>
       <td><a href="https://github.com/rudifa/url-to-markdown" target="_blank">rudifa/url-to-markdown</a></td>
       <td>main</td>
-      <td>2025-08-10</td>
-      <td>2025-08-11</td>
+      <td class="date-col">2025-08-10</td>
+      <td class="date-col">2025-08-11</td>
       <td></td>
     </tr>
   
@@ -5298,8 +5297,8 @@
       <td>superman66</td>
       <td><a href="https://github.com/superman66/logseq-plugin-url-md" target="_blank">superman66/logseq-plugin-url-md</a></td>
       <td>master</td>
-      <td>2022-07-03</td>
-      <td>2024-03-17</td>
+      <td class="date-col">2022-07-03</td>
+      <td class="date-col">2024-03-17</td>
       <td></td>
     </tr>
   
@@ -5310,8 +5309,8 @@
       <td>vipzhicheng</td>
       <td><a href="https://github.com/vipzhicheng/logseq-plugin-vim-editor" target="_blank">vipzhicheng/logseq-plugin-vim-editor</a></td>
       <td>master</td>
-      <td>2022-03-08</td>
-      <td>2024-02-20</td>
+      <td class="date-col">2022-03-08</td>
+      <td class="date-col">2024-02-20</td>
       <td></td>
     </tr>
   
@@ -5322,8 +5321,8 @@
       <td>vipzhicheng</td>
       <td><a href="https://github.com/vipzhicheng/logseq-plugin-vim-shortcuts" target="_blank">vipzhicheng/logseq-plugin-vim-shortcuts</a></td>
       <td>master</td>
-      <td>2021-12-27</td>
-      <td>2025-01-04</td>
+      <td class="date-col">2021-12-27</td>
+      <td class="date-col">2025-01-04</td>
       <td></td>
     </tr>
   
@@ -5334,8 +5333,8 @@
       <td>b-yp</td>
       <td><a href="https://github.com/b-yp/logseq-wakatime" target="_blank">b-yp/logseq-wakatime</a></td>
       <td>master</td>
-      <td>2024-08-15</td>
-      <td>2024-08-15</td>
+      <td class="date-col">2024-08-15</td>
+      <td class="date-col">2024-08-15</td>
       <td></td>
     </tr>
   
@@ -5346,8 +5345,8 @@
       <td>Daniel Hnyk</td>
       <td><a href="https://github.com/hnykda/logseq-wallabag" target="_blank">hnykda/logseq-wallabag</a></td>
       <td>develop</td>
-      <td>2025-01-03</td>
-      <td>2025-01-03</td>
+      <td class="date-col">2025-01-03</td>
+      <td class="date-col">2025-01-03</td>
       <td></td>
     </tr>
   
@@ -5358,8 +5357,8 @@
       <td>Aryan Sawhney</td>
       <td><a href="https://github.com/sawhney17/logseq-web-parser" target="_blank">sawhney17/logseq-web-parser</a></td>
       <td>main</td>
-      <td>2022-05-30</td>
-      <td>2022-05-30</td>
+      <td class="date-col">2022-05-30</td>
+      <td class="date-col">2022-05-30</td>
       <td></td>
     </tr>
   
@@ -5370,8 +5369,8 @@
       <td>Paul Kinlan</td>
       <td><a href="https://github.com/PaulKinlan/logseq-webpage-title" target="_blank">paulkinlan/logseq-webpage-title</a></td>
       <td>main</td>
-      <td>2022-05-04</td>
-      <td>2022-05-05</td>
+      <td class="date-col">2022-05-04</td>
+      <td class="date-col">2022-05-05</td>
       <td></td>
     </tr>
   
@@ -5382,8 +5381,8 @@
       <td>ahonn</td>
       <td><a href="https://github.com/ahonn/logseq-plugin-weread-importer" target="_blank">ahonn/logseq-plugin-weread-importer</a></td>
       <td>master</td>
-      <td>2023-01-21</td>
-      <td>2023-01-21</td>
+      <td class="date-col">2023-01-21</td>
+      <td class="date-col">2023-01-21</td>
       <td></td>
     </tr>
   
@@ -5394,8 +5393,8 @@
       <td>sethyuan</td>
       <td>sethyuan/logseq-plugin-weread-sync</td>
       <td></td>
-      <td>2023-02-20</td>
-      <td>2023-05-29</td>
+      <td class="date-col">2023-02-20</td>
+      <td class="date-col">2023-05-29</td>
       <td>Missing repo URL</td>
     </tr>
   
@@ -5406,8 +5405,8 @@
       <td>usoon</td>
       <td><a href="https://github.com/usoonees/logseq-plugin-whisper-subtitles" target="_blank">usoonees/logseq-plugin-whisper-subtitles</a></td>
       <td>main</td>
-      <td>2023-10-13</td>
-      <td>2023-10-13</td>
+      <td class="date-col">2023-10-13</td>
+      <td class="date-col">2023-10-13</td>
       <td></td>
     </tr>
   
@@ -5418,8 +5417,8 @@
       <td>Mario T. Lanza</td>
       <td><a href="https://github.com/mlanza/logseq-wide-eyed" target="_blank">mlanza/logseq-wide-eyed</a></td>
       <td>main</td>
-      <td>2022-02-15</td>
-      <td>2022-08-08</td>
+      <td class="date-col">2022-02-15</td>
+      <td class="date-col">2022-08-08</td>
       <td></td>
     </tr>
   
@@ -5430,8 +5429,8 @@
       <td>enchantmenttable</td>
       <td><a href="https://github.com/enchantmenttable/logseq-wiki-search" target="_blank">enchantmenttable/logseq-wiki-search</a></td>
       <td>main</td>
-      <td>2022-10-14</td>
-      <td>2024-03-17</td>
+      <td class="date-col">2022-10-14</td>
+      <td class="date-col">2024-03-17</td>
       <td></td>
     </tr>
   
@@ -5442,8 +5441,8 @@
       <td>msjsc001</td>
       <td><a href="https://github.com/msjsc001/logseq-word-count-plugin" target="_blank">msjsc001/logseq-word-count-plugin</a></td>
       <td>main</td>
-      <td>2025-04-01</td>
-      <td>2025-05-03</td>
+      <td class="date-col">2025-04-01</td>
+      <td class="date-col">2025-05-03</td>
       <td></td>
     </tr>
   
@@ -5454,8 +5453,8 @@
       <td>hkgnp</td>
       <td><a href="https://github.com/benjypng/logseq-wordcount-plugin" target="_blank">hkgnp/logseq-wordcount-plugin</a></td>
       <td>main</td>
-      <td>2021-11-24</td>
-      <td>2022-02-06</td>
+      <td class="date-col">2021-11-24</td>
+      <td class="date-col">2022-02-06</td>
       <td></td>
     </tr>
   
@@ -5466,8 +5465,8 @@
       <td>Artur Piszek (artpi)</td>
       <td><a href="https://github.com/artpi/logseq-wordpress-export" target="_blank">artpi/logseq-wordpress-export</a></td>
       <td>master</td>
-      <td>2022-10-29</td>
-      <td>2022-10-30</td>
+      <td class="date-col">2022-10-29</td>
+      <td class="date-col">2022-10-30</td>
       <td></td>
     </tr>
   
@@ -5478,8 +5477,8 @@
       <td>haydenull</td>
       <td><a href="https://github.com/haydenull/logseq-woz-theme" target="_blank">haydenull/logseq-woz-theme</a></td>
       <td>main</td>
-      <td>2021-09-17</td>
-      <td>2021-09-17</td>
+      <td class="date-col">2021-09-17</td>
+      <td class="date-col">2021-09-17</td>
       <td></td>
     </tr>
   
@@ -5490,8 +5489,8 @@
       <td>Evan Hall</td>
       <td><a href="https://github.com/hallx833/logseq-wpm-plugin" target="_blank">hallx833/logseq-wpm-plugin</a></td>
       <td>master</td>
-      <td>2023-04-29</td>
-      <td>2023-05-15</td>
+      <td class="date-col">2023-04-29</td>
+      <td class="date-col">2023-05-15</td>
       <td></td>
     </tr>
   
@@ -5502,8 +5501,8 @@
       <td>sethyuan</td>
       <td>sethyuan/logseq-plugin-wrap</td>
       <td></td>
-      <td>2022-01-25</td>
-      <td>2023-05-29</td>
+      <td class="date-col">2022-01-25</td>
+      <td class="date-col">2023-05-29</td>
       <td>Missing repo URL</td>
     </tr>
   
@@ -5514,8 +5513,8 @@
       <td>hkgnp</td>
       <td><a href="https://github.com/benjypng/logseq-writegood-plugin" target="_blank">hkgnp/logseq-writegood-plugin</a></td>
       <td>master</td>
-      <td>2022-04-21</td>
-      <td>2022-04-21</td>
+      <td class="date-col">2022-04-21</td>
+      <td class="date-col">2022-04-21</td>
       <td></td>
     </tr>
   
@@ -5526,8 +5525,8 @@
       <td>五彩</td>
       <td><a href="https://github.com/makediff/logseq-wucai-official-plugin" target="_blank">makediff/logseq-wucai-official-plugin</a></td>
       <td>master</td>
-      <td>2023-05-09</td>
-      <td>2023-05-11</td>
+      <td class="date-col">2023-05-09</td>
+      <td class="date-col">2023-05-11</td>
       <td></td>
     </tr>
   
@@ -5538,8 +5537,8 @@
       <td>benjypng</td>
       <td><a href="https://github.com/benjypng/logseq-zoterolocal-plugin" target="_blank">benjypng/logseq-zoterolocal-plugin</a></td>
       <td>main</td>
-      <td>2024-08-09</td>
-      <td>2024-08-21</td>
+      <td class="date-col">2024-08-09</td>
+      <td class="date-col">2024-08-21</td>
       <td></td>
     </tr>
   
@@ -5550,8 +5549,8 @@
       <td>stdword</td>
       <td><a href="https://github.com/stdword/logseq13-full-house-plugin" target="_blank">stdword/logseq13-full-house-plugin</a></td>
       <td>main</td>
-      <td>2023-03-05</td>
-      <td>2023-03-13</td>
+      <td class="date-col">2023-03-05</td>
+      <td class="date-col">2023-03-13</td>
       <td></td>
     </tr>
   
@@ -5562,8 +5561,8 @@
       <td>stdword</td>
       <td><a href="https://github.com/stdword/logseq13-missing-commands" target="_blank">stdword/logseq13-missing-commands</a></td>
       <td>main</td>
-      <td>2023-12-21</td>
-      <td>2023-12-30</td>
+      <td class="date-col">2023-12-21</td>
+      <td class="date-col">2023-12-30</td>
       <td></td>
     </tr>
   
@@ -5574,8 +5573,8 @@
       <td>stdword</td>
       <td><a href="https://github.com/stdword/logseq13-shorten-my-links" target="_blank">stdword/logseq13-shorten-my-links</a></td>
       <td>main</td>
-      <td>2023-10-07</td>
-      <td>2023-10-12</td>
+      <td class="date-col">2023-10-07</td>
+      <td class="date-col">2023-10-12</td>
       <td></td>
     </tr>
   
@@ -5586,8 +5585,8 @@
       <td>gfgafn</td>
       <td><a href="https://github.com/gfgafn/logseq_block_spacer" target="_blank">gfgafn/logseq_block_spacer</a></td>
       <td>main</td>
-      <td>2023-08-14</td>
-      <td>2023-08-14</td>
+      <td class="date-col">2023-08-14</td>
+      <td class="date-col">2023-08-14</td>
       <td>Missing icon name, Missing icon URL</td>
     </tr>
   
@@ -5598,8 +5597,8 @@
       <td>clstb</td>
       <td><a href="https://github.com/clstb/logsync" target="_blank">clstb/logsync</a></td>
       <td>main</td>
-      <td>2023-12-17</td>
-      <td>2023-12-18</td>
+      <td class="date-col">2023-12-17</td>
+      <td class="date-col">2023-12-18</td>
       <td>Missing icon name, Missing icon URL</td>
     </tr>
   
@@ -5610,8 +5609,8 @@
       <td>cannibalOx</td>
       <td><a href="https://github.com/cannibalox/logtools" target="_blank">cannibalox/logtools</a></td>
       <td>main</td>
-      <td>2022-03-17</td>
-      <td>2022-03-18</td>
+      <td class="date-col">2022-03-17</td>
+      <td class="date-col">2022-03-18</td>
       <td></td>
     </tr>
   
@@ -5622,8 +5621,8 @@
       <td>Angboo</td>
       <td><a href="https://github.com/Angboo/logwidgets" target="_blank">Angboo/logwidgets</a></td>
       <td>master</td>
-      <td>2022-06-25</td>
-      <td>2022-06-25</td>
+      <td class="date-col">2022-06-25</td>
+      <td class="date-col">2022-06-25</td>
       <td></td>
     </tr>
   
@@ -5634,8 +5633,8 @@
       <td>Bad3r</td>
       <td><a href="https://github.com/Bad3r/Logseq-Nord-Theme" target="_blank">Bad3r/Logseq-Nord-Theme</a></td>
       <td>main</td>
-      <td>2023-05-20</td>
-      <td>2023-05-30</td>
+      <td class="date-col">2023-05-20</td>
+      <td class="date-col">2023-05-30</td>
       <td></td>
     </tr>
   
@@ -5646,8 +5645,8 @@
       <td>Omar Magdy</td>
       <td><a href="https://github.com/omagdy7/ollama-logseq" target="_blank">omagdy7/ollama-logseq</a></td>
       <td>master</td>
-      <td>2023-11-05</td>
-      <td>2023-11-06</td>
+      <td class="date-col">2023-11-05</td>
+      <td class="date-col">2023-11-06</td>
       <td></td>
     </tr>
   
@@ -5658,8 +5657,8 @@
       <td>SamePage</td>
       <td><a href="https://github.com/samepage-network/logseq-samepage" target="_blank">samepage-network/logseq-samepage</a></td>
       <td>main</td>
-      <td>2022-11-15</td>
-      <td>2022-11-18</td>
+      <td class="date-col">2022-11-15</td>
+      <td class="date-col">2022-11-18</td>
       <td></td>
     </tr>
   
@@ -5670,8 +5669,8 @@
       <td>phildenhoff</td>
       <td><a href="https://github.com/phildenhoff/logseq-slipbox" target="_blank">phildenhoff/logseq-slipbox</a></td>
       <td>main</td>
-      <td>2023-12-16</td>
-      <td>2023-12-29</td>
+      <td class="date-col">2023-12-16</td>
+      <td class="date-col">2023-12-29</td>
       <td></td>
     </tr>
   
@@ -5682,8 +5681,8 @@
       <td>John McCann</td>
       <td><a href="https://github.com/dangermccann/logseq-template-gallery" target="_blank">dangermccann/logseq-template-gallery</a></td>
       <td>master</td>
-      <td>2023-02-04</td>
-      <td>2023-02-04</td>
+      <td class="date-col">2023-02-04</td>
+      <td class="date-col">2023-02-04</td>
       <td></td>
     </tr>
   
@@ -5694,8 +5693,8 @@
       <td>yourmoonlight</td>
       <td><a href="https://github.com/yourmoonlight/timeflow_for_logseq" target="_blank">yourmoonlight/timeflow_for_logseq</a></td>
       <td>master</td>
-      <td>2023-09-16</td>
-      <td>2023-09-17</td>
+      <td class="date-col">2023-09-16</td>
+      <td class="date-col">2023-09-17</td>
       <td></td>
     </tr>
   
@@ -5706,8 +5705,8 @@
       <td>jones melton</td>
       <td><a href="https://github.com/jonesmelton/logseq-tufte-theme" target="_blank">jonesmelton/logseq-tufte-theme</a></td>
       <td>main</td>
-      <td>2023-02-01</td>
-      <td>2023-02-01</td>
+      <td class="date-col">2023-02-01</td>
+      <td class="date-col">2023-02-01</td>
       <td></td>
     </tr>
   
@@ -5718,34 +5717,35 @@
       <td>Alex Qwxlea</td>
       <td><a href="https://github.com/QWxleA/Unfinished-business" target="_blank">QWxleA/Unfinished-business</a></td>
       <td>main</td>
-      <td>2022-04-05</td>
-      <td>2022-04-06</td>
+      <td class="date-col">2022-04-05</td>
+      <td class="date-col">2022-04-06</td>
       <td></td>
     </tr>
   </tbody>
       </table>
     </div>
-     <script>
-       function initDataTable() {
-  const table = $("#plugin-table").DataTable({
-    order: [], // No initial sort, preserve server order, but allow user sorting
-    paging: true, // required for Scroller
-    autoWidth: true,
-    scrollY: "70vh", // vertical scroll container height
-    scrollX: true, // allows horizontal resizing & sticky header sync
-    scrollCollapse: true,
-    scroller: true,
-    info: false, // disable info text
-  });
 
-  $(window).on("resize", function () {
-    table.columns.adjust().draw();
-  });
-}
+    <script>
+      function initDataTable() {
+        $(document).ready(function () {
+          const table = $("#plugin-table").DataTable({
+            order: [],
+            paging: true,
+            autoWidth: true,
+            scrollY: "70vh",
+            scrollX: true,
+            scrollCollapse: true,
+            scroller: true,
+            info: false,
+            initComplete: function () {
+              $("#plugin-table").css("opacity", "1").addClass("ready");
+            }
+          });
+        });
+      }
 
-      // Initialize DataTable on document ready
-      $(document).ready(initDataTable);
-     </script>
+      initDataTable();
+    </script>
   
       </main>
       
@@ -5817,7 +5817,7 @@
     </div>
 
       <div class="footer">
-        Page generated: <span id="footer-date">21-08-2025, 18:57:55 UTC</span> &mdash;
+        Page generated: <span id="footer-date">22-08-2025, 13:26:52 UTC</span> &mdash;
         Plugins listed: <span id="footer-count">466</span>
       </div>
       <script>

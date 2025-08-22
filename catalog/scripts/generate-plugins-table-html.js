@@ -86,12 +86,22 @@ function generateHtml(pluginsData) {
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <title>Logseq Marketplace Plugins</title>
-      <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
-      <link rel="stylesheet" href="https://cdn.datatables.net/scroller/2.2.0/css/scroller.dataTables.min.css" />
+
+      <!-- jQuery -->
       <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+      <!-- Core DataTables (v1.13.x) -->
+      <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
       <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+      <!-- Scroller extension (compatible with jQuery v1.x) -->
+      <link rel="stylesheet" href="https://cdn.datatables.net/scroller/2.2.0/css/scroller.dataTables.min.css">
       <script src="https://cdn.datatables.net/scroller/2.2.0/js/dataTables.scroller.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/datatables.net-responsive@2.5.0/js/dataTables.responsive.min.js"></script>
+
+      <!-- Marked for rendering Markdown READMEs -->
       <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
       <style>${renderStyles()}</style>
     </head>
     <body>
@@ -160,6 +170,12 @@ function renderStyles() {
  * @param {Array} pluginsData - Array of processed plugin objects.
  * @returns {string} HTML string for the table container and table.
  */
+/**
+ * Renders the table container and table for the plugins data,
+ * with jQuery DataTables v1.13 + Scroller initialization.
+ * @param {Array} pluginsData - Array of processed plugin objects.
+ * @returns {string} HTML string for the table container and table.
+ */
 function renderDataTable(pluginsData) {
   const tableStyles = `
     .table-container {
@@ -168,10 +184,18 @@ function renderDataTable(pluginsData) {
     #plugin-table {
       width: 100% !important;
       table-layout: auto;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    #plugin-table.ready {
+      opacity: 1;
     }
     #plugin-table th, #plugin-table td {
       white-space: normal !important;
       overflow-wrap: break-word;
+    }
+    #plugin-table td.date-col, #plugin-table th.date-col {
+      white-space: nowrap !important;
     }
     #plugin-table th {
       position: sticky;
@@ -180,7 +204,7 @@ function renderDataTable(pluginsData) {
       z-index: 1;
       border-top: 1px solid #85c8c8;
     }
-    #plugins tbody tr:hover {
+    #plugin-table tbody tr:hover {
       background-color: #eafafa !important;
       border-left: 4px solid #85c8c8;
       transition: background 0.2s, border 0.2s;
@@ -202,25 +226,6 @@ function renderDataTable(pluginsData) {
       padding: 5px;
       margin: 0 15px 10px 0;
     }
-
-    /* Wrapping columns */
-    .wrap {
-      white-space: normal !important;
-      overflow-wrap: break-word;
-    }
-
-    /* Long unbroken words column */
-    .breaklong {
-      white-space: normal !important;
-      overflow-wrap: anywhere;
-    }
-
-    /* Truncate with ellipsis */
-    .truncate {
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
   `;
 
   return `
@@ -231,12 +236,28 @@ function renderDataTable(pluginsData) {
         <tbody>${renderTableDataRows(pluginsData)}</tbody>
       </table>
     </div>
-     <script>
-       ${initDataTable.toString()}
 
-      // Initialize DataTable on document ready
-      $(document).ready(initDataTable);
-     </script>
+    <script>
+      function initDataTable() {
+        $(document).ready(function () {
+          const table = $("#plugin-table").DataTable({
+            order: [],
+            paging: true,
+            autoWidth: true,
+            scrollY: "70vh",
+            scrollX: true,
+            scrollCollapse: true,
+            scroller: true,
+            info: false,
+            initComplete: function () {
+              $("#plugin-table").css("opacity", "1").addClass("ready");
+            }
+          });
+        });
+      }
+
+      initDataTable();
+    </script>
   `;
 }
 
@@ -253,8 +274,8 @@ function renderTableHeaderRow() {
         <th>Author</th>
         <th>Repo</th>
         <th>Branch</th>
-        <th>Created</th>
-        <th>Last Updated</th>
+        <th class="date-col">Created</th>
+        <th class="date-col">Last Updated</th>
         <th>Error</th>
       </tr>
   `;
@@ -296,31 +317,15 @@ function renderPluginRow(plugin) {
       <td>${plugin.author || ""}</td>
       <td>${repoCell}</td>
       <td>${plugin.defaultBranch || ""}</td>
-      <td>${plugin.created_at ? plugin.created_at.slice(0, 10) : ""}</td>
-      <td>${plugin.last_updated ? plugin.last_updated.slice(0, 10) : ""}</td>
+      <td class="date-col">${
+        plugin.created_at ? plugin.created_at.slice(0, 10) : ""
+      }</td>
+      <td class="date-col">${
+        plugin.last_updated ? plugin.last_updated.slice(0, 10) : ""
+      }</td>
       <td>${plugin.error || ""}</td>
     </tr>
   `;
-}
-
-/**
- * Initializes the DataTable for the plugins table.
- */
-function initDataTable() {
-  const table = $("#plugin-table").DataTable({
-    order: [], // No initial sort, preserve server order, but allow user sorting
-    paging: true, // required for Scroller
-    autoWidth: true,
-    scrollY: "70vh", // vertical scroll container height
-    scrollX: true, // allows horizontal resizing & sticky header sync
-    scrollCollapse: true,
-    scroller: true,
-    info: false, // disable info text
-  });
-
-  $(window).on("resize", function () {
-    table.columns.adjust().draw();
-  });
 }
 
 /**
