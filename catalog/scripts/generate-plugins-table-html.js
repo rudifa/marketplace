@@ -10,6 +10,25 @@ export {main};
 // Usage: node generate-plugins-table-html.js
 // Output: catalog/index.html
 
+/**
+ * @typedef {object} PluginData
+ * @property {string} name - The name of the package, derived from the manifest's `title` or GitHub directory name.
+ * @property {string} id - Currently unused placeholder.
+ * @property {string} description - The package description.
+ * @property {string} author - The package author.
+ * @property {string} repo - The GitHub repository identifier (e.g., "owner/repo").
+ * @property {string} repoUrl - The full HTML URL to the GitHub repository.
+ * @property {string} iconUrl - The direct URL to the package icon, if found and valid.
+ * @property {string} readmeUrl - The direct URL to the package README.md, if found and valid.
+ * @property {string} created_at - The creation date of the package (first commit date) in ISO format.
+ * @property {string} last_updated - The last update date of the package (last commit date) in ISO format.
+ * @property {string} error - A comma-separated string of errors encountered during processing this package.
+ * @property {string} defaultBranch - The default branch name of the repository (e.g., 'main' or 'master').
+ * @property {string} theme - "Yes" if it's a theme plugin, otherwise an empty string.
+ * @property {string} effect - "Yes" if it has side effects, otherwise an empty string.
+ * @property {string} sponsors - A comma-separated string of sponsor links.
+ */
+
 const DIR = "./generated";
 
 const INPUT_FILE = "plugins-data.json";
@@ -48,6 +67,7 @@ if (
 async function main({verbose = false} = {}) {
   try {
     // Read plugin data from input file
+    /** @type {PluginData[]} */
     const pluginsData = JSON.parse(
       fs.readFileSync(`${DIR}/${INPUT_FILE}`, "utf-8")
     );
@@ -75,8 +95,8 @@ async function main({verbose = false} = {}) {
 // ======================================================================
 
 /**
- * Generates the complete HTML page for the Logseq Marketplace Plugins.
- * @param {Array} pluginsData - Array of processed plugin objects.
+ * Generate the complete HTML page for the Logseq Marketplace Plugins.
+ * @param {PluginData[]} pluginsData - Array of processed plugin objects.
  * @returns {string} Complete HTML string.
  */
 function generateHtml(pluginsData) {
@@ -122,7 +142,7 @@ function generateHtml(pluginsData) {
 }
 
 /**
- * Renders the CSS styles for the Logseq Marketplace Plugins page.
+ * Render the CSS styles for the Logseq Marketplace Plugins page.
  * @returns {string} A string containing CSS styles for the page layout, header, main content and footer.
  */
 function renderStyles() {
@@ -166,14 +186,14 @@ function renderStyles() {
 }
 
 /**
- * Renders the table container and table for the plugins data.
- * @param {Array} pluginsData - Array of processed plugin objects.
+ * Render the table container and table for the plugins data.
+ * @param {PluginData[]} pluginsData - Array of processed plugin objects.
  * @returns {string} HTML string for the table container and table.
  */
 /**
- * Renders the table container and table for the plugins data,
+ * Render the table container and table for the plugins data,
  * with jQuery DataTables v1.13 + Scroller initialization.
- * @param {Array} pluginsData - Array of processed plugin objects.
+ * @param {PluginData[]} pluginsData - Array of processed plugin objects.
  * @returns {string} HTML string for the table container and table.
  */
 function renderDataTable(pluginsData) {
@@ -301,7 +321,7 @@ function renderDataTable(pluginsData) {
 }
 
 /**
- * Renders the table header for the Logseq Marketplace Plugins table.
+ * Render the table header for the Logseq Marketplace Plugins table.
  * @returns {string} HTML string containing the table header.
  */
 function renderTableHeaderRow() {
@@ -324,8 +344,8 @@ function renderTableHeaderRow() {
 }
 
 /**
- * Renders the data rows for the plugins table.
- * @param {Array<Object>} pluginsData - An array of plugin objects containing the data to be displayed.
+ * Render the data rows for the plugins table.
+ * @param {PluginData[]} pluginsData - An array of plugin objects containing the data to be displayed.
  * @returns {string} A string of HTML containing all the table rows for the plugins data.
  */
 function renderTableDataRows(pluginsData) {
@@ -333,8 +353,8 @@ function renderTableDataRows(pluginsData) {
 }
 
 /**
- * Renders the HTML for a single table row based on the plugin data.
- * @param {Object} plugin - The plugin object.
+ * Render the HTML for a single table row based on the plugin data.
+ * @param {PluginData} plugin - The plugin object.
  * @returns {string} HTML string for a table row.
  */
 function renderPluginRow(plugin) {
@@ -374,7 +394,7 @@ function renderPluginRow(plugin) {
 }
 
 /**
- * Renders the modal HTML for displaying README content.
+ * Render the modal HTML for displaying README content.
  * @returns {string} HTML string for the README modal.
  */
 function renderReadmeModal() {
@@ -453,7 +473,7 @@ function formatNowToUTC() {
 }
 
 /**
- * Generates the client-side JavaScript to be included in the HTML.
+ * Generate the client-side JavaScript to be included in the HTML.
  * @returns {string} Client-side JavaScript as a string.
  */
 function generateClientScripts() {
@@ -479,7 +499,7 @@ function generateClientScripts() {
 }
 
 /**
- * Formats a Date object as a UTC string in 'DD-MM-YYYY, HH:MM:SS' format (en-GB), with / replaced by -.
+ * Format a Date object as a UTC string in 'DD-MM-YYYY, HH:MM:SS' format (en-GB), with / replaced by -.
  * @param {Date} date - The date to format.
  * @returns {string} The formatted UTC date string.
  */
@@ -498,7 +518,7 @@ function formatDateToUTC(date) {
 }
 
 /**
- * Preprocesses README markdown to convert relative URLs to absolute URLs.
+ * Preprocess README markdown to convert relative URLs to absolute URLs.
  * @param {string} markdown - The original markdown content.
  * @param {string} readmeUrl - The URL of the README file.
  * @returns {string} The processed markdown with absolute URLs.
@@ -525,7 +545,7 @@ function convertRelativeUrlsToAbsolute(markdown, readmeUrl) {
 }
 
 /**
- * Displays a modal with the README content of a plugin.
+ * Display a modal with the README content of a plugin.
  * @param {string} readmeUrl - The URL of the README file to display.
  */
 function showReadmeModal(readmeUrl) {
@@ -588,7 +608,7 @@ function showReadmeModal(readmeUrl) {
     });
 }
 /**
- * Closes the README modal.
+ * Close the README modal.
  */
 function closeReadmeModal() {
   const modalBg = document.getElementById("readme-modal-bg");

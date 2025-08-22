@@ -87,6 +87,52 @@ async function main({verbose = false, maxItems} = {}) {
   }
 }
 
+/**
+ * @typedef {object} PackagesListItem
+ * @property {string} name - The name of the file or directory.
+ * @property {string} path - The full path of the file or directory within the repository.
+ * @property {string} sha - The SHA of the file or directory.
+ * @property {number} size - The size of the file in bytes.
+ * @property {string} url - The API URL for the content.
+ * @property {string} html_url - The HTML URL for the content on GitHub.
+ * @property {string} git_url - The Git URL for the content.
+ * @property {string|null} download_url - The download URL for the content (null for directories).
+ * @property {'file'|'dir'|'symlink'|'submodule'} type - The type of the content.
+ */
+
+/**
+ * @typedef {object} Manifest
+ * @property {string} title - A title for plugin list item display. This is used as the `name` in the generated catalog.
+ * @property {string} description - A short description about your plugin.
+ * @property {string} author - The author's name.
+ * @property {string} repo - The GitHub repository identifier, like `{user}/{repo}`.
+ * @property {string} [icon] - [Optional] A logo filename for better recognition (e.g., "icon.png").
+ * @property {boolean} [theme] - [Optional] True if it's a theme plugin. Defaults to `false`.
+ * @property {string[]} [sponsors] - [Optional] An array of sponsor external links. Defaults to `[]`.
+ * @property {boolean} [web] - [Optional] Whether the web browser platform is supported. Defaults to `false`.
+ * @property {boolean} [effect] - [Optional] Whether the sandbox is running under the same origin with host. Defaults to `false`.
+ * @property {'file'|'db'} [unsupportedGraphType] - [Optional] Flag to indicate which graph type is not supported.
+ */
+
+/**
+ * @typedef {object} PluginData
+ * @property {string} name - The name of the package, derived from the manifest's `title` or GitHub directory name.
+ * @property {string} id - Currently unused placeholder.
+ * @property {string} description - The package description.
+ * @property {string} author - The package author.
+ * @property {string} repo - The GitHub repository identifier (e.g., "owner/repo").
+ * @property {string} repoUrl - The full HTML URL to the GitHub repository.
+ * @property {string} iconUrl - The direct URL to the package icon, if found and valid.
+ * @property {string} readmeUrl - The direct URL to the package README.md, if found and valid.
+ * @property {string} created_at - The creation date of the package (first commit date) in ISO format.
+ * @property {string} last_updated - The last update date of the package (last commit date) in ISO format.
+ * @property {string} error - A comma-separated string of errors encountered during processing this package.
+ * @property {string} defaultBranch - The default branch name of the repository (e.g., 'main' or 'master').
+ * @property {string} theme - "Yes" if it's a theme plugin, otherwise an empty string.
+ * @property {string} effect - "Yes" if it has side effects, otherwise an empty string.
+ * @property {string} sponsors - A comma-separated string of sponsor links.
+ */
+
 // ================================================================================
 // Fetch the package details for packages, for the Logseq Marketplace Plugins table
 // ================================================================================
@@ -94,9 +140,9 @@ async function main({verbose = false, maxItems} = {}) {
 /**
  * Worker function to process packages concurrently.
  * @param {Object[]} packages - Array of package objects to process.
- * @param {number} maxItems - Maximum number of items to process (optional).
+ * @param {number} [maxItems] - Maximum number of items to process.
  * @param {boolean} verbose - Enable verbose logging.
- * @param {function} processFunction - Function to process each package.
+ * @param {(pkg: PackagesListItem, verbose: boolean) => Promise<PluginData|null>} processFunction - Function to process each package.
  * @returns {Promise<{results: Object[], errorOccurred: boolean}>} - Processed results and error flag.
  */
 async function worker(packages, maxItems, verbose, processFunction) {
@@ -155,7 +201,7 @@ async function worker(packages, maxItems, verbose, processFunction) {
 /**
  * Fetch the list of package directories from the Logseq marketplace GitHub repository.
  * @param {boolean} verbose - Enable verbose logging.
- * @returns {Promise<Array>} List of package objects from GitHub API.
+ * @returns {Promise<PackagesListItem[]>} List of package objects from GitHub API.
  */
 async function fetchPackageList(verbose = false) {
   if (verbose)
@@ -177,10 +223,10 @@ async function fetchPackageList(verbose = false) {
 }
 
 /**
- * Process a single package: fetch manifest, commit dates, and build result object.
- * @param {Object} pkg - The package object from GitHub API.
+ * Process a single package: fetch manifest, commit dates, and build PluginData result.
+ * @param {PackagesListItem} pkg - The package object from GitHub API.
  * @param {boolean} verbose - Enable verbose logging.
- * @returns {Promise<Object|null>} Result object for the package, or null if not a directory.
+ * @returns {Promise<PluginData|null>} Result object for the package, or null if not a directory.
  */
 async function retrievePackageData(pkg, verbose = false) {
   if (pkg.type !== "dir") return null;
@@ -212,7 +258,7 @@ async function retrievePackageData(pkg, verbose = false) {
     packageData.last_updated = commitDates.last_updated;
   }
 
-  const manifest = await fetchManifest(pkg.name, verbose);
+  const /** @type {Manifest|null} */ manifest = await fetchManifest(pkg.name, verbose);
   if (!manifest) {
     return packageDataWithError("Missing manifest");
   } else {
@@ -227,7 +273,7 @@ async function retrievePackageData(pkg, verbose = false) {
     packageData.iconUrl = await getValidIconUrl(pkg.name, manifest.icon);
     if (!packageData.iconUrl) errors.push("Missing icon URL");
 
-    // Fill in the rest of the package data
+    // Fill in the rest of the package data from manifest
     packageData.name = manifest.name || pkg.name;
     packageData.description = manifest.description || "";
     packageData.author = manifest.author || "";
@@ -270,7 +316,7 @@ async function retrievePackageData(pkg, verbose = false) {
  * Fetch the manifest.json for a given package.
  * @param {string} packageName - The name of the package directory.
  * @param {boolean} verbose - Enable verbose logging.
- * @returns {Promise<Object|null>} Manifest object, or null if not found.
+ * @returns {Promise<Manifest|null>} Manifest object, or null if not found.
  */
 async function fetchManifest(packageName, verbose = false) {
   const manifestUrl = `${RAW_LOGSEQ_MARKETPLACE_PACKAGES_URL}/${packageName}/manifest.json`;
@@ -297,9 +343,9 @@ async function fetchManifest(packageName, verbose = false) {
 }
 
 /**
- * Attempts to fetch the icon for a given package and icon name.
+ * Attempt to fetch the icon for a given package and icon name.
  * @param {string} packageName - The name of the package directory.
- * @param {string} iconName - The icon file name from the manifest.
+ * @param {string} [iconName] - The icon file name from the manifest.
  * @returns {Promise<string|null>} The icon URL if fetch succeeds, or null if not found/invalid.
  */
 async function getValidIconUrl(packageName, iconName) {
@@ -358,14 +404,9 @@ async function fetchCommitDates(packageName, verbose = false) {
 }
 
 /**
- * Fetches the default branch name for a given GitHub repository.
+ * Fetch the repo URL and default branch name for a given GitHub repository.
  * @param {string} repo - The GitHub repository in the form 'owner/repo'.
- * @returns {Promise<string|null>} The default branch name (e.g., 'main' or 'master'), or null if not found or error.
- */
-/**
- * Fetches the repo URL and default branch name for a given GitHub repository.
- * @param {string} repo - The GitHub repository in the form 'owner/repo'.
- * @returns {Promise<{repoUrl: string, defaultBranch: string|null}>} The repo URL and default branch name, or null if not found or error.
+ * @returns {Promise<{repoUrl: string, defaultBranch: string|null}>} The repo URL and default branch name.
  */
 async function getRepoUrlAndDefaultBranch(repo) {
   const apiUrl = `https://api.github.com/repos/${repo}`;
@@ -385,8 +426,9 @@ async function getRepoUrlAndDefaultBranch(repo) {
 }
 
 /**
- * Returns the first valid README.md URL (main or master branch) for a given GitHub repo, or null if not found.
+ * Return the first valid README.md URL (main or master branch) for a given GitHub repo, or null if not found.
  * @param {string} repo - The GitHub repository in the form 'owner/repo'.
+ * @param {string} defaultBranch - The default branch name (e.g., 'main' or 'master').
  * @returns {Promise<string|null>} The valid README.md URL or null if not found.
  */
 async function getValidReadmeUrl(repo, defaultBranch) {
@@ -416,7 +458,7 @@ async function getValidReadmeUrl(repo, defaultBranch) {
  * Fetch data from a URL with error checking and handling.
  * @param {string} url - The URL to fetch from.
  * @param {string} caller - The name of the calling function (for error reporting).
- * @param {Object} options - Additional options for fetch (optional).
+ * @param {object} [options] - Additional options for fetch.
  * @returns {Promise<Response|null>} The fetch response or null if failed.
  * @throws {Error} Throws an error for rate limiting (403) or too many requests (429).
  */
@@ -449,7 +491,7 @@ async function fetchWithCheck(url, caller, options = {}) {
 
 /**
  * Get headers for GitHub API requests, including authorization if GITHUB_TOKEN is set.
- * @returns {Object} Headers object for fetch requests.
+ * @returns {object} Headers object for fetch requests.
  */
 function getGithubHeaders(verbose = false) {
   const headers = {Accept: "application/vnd.github.v3+json"};
