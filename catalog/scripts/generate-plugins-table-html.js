@@ -250,14 +250,7 @@ function renderDataTable(pluginsData) {
 
     function initDataTableWithToggle() {
         let showMore = false;  // initial state
-        let table;             // declare first
-
-        // toggle function uses the variable
-        function toggleColumns() {
-            // if (!table) return;       // safety check
-            table.column(5).visible(showMore); // Branch
-            table.column(8).visible(showMore); // Error
-        }
+        let table;             // declare table variable
 
         table = $("#plugin-table").DataTable({
             order: [],
@@ -283,8 +276,10 @@ function renderDataTable(pluginsData) {
 
                 // Use the table API for toggleColumns
                 function toggleColumns() {
-                    $table.column(5).visible(showMore); // Branch
-                    $table.column(8).visible(showMore); // Error
+                    $table.column(8).visible(showMore); // Branch
+                    $table.column(9).visible(showMore); // Theme
+                    $table.column(10).visible(showMore); // Effect
+                    $table.column(11).visible(showMore); // Sponsors
                 }
 
                 // Initial column visibility **after draw**
@@ -317,10 +312,13 @@ function renderTableHeaderRow() {
         <th>Description</th>
         <th>Author</th>
         <th>Repo</th>
-        <th>Branch</th>
         <th class="date-col">Created</th>
         <th class="date-col">Last Updated</th>
         <th>Error</th>
+        <th>Branch</th>
+        <th>Theme</th>
+        <th>Effect</th>
+        <th>Sponsors</th>
       </tr>
   `;
 }
@@ -360,7 +358,6 @@ function renderPluginRow(plugin) {
       <td>${descCell}</td>
       <td>${plugin.author || ""}</td>
       <td>${repoCell}</td>
-      <td>${plugin.defaultBranch || ""}</td>
       <td class="date-col">${
         plugin.created_at ? plugin.created_at.slice(0, 10) : ""
       }</td>
@@ -368,6 +365,10 @@ function renderPluginRow(plugin) {
         plugin.last_updated ? plugin.last_updated.slice(0, 10) : ""
       }</td>
       <td>${plugin.error || ""}</td>
+      <td>${plugin.defaultBranch || ""}</td>
+      <td>${plugin.theme || ""}</td>
+      <td>${plugin.effect || ""}</td>
+      <td>${plugin.sponsors || ""}</td>
     </tr>
   `;
 }

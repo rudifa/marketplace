@@ -193,12 +193,15 @@ async function retrievePackageData(pkg, verbose = false) {
     author: "",
     repo: "",
     repoUrl: "",
-    dir: pkg.name,
     iconUrl: "",
     readmeUrl: "",
     created_at: "",
     last_updated: "",
     error: "",
+    defaultBranch: "",
+    theme: "",
+    effect: "",
+    sponsors: "",
   };
 
   let errors = [];
@@ -229,6 +232,9 @@ async function retrievePackageData(pkg, verbose = false) {
     packageData.description = manifest.description || "";
     packageData.author = manifest.author || "";
     packageData.repo = manifest.repo || "";
+    packageData.theme = manifest.theme ? "Yes" : "";
+    packageData.effect = manifest.effect ? "Yes" : "";
+    packageData.sponsors = manifest.sponsors && manifest.sponsors.join(", ") || "";
 
     // Create and validate the repo URL and get the default branch
     const {repoUrl, defaultBranch} = await getRepoUrlAndDefaultBranch(
